@@ -11,7 +11,7 @@ import type {
     AddCertificateRequestPayloadProps,
     CertificateType
 } from "@/interfaces"
-import { cors,sendAPIResponse } from "@/utils"
+import { cors, sendAPIResponse } from "@/utils"
 import { connectDB } from "@/middleware/api"
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -103,7 +103,7 @@ const handleAddACertificate = async (
                 message: "Certificate added successfully"
             })
         )
-    } catch (_error) {
+    } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
@@ -131,7 +131,9 @@ const handleGetACertificate = async (
             return res.status(apiStatusCodes.BAD_REQUEST).json(
                 sendAPIResponse({
                     status: false,
-                    message: `Missing required fields: ${missingFields.join(", ")}`
+                    message: `Missing required fields: ${missingFields.join(
+                        ", "
+                    )}`
                 })
             )
         }
@@ -154,7 +156,7 @@ const handleGetACertificate = async (
                 message: "Certificate not found"
             })
         )
-    } catch (_error) {
+    } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,

@@ -31,7 +31,7 @@ const addPaymentToDB = async ({
 
         await payment.save()
         return { data: payment }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to save payment to DB" }
     }
 }
@@ -45,7 +45,7 @@ const getPaymentByOrderIdFromDB = async (
             return { error: "Payment not found" }
         }
         return { data: payment }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to find payment" }
     }
 }
@@ -106,7 +106,7 @@ const checkPaymentStatusFromDB = async (
                 error: "Payment not completed"
             }
         }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Error checking payment status" }
     }
 }

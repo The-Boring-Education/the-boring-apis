@@ -11,7 +11,7 @@ const findCouponByCodeFromDB = async (
             return { error: "Coupon not found" }
         }
         return { data: coupon }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to find coupon" }
     }
 }
@@ -53,7 +53,7 @@ const validateCouponForProductFromDB = async (
         }
 
         return { data: coupon }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to validate coupon" }
     }
 }
@@ -67,7 +67,7 @@ const getCouponByIdFromDB = async (
             return { error: "Coupon not found" }
         }
         return { data: coupon }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to get coupon" }
     }
 }
@@ -80,7 +80,7 @@ const getAllCouponsFromDB = async (): Promise<DatabaseQueryResponseType> => {
             .populate("createdBy", "name email")
             .sort({ createdAt: -1 })
         return { data: coupons }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to fetch coupons" }
     }
 }
@@ -220,7 +220,7 @@ const deleteCouponFromDB = async (
         }
 
         return { data: deletedCoupon }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to delete coupon" }
     }
 }
@@ -253,7 +253,7 @@ const applyCouponToSheetsFromDB = async (
         ).populate("createdBy", "name email")
 
         return { data: updatedCoupon }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to apply coupon to sheets" }
     }
 }
@@ -280,7 +280,7 @@ const removeCouponFromSheetFromDB = async (
         ).populate("createdBy", "name email")
 
         return { data: updatedCoupon }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to remove coupon from sheet" }
     }
 }
@@ -300,7 +300,7 @@ const incrementCouponUsageFromDB = async (
         }
 
         return { data: updatedCoupon }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to increment coupon usage" }
     }
 }

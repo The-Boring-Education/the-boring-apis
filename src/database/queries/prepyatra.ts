@@ -24,7 +24,7 @@ const getRecruitersByUserFromDB = async (
             user: new mongoose.Types.ObjectId(userId)
         }).sort({ updatedAt: -1 })
         return { data: recruiters }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to fetch recruiters from DB" }
     }
 }
@@ -44,7 +44,7 @@ const addRecruiterToDB = async (
         const addRecruiter = new Recruiter(recruiterData)
         await addRecruiter.save()
         return { data: addRecruiter }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Error while saving recruiter to DB" }
     }
 }
@@ -65,7 +65,7 @@ const updateRecruiterInDB = async (
         }
 
         return { data: updatedRecruiter }
-    } catch (_error: any) {
+    } catch (error: any) {
         return { error: "Failed to update recruiter" }
     }
 }
@@ -81,7 +81,7 @@ const deleteRecruiterInDB = async (
         }
 
         return { data: deletedRecruiter }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to update recruiter: " }
     }
 }
@@ -104,7 +104,7 @@ const addPrepLogToDB = async ({
         await updateUserPrepLogStreak(userId)
 
         return { data: newLog }
-    } catch (_error: any) {
+    } catch (error: any) {
         return { error: error.message }
     }
 }
@@ -115,7 +115,7 @@ const getPrepLogsByUserFromDB = async (userId: string) => {
             createdAt: -1
         })
         return { data: logs }
-    } catch (_error: any) {
+    } catch (error: any) {
         return { error: error.message }
     }
 }
@@ -133,7 +133,7 @@ const updatePrepLogInDB = async (prepLogId: string, updateData: any) => {
         if (!updatedLog) return { error: "Prep log not found" }
 
         return { data: updatedLog }
-    } catch (_error: any) {
+    } catch (error: any) {
         return { error: error.message }
     }
 }
@@ -155,7 +155,7 @@ const deletePrepLogInDB = async (prepLogId: string) => {
         }
 
         return { data: deletedLog }
-    } catch (_error: any) {
+    } catch (error: any) {
         return { error: error.message }
     }
 }
@@ -172,7 +172,7 @@ const getActiveSubscriptionByUserFromDB = async (
             expiryDate: { $gt: new Date() }
         })
         return { data: subscription }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to fetch active subscription from DB" }
     }
 }
@@ -204,7 +204,7 @@ const createSubscriptionInDB = async ({
             isActive: true
         })
         return { data: subscription }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to create subscription in DB" }
     }
 }
@@ -227,7 +227,7 @@ const updateUserSubscriptionStatusInDB = async ({
             }
         )
         return { data: updatedUser }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to update user subscription status in DB" }
     }
 }
@@ -238,7 +238,7 @@ const getPYUserByIdFromDB = async (
     try {
         const user = await User.findById(userId)
         return { data: user }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to fetch user from DB" }
     }
 }
@@ -255,7 +255,7 @@ const updatePYUserByIdInDB = async (
             options
         )
         return { data: updatedUser }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to update user in DB" }
     }
 }
@@ -349,7 +349,7 @@ const updateUserPrepLogStreak = async (
                 streakMilestone: currentStreak
             }
         }
-    } catch (_error: any) {
+    } catch (error: any) {
         return { error: error.message }
     }
 }
@@ -395,7 +395,7 @@ const getUserPrepLogStats = async (
                 weeklyLogs: recentLogs
             }
         }
-    } catch (_error: any) {
+    } catch (error: any) {
         return { error: error.message }
     }
 }
@@ -536,7 +536,7 @@ const recalculateUserPrepLogStats = async (
                 lastLoggedDate
             }
         }
-    } catch (_error: any) {
+    } catch (error: any) {
         return { error: error.message }
     }
 }
@@ -580,7 +580,7 @@ const getAllUsersWithLogsFromDB =
                     totalUsers: usersWithLogs.length
                 }
             }
-        } catch (_error: any) {
+        } catch (error: any) {
             return { error: error.message }
         }
     }
@@ -631,7 +631,7 @@ const getAllMenteesFromDB = async (): Promise<DatabaseQueryResponseType> => {
                 totalMentees: menteesWithDetails.length
             }
         }
-    } catch (_error: any) {
+    } catch (error: any) {
         return { error: error.message }
     }
 }
@@ -642,7 +642,7 @@ const isUserMenteeInDB = async (
     try {
         const existing = await Mentorship.findOne({ user: userId })
         return { data: { isMentee: !!existing } }
-    } catch (_error: any) {
+    } catch (error: any) {
         return { error: error.message }
     }
 }
@@ -667,7 +667,7 @@ const toggleMentorshipInDB = async (
             const deleted = await Mentorship.findOneAndDelete({ user: userId })
             return { data: deleted }
         }
-    } catch (_error: any) {
+    } catch (error: any) {
         return { error: error.message }
     }
 }
@@ -681,7 +681,7 @@ const getChallengesByUserFromDB = async (
             user: new mongoose.Types.ObjectId(userId)
         }).sort({ createdAt: -1 })
         return { data: challenges }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to fetch challenges from DB" }
     }
 }
@@ -709,7 +709,7 @@ const createChallengeInDB = async (payload: {
         const newChallenge = new Challenge(challengeData)
         await newChallenge.save()
         return { data: newChallenge }
-    } catch (_error: any) {
+    } catch (error: any) {
         return {
             error: error.message || "Error while creating challenge in DB"
         }
@@ -732,7 +732,7 @@ const updateChallengeInDB = async (
         }
 
         return { data: updatedChallenge }
-    } catch (_error: any) {
+    } catch (error: any) {
         return { error: "Failed to update challenge" }
     }
 }
@@ -751,7 +751,7 @@ const deleteChallengeInDB = async (
         }
 
         return { data: deletedChallenge }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to delete challenge" }
     }
 }
@@ -764,7 +764,7 @@ const getChallengeLogsByIdFromDB = async (
             challenge: new mongoose.Types.ObjectId(challengeId)
         }).sort({ day: 1 })
         return { data: logs }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to fetch challenge logs from DB" }
     }
 }
@@ -838,7 +838,7 @@ const createChallengeLogInDB = async (payload: {
         }
 
         return { data: newLog }
-    } catch (_error: any) {
+    } catch (error: any) {
         return {
             error: error.message || "Error while creating challenge log in DB"
         }
@@ -901,7 +901,7 @@ const getChallengeProgressFromDB = async (
         }
 
         return { data: progressData }
-    } catch (_error: any) {
+    } catch (error: any) {
         return { error: error.message || "Failed to fetch challenge progress" }
     }
 }
@@ -951,7 +951,7 @@ const getChallengeStatsFromDB =
             }
 
             return { data: stats }
-        } catch (_error: any) {
+        } catch (error: any) {
             return { error: error.message || "Failed to fetch challenge stats" }
         }
     }

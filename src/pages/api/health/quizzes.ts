@@ -86,7 +86,7 @@ export default async function handler(
                 error: `HTTP ${response.status}: ${response.statusText}`
             })
         }
-    } catch (_error) {
+    } catch (error) {
         const responseTime = Date.now() - startTime
         const errorMessage =
             error instanceof Error ? error.message : "Unknown error"

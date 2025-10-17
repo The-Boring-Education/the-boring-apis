@@ -10,7 +10,7 @@ const addPlaylistToDB = async (
         const playlist = new Playlist(playlistDetails)
         await playlist.save()
         return { data: playlist }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed while adding playlist" }
     }
 }
@@ -27,7 +27,7 @@ const updateTagsInPlaylist = async (
         )
 
         return { data: updatedPlaylist }
-    } catch (_error) {
+    } catch (error) {
         return { error }
     }
 }
@@ -53,7 +53,7 @@ const addUserPlaylistToDB = async (
 
         await userPlaylist.save()
         return { data: userPlaylist }
-    } catch (_error) {
+    } catch (error) {
         return { error }
     }
 }
@@ -74,7 +74,7 @@ const updateReferredByInPlaylist = async (
         }
 
         return { data: updatedPlaylist }
-    } catch (_error) {
+    } catch (error) {
         return { error: `An error occurred: ${error}` }
     }
 }
@@ -90,7 +90,7 @@ const checkPlaylistExistsByID = async (
         }
 
         return { data: platlist }
-    } catch (_error) {
+    } catch (error) {
         return { error }
     }
 }
@@ -99,7 +99,7 @@ const getPlaylistsFromDB = async (): Promise<DatabaseQueryResponseType> => {
     try {
         const playlists = await Playlist.find()
         return { data: playlists }
-    } catch (_error) {
+    } catch (error) {
         return { error }
     }
 }
@@ -169,7 +169,7 @@ const getPlaylistByIdFromDB = async (
         }
 
         return { data: result }
-    } catch (_error) {
+    } catch (error) {
         return { error }
     }
 }
@@ -195,7 +195,7 @@ const getUserPlaylistsFromDB = async (
         )
 
         return { data: playlists }
-    } catch (_error) {
+    } catch (error) {
         return { error: "An error occurred while fetching playlists" }
     }
 }
@@ -214,7 +214,7 @@ const deleteUserPlaylistFromDB = async (
             return { error: "UserPlaylist not found" }
         }
         return { data: userPlaylist }
-    } catch (_error) {
+    } catch (error) {
         return { error: "An error occurred while deleting userPlaylist" }
     }
 }
@@ -259,7 +259,7 @@ const updateUserPlaylistData = async (
             )
         }
         return { data: { updatedUserPlaylist, updatedPlaylist } }
-    } catch (_error) {
+    } catch (error) {
         return { error: `An error occurred: ${error}` }
     }
 }
@@ -275,7 +275,7 @@ const getPlaylistByTagFromDB = async (
         }
 
         return { data: playlists }
-    } catch (_error) {
+    } catch (error) {
         return { error }
     }
 }
@@ -291,7 +291,7 @@ const deletePlaylistFromDB = async (
         }
 
         return { data: playlist }
-    } catch (_error) {
+    } catch (error) {
         return { error }
     }
 }
@@ -308,7 +308,7 @@ const deletePlaylistByTagFromDB = async (
         return {
             data: playlists
         }
-    } catch (_error) {
+    } catch (error) {
         return { error }
     }
 }

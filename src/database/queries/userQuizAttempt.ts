@@ -1,4 +1,3 @@
-
 import type { DatabaseQueryResponseType } from "@/interfaces"
 
 import { QuizAttempt } from "../models"
@@ -68,7 +67,7 @@ export const addUserQuizAttemptToDB = async (
 
         const savedAttempt = await attempt.save()
         return { data: savedAttempt }
-    } catch (_error) {
+    } catch (error) {
         console.error("Error saving quiz attempt:", error)
         console.error(
             "Attempt data that failed:",
@@ -174,7 +173,7 @@ export const getUserQuizPerformanceFromDB = async (
         }
 
         return { data: performanceStats }
-    } catch (_error) {
+    } catch (error) {
         console.error("Error getting user performance:", error)
         // Return empty results instead of error for better UX
         return {
@@ -228,7 +227,7 @@ export const getLeaderboardFromDB = async (
         ])
 
         return { data: attempts }
-    } catch (_error) {
+    } catch (error) {
         console.error("Error getting leaderboard:", error)
         return { error: "Failed to get leaderboard" }
     }
@@ -313,7 +312,7 @@ export const getQuizAdminAnalyticsFromDB =
             }
 
             return { data: analytics }
-        } catch (_error) {
+        } catch (error) {
             console.error("Error getting admin analytics:", error)
             return { error: "Failed to get admin analytics" }
         }

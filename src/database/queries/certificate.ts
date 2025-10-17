@@ -1,73 +1,77 @@
 import type {
-  AddCertificateRequestPayloadProps,
-  DatabaseQueryResponseType,
-} from '@/interfaces';
+    AddCertificateRequestPayloadProps,
+    DatabaseQueryResponseType
+} from "@/interfaces"
 
-import Certificate from '../models/Certificate';
+import Certificate from "../models/Certificate"
 
 const addACertificateToDB = async (
-  certificatePayload: AddCertificateRequestPayloadProps
+    certificatePayload: AddCertificateRequestPayloadProps
 ): Promise<DatabaseQueryResponseType> => {
-  try {
-    const certificate = new Certificate(certificatePayload);
-    await certificate.save();
-    return { data: certificate };
-    } catch (_error) {
-    return { error };
-  }
-};
+    try {
+        const certificate = new Certificate(certificatePayload)
+        await certificate.save()
+        return { data: certificate }
+    } catch (error) {
+        return { error }
+    }
+}
 
 const checkCertificateExistForAProgram = async (
-  type: string,
-  userId: string,
-  programId: string
+    type: string,
+    userId: string,
+    programId: string
 ) => {
-  try {
-    const certificate = await Certificate.findOne({ type, userId, programId });
+    try {
+        const certificate = await Certificate.findOne({
+            type,
+            userId,
+            programId
+        })
 
-    if (certificate) {
-      return { data: certificate };
-    } else {
-      return { error: 'Certificate does not exist' };
+        if (certificate) {
+            return { data: certificate }
+        } else {
+            return { error: "Certificate does not exist" }
+        }
+    } catch (error) {
+        return { error: "Failed while checking certificate existence" }
     }
-    } catch (_error) {
-    return { error: 'Failed while checking certificate existence' };
-  }
-};
+}
 
 // Get A Certificate by Id
 const getCertificateById = async (certificateId: string) => {
-  try {
-    const certificate = await Certificate.findById(certificateId);
+    try {
+        const certificate = await Certificate.findById(certificateId)
 
-    if (certificate) {
-      return { data: certificate };
-    } else {
-      return { error: 'Certificate not found' };
+        if (certificate) {
+            return { data: certificate }
+        } else {
+            return { error: "Certificate not found" }
+        }
+    } catch (error) {
+        return { error: "Failed while fetching certificate" }
     }
-    } catch (_error) {
-    return { error: 'Failed while fetching certificate' };
-  }
-};
+}
 
 // Get All User Certificates
 const getUserCertificates = async (userId: string) => {
-  try {
-    const certificates = await Certificate.find({ userId });
+    try {
+        const certificates = await Certificate.find({ userId })
 
-    if (certificates.length > 0) {
-      return { data: certificates };
-    } else {
-      return { error: 'No certificates found' };
+        if (certificates.length > 0) {
+            return { data: certificates }
+        } else {
+            return { error: "No certificates found" }
+        }
+    } catch (error) {
+        return { error: "Failed while fetching certificates" }
     }
-    } catch (_error) {
-    return { error: 'Failed while fetching certificates' };
-  }
-};
+}
 
 export {
-  addACertificateToDB,
-  checkCertificateExistForAProgram,
-  getCertificateById,
-  getUserCertificates,
-};
+    addACertificateToDB,
+    checkCertificateExistForAProgram,
+    getCertificateById,
+    getUserCertificates
+}

@@ -14,7 +14,7 @@ const addGamificationDocInDB = async (
         const gamification = new Gamification({ userId })
         await gamification.save()
         return { data: gamification }
-    } catch (_error) {
+    } catch (error) {
         return { error }
     }
 }
@@ -30,7 +30,7 @@ const getUserPointsFromDB = async (
         }
 
         return { data: gamification }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Error fetching user points" }
     }
 }
@@ -61,7 +61,7 @@ const updateUserPointsInDB = async (
         }
 
         return { data: updatedGamification }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Error updating user points" }
     }
 }
@@ -95,7 +95,7 @@ const deductUserPointsFromDB = async (
         }
 
         return { data: updatedGamification }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Error reducing points" }
     }
 }
@@ -118,7 +118,7 @@ const handleGamificationPoints = async (
         return {
             data
         }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Unexpected error in handleGamificationPoints" }
     }
 }
@@ -151,7 +151,7 @@ const getLeaderboardFromDB = async (
         ])
 
         return { data: leaderboard }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Error fetching leaderboard" }
     }
 }

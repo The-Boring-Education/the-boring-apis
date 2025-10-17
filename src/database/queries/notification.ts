@@ -12,7 +12,7 @@ const addANotificationToDB = async (
         const notification = new Notification(notificationPayload)
         await notification.save()
         return { data: notification }
-    } catch (_error) {
+    } catch (error) {
         return { error }
     }
 }
@@ -22,7 +22,7 @@ const getAllNotificationsFromDB = async () => {
         const notifications = await Notification.find()
 
         return { data: notifications }
-    } catch (_error) {
+    } catch (error) {
         return { error }
     }
 }
@@ -40,7 +40,7 @@ const updateANotificationInDB = async (
         )
 
         return { data: updatedNotificationData }
-    } catch (_error) {
+    } catch (error) {
         return { error }
     }
 }
@@ -56,7 +56,7 @@ const deleteANotificationsFromDB = async (notificationId: string) => {
         }
 
         return { data: notification }
-    } catch (_error) {
+    } catch (error) {
         return { error }
     }
 }

@@ -74,7 +74,7 @@ const createQuizSessionInDB = async ({
         await session.save()
 
         return { data: session }
-    } catch (_error) {
+    } catch (error) {
         console.error("Error creating quiz session:", error)
         return { error: "Failed to create quiz session" }
     }
@@ -212,7 +212,7 @@ const submitAnswerInDB = async ({
                 detailedExplanation: question.detailedExplanation
             }
         }
-    } catch (_error) {
+    } catch (error) {
         console.error("Error submitting answer:", error)
         return { error: "Failed to submit answer" }
     }
@@ -282,7 +282,7 @@ const completeQuizSessionInDB = async (
         })
 
         return { data: session }
-    } catch (_error) {
+    } catch (error) {
         console.error("Error completing session:", error)
         return { error: "Failed to complete session" }
     }
@@ -352,7 +352,7 @@ const updateUserQuestionPerformance = async ({
         performance.lastAttemptedAt = new Date()
 
         await performance.save()
-    } catch (_error) {
+    } catch (error) {
         console.error("Error updating question performance:", error)
     }
 }
@@ -476,7 +476,7 @@ const updateUserAnalyticsInDB = async ({
         analytics.lastAttemptAt = new Date()
 
         await analytics.save()
-    } catch (_error) {
+    } catch (error) {
         console.error("Error updating analytics:", error)
     }
 }
@@ -494,7 +494,7 @@ const getUserAnalyticsFromDB = async (
 
         const analytics = await UserQuizAnalytics.find(filter).lean()
         return { data: analytics }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to fetch user analytics" }
     }
 }
@@ -562,7 +562,7 @@ const getQuizLeaderboardFromDB = async (
         ])
 
         return { data: leaderboard }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to fetch leaderboard" }
     }
 }
@@ -583,7 +583,7 @@ const getUserQuizSessionsFromDB = async (
             .lean()
 
         return { data: sessions }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed to fetch user sessions" }
     }
 }
@@ -676,7 +676,7 @@ const getQuizAdminAnalyticsFromDB =
             }
 
             return { data: analytics }
-        } catch (_error) {
+        } catch (error) {
             console.error("Error fetching admin analytics:", error)
             return { error: "Failed to fetch admin analytics" }
         }
@@ -725,7 +725,7 @@ const getActiveSessionsFromDB =
             })
 
             return { data: formattedSessions }
-        } catch (_error) {
+        } catch (error) {
             console.error("Error fetching active sessions:", error)
             return { error: "Failed to fetch active sessions" }
         }
@@ -741,4 +741,5 @@ export {
     getUserQuizSessionsFromDB,
     submitAnswerInDB,
     updateUserAnalyticsInDB,
-    updateUserQuestionPerformance}
+    updateUserQuestionPerformance
+}

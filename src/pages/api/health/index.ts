@@ -79,7 +79,7 @@ async function checkServiceHealth(
                 error: `HTTP ${response.status}: ${response.statusText}`
             }
         }
-    } catch (_error) {
+    } catch (error) {
         const responseTime = Date.now() - startTime
         const errorMessage =
             error instanceof Error ? error.message : "Unknown error"
@@ -153,7 +153,7 @@ export default async function handler(
         }
 
         res.status(httpStatus).json(response)
-    } catch (_error) {
+    } catch (error) {
         const errorMessage =
             error instanceof Error ? error.message : "Unknown error"
 

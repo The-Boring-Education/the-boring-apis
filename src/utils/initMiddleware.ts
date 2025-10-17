@@ -6,7 +6,7 @@ try {
     const next = require("next")
     _NextApiRequest = next.NextApiRequest
     _NextApiResponse = next.NextApiResponse
-} catch (_error) {
+} catch (error) {
     _NextApiRequest = class {}
     _NextApiResponse = class {}
 }

@@ -12,7 +12,7 @@ const addAQuizToDB = async (
         const quiz = new Quiz(quizData)
         await quiz.save()
         return { data: quiz }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed while adding quiz", details: error }
     }
 }
@@ -34,7 +34,7 @@ const updateAQuizInDB = async ({
         if (!updatedQuiz) return { error: "Quiz does not exist" }
 
         return { data: updatedQuiz }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed while updating quiz" }
     }
 }
@@ -51,7 +51,7 @@ const getQuizCategoriesFromDB = async (
         ).lean()
 
         return { data: categories }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed while fetching quiz categories" }
     }
 }
@@ -72,7 +72,7 @@ const getQuizByIdFromDB = async (
         }
 
         return { data: quiz }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed while fetching quiz" }
     }
 }
@@ -98,7 +98,7 @@ const getQuizCategoriesWithCountsFromDB = async (
         ])
 
         return { data: categories }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed while fetching quiz categories with counts" }
     }
 }
@@ -122,7 +122,7 @@ const appendQuestionsToQuizInDB = async (
         if (!updated) return { error: "Quiz not found" }
 
         return { data: updated }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed while appending questions to quiz" }
     }
 }
@@ -135,7 +135,7 @@ const saveQuizAttemptToDB = async (
         const attempt = new QuizAttempt(attemptData)
         const savedAttempt = await attempt.save()
         return { data: savedAttempt }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed while saving quiz attempt" }
     }
 }
@@ -163,7 +163,7 @@ const getUserQuizHistoryFromDB = async ({
             .lean()
 
         return { data: attempts }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed while fetching quiz history" }
     }
 }
@@ -226,7 +226,7 @@ const getUserQuizStatsFromDB = async (
         }
 
         return { data: stats[0] || defaultStats }
-    } catch (_error) {
+    } catch (error) {
         return { error: "Failed while fetching quiz statistics" }
     }
 }
@@ -240,4 +240,5 @@ export {
     getUserQuizHistoryFromDB,
     getUserQuizStatsFromDB,
     saveQuizAttemptToDB,
-    updateAQuizInDB}
+    updateAQuizInDB
+}
