@@ -9,6 +9,7 @@ const CASHFREE_BASE_URL = process.env.CASHFREE_BASE_URL as string;
 const CASHFREE_SECRET_KEY = process.env.CASHFREE_SECRET_KEY as string;
 const CASHFREE_CLIENT_ID = process.env.CASHFREE_CLIENT_ID as string;
 const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN as string;
+const PLATFORM_URL = process.env.NEXT_PUBLIC_PLATFORM_URL as string;
 
 // Email Service Configuration
 const EMAIL_SERVICE_URL = process.env.EMAIL_SERVICE_URL as string;
@@ -29,7 +30,8 @@ const envConfig = {
     SENTRY_DSN,
     EMAIL_SERVICE_URL,
     EMAIL_API_KEY,
-    FROM_EMAIL
+    FROM_EMAIL,
+    PLATFORM_URL
 };
 
 export { envConfig };

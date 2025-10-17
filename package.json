@@ -8,7 +8,7 @@
     "dev": "next dev -p 3004",
     "build": "npm run lint && next build",
     "start": "next start -p 3000",
-    "lint": "eslint .",
+    "lint": "eslint . --fix",
     "prepare": "husky install",
     "docker:build": "docker build -t tbe-api .",
     "docker:run": "docker run -p 3000:3000 tbe-api",

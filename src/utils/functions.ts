@@ -12,11 +12,12 @@ import type {
 import {
     envConfig,
     JOB_SKILL_NORMALIZER,
+    POINTS_RULES,
+    routes,
     SKILL_BLACKLIST,
+    SUBSCRIPTION_FEATURES,
     YOUTUBE_API_PATH
 } from '@/config/constants';
-import { POINTS_RULES, SUBSCRIPTION_FEATURES } from '@/config/constants';
-import { routes } from '@/config/constants';
 
 const sendAPIResponse = ({
     success,
@@ -35,7 +36,7 @@ const sendAPIResponse = ({
 const fetchAPIData = async (
     url: string
 ): Promise<{ status: boolean; data: any }> => {
-    const response = await fetch(`${envConfig.API_URL}/${url}`);
+    const response = await fetch(`${url}`);
     const data = await response.json();
 
     return {
@@ -347,3 +348,4 @@ export {
     validateWebhookEvent,
     verifyWebhookSignature
 };
+

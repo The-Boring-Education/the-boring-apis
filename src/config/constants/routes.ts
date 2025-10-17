@@ -1,4 +1,3 @@
-import { envConfig } from './envConfig';
 
 const routes = {
     home: '/',
@@ -80,7 +79,7 @@ const routes = {
     unskilled: '/unskilled',
     404: '/404',
     api: {
-        base: `${envConfig.API_URL}/api/v1`,
+        base: '/api/v1',
         projects: '/projects',
         webinar: '/webinar',
         project: (project: string) => `/projects/${project}`,
@@ -163,3 +162,4 @@ const routes = {
 };
 
 export { routes };
+

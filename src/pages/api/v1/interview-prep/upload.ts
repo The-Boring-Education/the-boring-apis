@@ -137,7 +137,7 @@ export default async function handler(
 
                     // Add question via API call to maintain consistency
                     const questionResponse = await axios.post(
-                        `${process.env.API_URL}/interview-prep/${savedSheet._id}/question`,
+                        `/interview-prep/${savedSheet._id}/question`,
                         questionPayload,
                         {
                             headers: {
