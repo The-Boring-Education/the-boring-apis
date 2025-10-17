@@ -1,0 +1,7 @@
+# Super simple .dockerignore - just exclude the big stuff
+node_modules
+.next
+.git
+.env*
+*.log
+.DS_Store
