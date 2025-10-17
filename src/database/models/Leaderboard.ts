@@ -4,37 +4,37 @@ import { DATABASE_MODELS, LeaderboardEnum } from '@/config/constants';
 import { type LeaderboardModel } from '@/interfaces';
 
 const LeaderboardEntrySchema = new Schema(
-  {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: DATABASE_MODELS.USER,
-      required: true,
+    {
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: DATABASE_MODELS.USER,
+            required: true
+        },
+        points: {
+            type: Number,
+            required: true
+        }
     },
-    points: {
-      type: Number,
-      required: true,
-    },
-  },
-  { _id: false }
+    { _id: false }
 );
 
 const LeaderboardSchema = new Schema(
-  {
-    type: {
-      type: String,
-      enum: LeaderboardEnum,
-      required: true,
+    {
+        type: {
+            type: String,
+            enum: LeaderboardEnum,
+            required: true
+        },
+        date: {
+            type: Date,
+            required: true
+        },
+        entries: {
+            type: [LeaderboardEntrySchema],
+            default: []
+        }
     },
-    date: {
-      type: Date,
-      required: true,
-    },
-    entries: {
-      type: [LeaderboardEntrySchema],
-      default: [],
-    },
-  },
-  { timestamps: true }
+    { timestamps: true }
 );
 
 const Leaderboard: Model<LeaderboardModel> =

@@ -1,82 +1,82 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { apiStatusCodes } from "@/config/constants"
-import { User } from "@/database"
-import { cors, sendAPIResponse } from "@/utils"
-import { connectDB } from "@/middleware"
+import { apiStatusCodes } from '@/config/constants';
+import { User } from '@/database';
+import { cors, sendAPIResponse } from '@/utils';
+import { connectDB } from '@/middleware';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    await cors(req, res)
-    await connectDB()
+    await cors(req, res);
+    await connectDB();
 
     switch (req.method) {
-        case "GET":
-            return handleGetUsersForReminder(req, res)
+        case 'GET':
+            return handleGetUsersForReminder(req, res);
         default:
             return res.status(apiStatusCodes.METHOD_NOT_ALLOWED).json(
                 sendAPIResponse({
                     status: false,
                     message: `Method ${req.method} not allowed`
                 })
-            )
+            );
     }
-}
+};
 
 const handleGetUsersForReminder = async (
     req: NextApiRequest,
     res: NextApiResponse
 ) => {
     try {
-        const { reminderType = "daily" } = req.query
+        const { reminderType = 'daily' } = req.query;
 
-        const today = new Date()
-        today.setHours(0, 0, 0, 0)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-        const yesterday = new Date(today)
-        yesterday.setDate(yesterday.getDate() - 1)
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
 
-        let usersNeedingReminder
+        let usersNeedingReminder;
 
-        if (reminderType === "daily") {
+        if (reminderType === 'daily') {
             // Find users who haven't logged today
             usersNeedingReminder = await User.find({
-                "prepYatra.pyOnboarded": true,
+                'prepYatra.pyOnboarded': true,
                 $or: [
-                    { "prepYatra.prepLog.lastLoggedDate": { $exists: false } },
-                    { "prepYatra.prepLog.lastLoggedDate": { $lt: today } }
+                    { 'prepYatra.prepLog.lastLoggedDate': { $exists: false } },
+                    { 'prepYatra.prepLog.lastLoggedDate': { $lt: today } }
                 ]
-            }).select("_id name email prepYatra.prepLog")
-        } else if (reminderType === "streak_risk") {
+            }).select('_id name email prepYatra.prepLog');
+        } else if (reminderType === 'streak_risk') {
             // Find users with active streaks who haven't logged today
             usersNeedingReminder = await User.find({
-                "prepYatra.pyOnboarded": true,
-                "prepYatra.prepLog.currentStreak": { $gte: 3 },
-                "prepYatra.prepLog.lastLoggedDate": { $lt: today }
-            }).select("_id name email prepYatra.prepLog")
-        } else if (reminderType === "streak_broken") {
+                'prepYatra.pyOnboarded': true,
+                'prepYatra.prepLog.currentStreak': { $gte: 3 },
+                'prepYatra.prepLog.lastLoggedDate': { $lt: today }
+            }).select('_id name email prepYatra.prepLog');
+        } else if (reminderType === 'streak_broken') {
             // Find users whose streak was broken yesterday
             usersNeedingReminder = await User.find({
-                "prepYatra.pyOnboarded": true,
-                "prepYatra.prepLog.currentStreak": 0,
-                "prepYatra.prepLog.lastLoggedDate": { $lt: yesterday },
-                "prepYatra.prepLog.totalLogs": { $gt: 0 }
-            }).select("_id name email prepYatra.prepLog")
-        } else if (reminderType === "inactive") {
+                'prepYatra.pyOnboarded': true,
+                'prepYatra.prepLog.currentStreak': 0,
+                'prepYatra.prepLog.lastLoggedDate': { $lt: yesterday },
+                'prepYatra.prepLog.totalLogs': { $gt: 0 }
+            }).select('_id name email prepYatra.prepLog');
+        } else if (reminderType === 'inactive') {
             // Find users who haven't logged in the last 3 days
-            const threeDaysAgo = new Date(today)
-            threeDaysAgo.setDate(threeDaysAgo.getDate() - 3)
+            const threeDaysAgo = new Date(today);
+            threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
             usersNeedingReminder = await User.find({
-                "prepYatra.pyOnboarded": true,
+                'prepYatra.pyOnboarded': true,
                 $or: [
-                    { "prepYatra.prepLog.lastLoggedDate": { $exists: false } },
+                    { 'prepYatra.prepLog.lastLoggedDate': { $exists: false } },
                     {
-                        "prepYatra.prepLog.lastLoggedDate": {
+                        'prepYatra.prepLog.lastLoggedDate': {
                             $lt: threeDaysAgo
                         }
                     }
                 ]
-            }).select("_id name email prepYatra.prepLog")
+            }).select('_id name email prepYatra.prepLog');
         }
 
         const reminderData =
@@ -90,7 +90,7 @@ const handleGetUsersForReminder = async (
                     totalLogs: 0,
                     lastLoggedDate: null
                 }
-            })) || []
+            })) || [];
 
         return res.status(apiStatusCodes.OKAY).json(
             sendAPIResponse({
@@ -101,17 +101,17 @@ const handleGetUsersForReminder = async (
                     users: reminderData
                 }
             })
-        )
+        );
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
                 message:
-                    "Something went wrong while fetching users for reminder",
+                    'Something went wrong while fetching users for reminder',
                 error
             })
-        )
+        );
     }
-}
+};
 
-export default handler
+export default handler;

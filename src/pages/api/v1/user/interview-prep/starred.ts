@@ -1,55 +1,55 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { apiStatusCodes } from "@/config/constants"
+import { apiStatusCodes } from '@/config/constants';
 import {
     getStarredQuestionsFromDB,
     markQuestionStarredByUser
-} from "@/database"
-import type { MarkQuestionStarredRequestProps } from "@/interfaces"
-import { sendAPIResponse } from "@/utils"
-import { connectDB } from "@/middleware"
+} from '@/database';
+import type { MarkQuestionStarredRequestProps } from '@/interfaces';
+import { sendAPIResponse } from '@/utils';
+import { connectDB } from '@/middleware';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        await connectDB()
+        await connectDB();
 
         switch (req.method) {
-            case "POST":
-                return handleStarQuestion(req, res)
-            case "GET":
-                return handleGetStarredQuestions(req, res)
+            case 'POST':
+                return handleStarQuestion(req, res);
+            case 'GET':
+                return handleGetStarredQuestions(req, res);
             default:
                 return res.status(apiStatusCodes.BAD_REQUEST).json(
                     sendAPIResponse({
                         status: false,
                         message: `Method ${req.method} Not Allowed`
                     })
-                )
+                );
         }
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Internal Server Error"
+                message: 'Internal Server Error'
             })
-        )
+        );
     }
-}
+};
 
 const handleStarQuestion = async (
     req: NextApiRequest,
     res: NextApiResponse
 ) => {
     const { userId, sheetId, questionId, isStarred } =
-        req.body as MarkQuestionStarredRequestProps
+        req.body as MarkQuestionStarredRequestProps;
 
-    if (!userId || !sheetId || !questionId || typeof isStarred !== "boolean") {
+    if (!userId || !sheetId || !questionId || typeof isStarred !== 'boolean') {
         return res.status(apiStatusCodes.BAD_REQUEST).json(
             sendAPIResponse({
                 status: false,
-                message: "Invalid Data sent in request"
+                message: 'Invalid Data sent in request'
             })
-        )
+        );
     }
 
     try {
@@ -59,15 +59,15 @@ const handleStarQuestion = async (
                 sheetId,
                 questionId,
                 isStarred
-            )
+            );
 
-        if (starQuestionError === "User or question not found") {
+        if (starQuestionError === 'User or question not found') {
             return res.status(apiStatusCodes.NOT_FOUND).json(
                 sendAPIResponse({
                     status: false,
-                    message: "User or question not found"
+                    message: 'User or question not found'
                 })
-            )
+            );
         }
         if (starQuestionError) {
             return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
@@ -75,49 +75,49 @@ const handleStarQuestion = async (
                     status: false,
                     message:
                         starQuestionError ||
-                        "Failed to mark question as starred"
+                        'Failed to mark question as starred'
                 })
-            )
+            );
         }
 
         return res.status(apiStatusCodes.OKAY).json(
             sendAPIResponse({
                 status: true,
                 message: isStarred
-                    ? "Question marked as starred"
-                    : "Question unstarred",
+                    ? 'Question marked as starred'
+                    : 'Question unstarred',
                 data: starredQuestion
             })
-        )
+        );
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Unexpected error occurred while starring question",
+                message: 'Unexpected error occurred while starring question',
                 error
             })
-        )
+        );
     }
-}
+};
 
 const handleGetStarredQuestions = async (
     req: NextApiRequest,
     res: NextApiResponse
 ) => {
-    const { userId, sheetId } = req.body as MarkQuestionStarredRequestProps
+    const { userId, sheetId } = req.body as MarkQuestionStarredRequestProps;
 
     if (!userId || !sheetId) {
         return res.status(apiStatusCodes.BAD_REQUEST).json(
             sendAPIResponse({
                 status: false,
-                message: "Invalid Data sent in request"
+                message: 'Invalid Data sent in request'
             })
-        )
+        );
     }
 
     try {
         const { data: starredQuestions, error: getStarredQuestionsError } =
-            await getStarredQuestionsFromDB(userId, sheetId)
+            await getStarredQuestionsFromDB(userId, sheetId);
 
         if (getStarredQuestionsError) {
             return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
@@ -125,28 +125,28 @@ const handleGetStarredQuestions = async (
                     status: false,
                     message:
                         getStarredQuestionsError ||
-                        "Failed to get starred questions"
+                        'Failed to get starred questions'
                 })
-            )
+            );
         }
 
         return res.status(apiStatusCodes.OKAY).json(
             sendAPIResponse({
                 status: true,
-                message: "Starred questions fetched successfully",
+                message: 'Starred questions fetched successfully',
                 data: starredQuestions
             })
-        )
+        );
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
                 message:
-                    "Unexpected error occurred while getting starred questions",
+                    'Unexpected error occurred while getting starred questions',
                 error
             })
-        )
+        );
     }
-}
+};
 
-export default handler
+export default handler;

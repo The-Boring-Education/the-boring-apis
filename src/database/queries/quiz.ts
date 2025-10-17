@@ -1,21 +1,21 @@
-import type { DatabaseQueryResponseType } from "@/interfaces"
+import type { DatabaseQueryResponseType } from '@/interfaces';
 
-import { Quiz, QuizAttempt } from "../models"
-import type { QuizModel } from "../models/Quiz/Quiz"
-import type { QuizAttemptModel } from "../models/Quiz/QuizAttempt"
+import { Quiz, QuizAttempt } from '../models';
+import type { QuizModel } from '../models/Quiz/Quiz';
+import type { QuizAttemptModel } from '../models/Quiz/QuizAttempt';
 
 // Add a quiz to database
 const addAQuizToDB = async (
-    quizData: Omit<QuizModel, "_id" | "createdAt" | "updatedAt">
+    quizData: Omit<QuizModel, '_id' | 'createdAt' | 'updatedAt'>
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const quiz = new Quiz(quizData)
-        await quiz.save()
-        return { data: quiz }
+        const quiz = new Quiz(quizData);
+        await quiz.save();
+        return { data: quiz };
     } catch (error) {
-        return { error: "Failed while adding quiz", details: error }
+        return { error: 'Failed while adding quiz', details: error };
     }
-}
+};
 
 // Update a quiz in database
 const updateAQuizInDB = async ({
@@ -23,38 +23,38 @@ const updateAQuizInDB = async ({
     updatedData
 }: {
     id: string
-    updatedData: Partial<Omit<QuizModel, "_id" | "createdAt" | "updatedAt">>
+    updatedData: Partial<Omit<QuizModel, '_id' | 'createdAt' | 'updatedAt'>>
 }): Promise<DatabaseQueryResponseType> => {
     try {
         const updatedQuiz = await Quiz.findByIdAndUpdate(id, updatedData, {
             new: true,
             runValidators: true
-        })
+        });
 
-        if (!updatedQuiz) return { error: "Quiz does not exist" }
+        if (!updatedQuiz) return { error: 'Quiz does not exist' };
 
-        return { data: updatedQuiz }
+        return { data: updatedQuiz };
     } catch (error) {
-        return { error: "Failed while updating quiz" }
+        return { error: 'Failed while updating quiz' };
     }
-}
+};
 
 // Get all quiz categories from database
 const getQuizCategoriesFromDB = async (
     includeInactive: boolean
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const filter = includeInactive ? {} : { isActive: true }
+        const filter = includeInactive ? {} : { isActive: true };
         const categories = await Quiz.find(
             filter,
-            "_id categoryName categoryDescription categoryIcon isActive"
-        ).lean()
+            '_id categoryName categoryDescription categoryIcon isActive'
+        ).lean();
 
-        return { data: categories }
+        return { data: categories };
     } catch (error) {
-        return { error: "Failed while fetching quiz categories" }
+        return { error: 'Failed while fetching quiz categories' };
     }
-}
+};
 
 // Get quiz by ID from database
 const getQuizByIdFromDB = async (
@@ -64,25 +64,25 @@ const getQuizByIdFromDB = async (
     try {
         const filter = includeInactive
             ? { _id: id }
-            : { _id: id, isActive: true }
-        const quiz = await Quiz.findOne(filter).lean()
+            : { _id: id, isActive: true };
+        const quiz = await Quiz.findOne(filter).lean();
 
         if (!quiz) {
-            return { error: "Quiz not found" }
+            return { error: 'Quiz not found' };
         }
 
-        return { data: quiz }
+        return { data: quiz };
     } catch (error) {
-        return { error: "Failed while fetching quiz" }
+        return { error: 'Failed while fetching quiz' };
     }
-}
+};
 
 // Get quiz categories with question counts
 const getQuizCategoriesWithCountsFromDB = async (
     includeInactive: boolean
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const matchFilter = includeInactive ? {} : { isActive: true }
+        const matchFilter = includeInactive ? {} : { isActive: true };
         const categories = await Quiz.aggregate([
             { $match: matchFilter },
             {
@@ -92,53 +92,53 @@ const getQuizCategoriesWithCountsFromDB = async (
                     categoryDescription: 1,
                     categoryIcon: 1,
                     isActive: 1,
-                    questionCount: { $size: { $ifNull: ["$questions", []] } }
+                    questionCount: { $size: { $ifNull: ['$questions', []] } }
                 }
             }
-        ])
+        ]);
 
-        return { data: categories }
+        return { data: categories };
     } catch (error) {
-        return { error: "Failed while fetching quiz categories with counts" }
+        return { error: 'Failed while fetching quiz categories with counts' };
     }
-}
+};
 
 // Append questions to an existing quiz
 const appendQuestionsToQuizInDB = async (
     id: string,
-    questions: QuizModel["questions"]
+    questions: QuizModel['questions']
 ): Promise<DatabaseQueryResponseType> => {
     try {
         if (!Array.isArray(questions) || questions.length === 0) {
-            return { error: "Questions must be a non-empty array" }
+            return { error: 'Questions must be a non-empty array' };
         }
 
         const updated = await Quiz.findByIdAndUpdate(
             id,
             { $push: { questions: { $each: questions } } },
             { new: true, runValidators: true }
-        )
+        );
 
-        if (!updated) return { error: "Quiz not found" }
+        if (!updated) return { error: 'Quiz not found' };
 
-        return { data: updated }
+        return { data: updated };
     } catch (error) {
-        return { error: "Failed while appending questions to quiz" }
+        return { error: 'Failed while appending questions to quiz' };
     }
-}
+};
 
 // Save quiz attempt to database
 const saveQuizAttemptToDB = async (
     attemptData: Partial<QuizAttemptModel>
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const attempt = new QuizAttempt(attemptData)
-        const savedAttempt = await attempt.save()
-        return { data: savedAttempt }
+        const attempt = new QuizAttempt(attemptData);
+        const savedAttempt = await attempt.save();
+        return { data: savedAttempt };
     } catch (error) {
-        return { error: "Failed while saving quiz attempt" }
+        return { error: 'Failed while saving quiz attempt' };
     }
-}
+};
 
 // Get user quiz history from database
 const getUserQuizHistoryFromDB = async ({
@@ -151,22 +151,22 @@ const getUserQuizHistoryFromDB = async ({
     quizId?: string
 }): Promise<DatabaseQueryResponseType> => {
     try {
-        let query = QuizAttempt.find({ userId })
+        let query = QuizAttempt.find({ userId });
 
         if (quizId) {
-            query = query.where("quizId").equals(quizId)
+            query = query.where('quizId').equals(quizId);
         }
 
         const attempts = await query
             .sort({ completedAt: -1 })
             .limit(limit)
-            .lean()
+            .lean();
 
-        return { data: attempts }
+        return { data: attempts };
     } catch (error) {
-        return { error: "Failed while fetching quiz history" }
+        return { error: 'Failed while fetching quiz history' };
     }
-}
+};
 
 // Get user quiz statistics from database
 const getUserQuizStatsFromDB = async (
@@ -179,11 +179,11 @@ const getUserQuizStatsFromDB = async (
                 $group: {
                     _id: null,
                     totalQuizzes: { $sum: 1 },
-                    totalPoints: { $sum: "$pointsEarned" },
-                    totalCorrectAnswers: { $sum: "$correctAnswers" },
-                    totalQuestions: { $sum: "$totalQuestions" },
-                    averageScore: { $avg: "$score" },
-                    averageTimeTaken: { $avg: "$timeTaken" }
+                    totalPoints: { $sum: '$pointsEarned' },
+                    totalCorrectAnswers: { $sum: '$correctAnswers' },
+                    totalQuestions: { $sum: '$totalQuestions' },
+                    averageScore: { $avg: '$score' },
+                    averageTimeTaken: { $avg: '$timeTaken' }
                 }
             },
             {
@@ -193,16 +193,16 @@ const getUserQuizStatsFromDB = async (
                     totalPoints: 1,
                     totalCorrectAnswers: 1,
                     totalQuestions: 1,
-                    averageScore: { $round: ["$averageScore", 2] },
-                    averageTimeTaken: { $round: ["$averageTimeTaken", 0] },
+                    averageScore: { $round: ['$averageScore', 2] },
+                    averageTimeTaken: { $round: ['$averageTimeTaken', 0] },
                     overallAccuracy: {
                         $round: [
                             {
                                 $multiply: [
                                     {
                                         $divide: [
-                                            "$totalCorrectAnswers",
-                                            "$totalQuestions"
+                                            '$totalCorrectAnswers',
+                                            '$totalQuestions'
                                         ]
                                     },
                                     100
@@ -213,7 +213,7 @@ const getUserQuizStatsFromDB = async (
                     }
                 }
             }
-        ])
+        ]);
 
         const defaultStats = {
             totalQuizzes: 0,
@@ -223,13 +223,13 @@ const getUserQuizStatsFromDB = async (
             averageScore: 0,
             averageTimeTaken: 0,
             overallAccuracy: 0
-        }
+        };
 
-        return { data: stats[0] || defaultStats }
+        return { data: stats[0] || defaultStats };
     } catch (error) {
-        return { error: "Failed while fetching quiz statistics" }
+        return { error: 'Failed while fetching quiz statistics' };
     }
-}
+};
 
 export {
     addAQuizToDB,
@@ -241,4 +241,4 @@ export {
     getUserQuizStatsFromDB,
     saveQuizAttemptToDB,
     updateAQuizInDB
-}
+};

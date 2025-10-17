@@ -2,9 +2,9 @@ import type {
     AddFeedbackRequestProps,
     DatabaseQueryResponseType,
     UpdateFeedbackRequestProps
-} from "@/interfaces"
+} from '@/interfaces';
 
-import { Feedback } from "../models"
+import { Feedback } from '../models';
 
 const addFeedbackToDB = async ({
     rating,
@@ -18,15 +18,15 @@ const addFeedbackToDB = async ({
             type,
             ref,
             user: userId,
-            feedback: ""
-        })
+            feedback: ''
+        });
 
-        await newFeedback.save()
-        return { data: newFeedback }
+        await newFeedback.save();
+        return { data: newFeedback };
     } catch (error) {
-        return { error: "Failed to create feedback" }
+        return { error: 'Failed to create feedback' };
     }
-}
+};
 
 const updateFeedbackTextInDB = async ({
     feedbackId,
@@ -37,18 +37,18 @@ const updateFeedbackTextInDB = async ({
         const existingFeedback = await Feedback.findOne({
             _id: feedbackId,
             user: userId
-        })
+        });
 
         if (!existingFeedback) {
-            return { error: "Feedback not found" }
+            return { error: 'Feedback not found' };
         }
 
-        existingFeedback.feedback = feedback
-        await existingFeedback.save()
-        return { data: existingFeedback }
+        existingFeedback.feedback = feedback;
+        await existingFeedback.save();
+        return { data: existingFeedback };
     } catch (error) {
-        return { error: "Failed to update feedback text" }
+        return { error: 'Failed to update feedback text' };
     }
-}
+};
 
-export { addFeedbackToDB, updateFeedbackTextInDB }
+export { addFeedbackToDB, updateFeedbackTextInDB };

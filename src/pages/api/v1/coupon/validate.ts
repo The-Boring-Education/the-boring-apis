@@ -1,9 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { apiStatusCodes } from "@/config/constants"
-import { validateCouponForProductFromDB } from "@/database"
-import type { APIResponseType } from "@/interfaces"
-import { connectDB } from "@/middleware"
+import { apiStatusCodes } from '@/config/constants';
+import { validateCouponForProductFromDB } from '@/database';
+import type { APIResponseType } from '@/interfaces';
+import { connectDB } from '@/middleware';
 
 interface ValidateCouponRequest {
     code: string
@@ -32,26 +32,26 @@ const validateCoupon = async (
     req: NextApiRequest,
     res: NextApiResponse<APIResponseType>
 ) => {
-    if (req.method !== "POST") {
+    if (req.method !== 'POST') {
         return res.status(apiStatusCodes.METHOD_NOT_ALLOWED).json({
             status: false,
-            message: "Method not allowed",
+            message: 'Method not allowed',
             data: null
-        })
+        });
     }
 
     try {
-        await connectDB()
+        await connectDB();
 
         const { code, productId, productType, userId }: ValidateCouponRequest =
-            req.body
+            req.body;
 
         if (!code || !productId || !productType) {
             return res.status(apiStatusCodes.BAD_REQUEST).json({
                 status: false,
-                message: "Code, productId, and productType are required",
+                message: 'Code, productId, and productType are required',
                 data: null
-            })
+            });
         }
 
         // Validate coupon using database query
@@ -60,19 +60,19 @@ const validateCoupon = async (
             productId,
             productType,
             userId
-        )
+        );
 
         if (error || !coupon) {
             return res.status(apiStatusCodes.BAD_REQUEST).json({
                 status: false,
-                message: error || "Invalid coupon code",
+                message: error || 'Invalid coupon code',
                 data: null
-            })
+            });
         }
 
         return res.status(apiStatusCodes.OKAY).json({
             status: true,
-            message: "Coupon validated successfully",
+            message: 'Coupon validated successfully',
             data: {
                 _id: coupon._id.toString(),
                 code: coupon.code,
@@ -86,15 +86,15 @@ const validateCoupon = async (
                 minimumAmount: coupon.minimumAmount,
                 isValid: coupon.isValid
             }
-        })
+        });
     } catch (error) {
-        console.error("Error validating coupon:", error)
+        console.error('Error validating coupon:', error);
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json({
             status: false,
-            message: "Internal server error",
+            message: 'Internal server error',
             data: null
-        })
+        });
     }
-}
+};
 
-export default validateCoupon
+export default validateCoupon;

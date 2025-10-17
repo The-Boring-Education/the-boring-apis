@@ -4,82 +4,82 @@ import { DATABASE_MODELS, DIFFICULTY_LEVEL, ROADMAPS } from '@/config/constants'
 import type { CourseChapterModel, CourseModel } from '@/interfaces';
 
 const chapterSchema = new Schema<CourseChapterModel>(
-  {
-    name: {
-      type: String,
-      required: [true, 'Chapter Name is required'],
+    {
+        name: {
+            type: String,
+            required: [true, 'Chapter Name is required']
+        },
+        content: {
+            type: String,
+            required: [true, 'Chapter content is required']
+        },
+        isOptional: {
+            type: Boolean
+        }
     },
-    content: {
-      type: String,
-      required: [true, 'Chapter content is required'],
-    },
-    isOptional: {
-      type: Boolean,
-    },
-  },
-  { timestamps: true, _id: true }
+    { timestamps: true, _id: true }
 );
 
 const CourseSchema = new Schema<CourseModel>(
-  {
-    name: {
-      type: String,
-      required: [true, 'Course name is required'],
+    {
+        name: {
+            type: String,
+            required: [true, 'Course name is required']
+        },
+        meta: { type: String },
+        slug: {
+            type: String,
+            required: [true, 'Slug is required']
+        },
+        coverImageURL: {
+            type: String,
+            required: [true, 'Course thumbnail is required']
+        },
+        description: {
+            type: String
+        },
+        liveOn: {
+            type: Date,
+            required: [true, 'Live on is required']
+        },
+        isPremium: {
+            type: Boolean,
+            default: false
+        },
+        price: {
+            type: Number
+        },
+        chapters: [chapterSchema],
+        roadmap: { type: String, enum: ROADMAPS, required: true },
+        difficultyLevel: {
+            type: String,
+            enum: DIFFICULTY_LEVEL,
+            required: true
+        },
+        features: [
+            {
+                type: String
+            }
+        ]
     },
-    meta: { type: String },
-    slug: {
-      type: String,
-      required: [true, 'Slug is required'],
-    },
-    coverImageURL: {
-      type: String,
-      required: [true, 'Course thumbnail is required'],
-    },
-    description: {
-      type: String,
-    },
-    liveOn: {
-      type: Date,
-      required: [true, 'Live on is required'],
-    },
-    isPremium: {
-      type: Boolean,
-      default: false,
-    },
-    price: {
-      type: Number,
-    },
-    chapters: [chapterSchema],
-    roadmap: { type: String, enum: ROADMAPS, required: true },
-    difficultyLevel: {
-      type: String,
-      enum: DIFFICULTY_LEVEL,
-      required: true,
-    },
-    features: [
-      {
-        type: String,
-      },
-    ],
-  },
-  {
-    timestamps: true,
-    _id: true,
-    toObject: {
-      virtuals: true,
-      transform: (doc, ret) => {
-        delete ret.id;
-        return ret;
-      },
-    },
-    toJSON: {
-      virtuals: true,
-      transform: (doc, ret) => {
-        delete ret.id;
-        return ret;
-      },
-    },
-  }
+    {
+        timestamps: true,
+        _id: true,
+        toObject: {
+            virtuals: true,
+            transform: (doc, ret) => {
+                delete ret.id;
+                return ret;
+            }
+        },
+        toJSON: {
+            virtuals: true,
+            transform: (doc, ret) => {
+                delete ret.id;
+                return ret;
+            }
+        }
+    }
 );
 
 const Course: Model<CourseModel> =

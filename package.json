@@ -6,9 +6,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3004",
-    "build": "next build",
+    "build": "npm run lint && next build",
     "start": "next start -p 3000",
-    "lint": "eslint . --fix",
+    "lint": "eslint .",
+    "prepare": "husky install",
     "docker:build": "docker build -t tbe-api .",
     "docker:run": "docker run -p 3000:3000 tbe-api",
     "docker:test": "./scripts/test-docker-build.sh",
@@ -41,10 +42,23 @@
     "eslint-config-next": "^13.2.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2"
   },
   "engines": {
     "node": ">=20.x",
     "npm": ">=9.0.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix --quiet",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }

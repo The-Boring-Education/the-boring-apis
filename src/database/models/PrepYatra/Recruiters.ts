@@ -4,49 +4,49 @@ import { APPLICATION_STATUS, DATABASE_MODELS } from '@/config/constants';
 import type { RecruiterModel } from '@/interfaces';
 
 const RecruiterSchema = new Schema<RecruiterModel>(
-  {
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: DATABASE_MODELS.USER,
-      required: true,
+    {
+        user: {
+            type: Schema.Types.ObjectId,
+            ref: DATABASE_MODELS.USER,
+            required: true
+        },
+        recruiterName: {
+            type: String,
+            required: true
+        },
+        email: {
+            type: String
+        },
+        phone: {
+            type: String
+        },
+        company: {
+            type: String
+        },
+        appliedPosition: {
+            type: String
+        },
+        applicationStatus: {
+            type: String,
+            enum: APPLICATION_STATUS
+        },
+        lastContacted: {
+            type: String
+        },
+        comments: {
+            type: String
+        },
+        follow_up_date: {
+            type: String
+        },
+        last_interview_date: {
+            type: String
+        },
+        link: {
+            type: String
+        }
     },
-    recruiterName: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-    },
-    phone: {
-      type: String,
-    },
-    company: {
-      type: String,
-    },
-    appliedPosition: {
-      type: String,
-    },
-    applicationStatus: {
-      type: String,
-      enum: APPLICATION_STATUS,
-    },
-    lastContacted: {
-      type: String,
-    },
-    comments: {
-      type: String,
-    },
-    follow_up_date: {
-      type: String,
-    },
-    last_interview_date: {
-      type: String,
-    },
-    link: {
-      type: String,
-    },
-  },
-  { timestamps: true }
+    { timestamps: true }
 );
 
 const Recruiter: Model<RecruiterModel> =

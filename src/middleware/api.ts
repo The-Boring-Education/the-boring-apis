@@ -1,18 +1,18 @@
-import mongoose from "mongoose"
-import type { NextApiRequest, NextApiResponse } from "next"
+import mongoose from 'mongoose';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { apiStatusCodes, envConfig } from "@/config/constants"
-import { cors, sendAPIResponse } from "@/utils"
+import { apiStatusCodes, envConfig } from '@/config/constants';
+import { cors, sendAPIResponse } from '@/utils';
 
 // Connect to DB
 const connectDB = async () => {
     try {
-        await mongoose.connect(envConfig.MONGODB_URI)
-        console.log("Connected to MongoDB")
+        await mongoose.connect(envConfig.MONGODB_URI);
+        console.log('Connected to MongoDB');
     } catch (error) {
-        console.error("Error connecting to MongoDB:", error)
+        console.error('Error connecting to MongoDB:', error);
     }
-}
+};
 
 // Admin authentication middleware
 const adminMiddleware = async (
@@ -20,8 +20,8 @@ const adminMiddleware = async (
     res: NextApiResponse
 ): Promise<boolean> => {
     try {
-        const adminHeader = req.headers["x-admin-secret"]
-        const expectedSecret = process.env.ADMIN_SECRET || "TBEAdmin"
+        const adminHeader = req.headers['x-admin-secret'];
+        const expectedSecret = process.env.ADMIN_SECRET || 'TBEAdmin';
 
         if (!adminHeader || adminHeader !== expectedSecret) {
             res.status(apiStatusCodes.UNAUTHORIZED).json(
@@ -29,25 +29,25 @@ const adminMiddleware = async (
                     success: false,
                     status: apiStatusCodes.UNAUTHORIZED,
                     error: true,
-                    message: "Unauthorized. Admin access required."
+                    message: 'Unauthorized. Admin access required.'
                 })
-            )
-            return false
+            );
+            return false;
         }
 
-        return true
+        return true;
     } catch (error) {
         res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 success: false,
                 status: apiStatusCodes.INTERNAL_SERVER_ERROR,
                 error: true,
-                message: "Admin authentication error",
+                message: 'Admin authentication error',
                 data: error
             })
-        )
-        return false
+        );
+        return false;
     }
-}
+};
 
-export { adminMiddleware, connectDB, cors }
+export { adminMiddleware, connectDB, cors };

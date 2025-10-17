@@ -4,28 +4,28 @@ import { DATABASE_MODELS, USER_POINTS_ACTION } from '@/config/constants';
 import type { GamificationModel, UserPointsAction } from '@/interfaces';
 
 const ActionSchema = new Schema<UserPointsAction>(
-  {
-    actionType: {
-      type: String,
-      enum: USER_POINTS_ACTION,
-      required: true,
+    {
+        actionType: {
+            type: String,
+            enum: USER_POINTS_ACTION,
+            required: true
+        },
+        pointsEarned: { type: Number, required: true }
     },
-    pointsEarned: { type: Number, required: true },
-  },
-  { timestamps: true }
+    { timestamps: true }
 );
 
 const GamificationSchema = new Schema<GamificationModel>(
-  {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: DATABASE_MODELS.USER,
-      required: true,
+    {
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: DATABASE_MODELS.USER,
+            required: true
+        },
+        points: { type: Number, default: 0 },
+        actions: [ActionSchema]
     },
-    points: { type: Number, default: 0 },
-    actions: [ActionSchema],
-  },
-  { timestamps: true }
+    { timestamps: true }
 );
 
 const Gamification: Model<GamificationModel> =

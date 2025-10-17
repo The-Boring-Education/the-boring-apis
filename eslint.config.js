@@ -1,8 +1,8 @@
 import js from "@eslint/js"
-import tseslint from "typescript-eslint"
+import next from "@next/eslint-plugin-next"
 import react from "eslint-plugin-react"
 import reactHooks from "eslint-plugin-react-hooks"
-import next from "@next/eslint-plugin-next"
+import tseslint from "typescript-eslint"
 
 export default [
     js.configs.recommended,
@@ -42,6 +42,8 @@ export default [
             ...react.configs.recommended.rules,
             ...reactHooks.configs.recommended.rules,
             ...next.configs.recommended.rules,
+            
+            // Auto-fixable rules
             "@typescript-eslint/no-unused-vars": [
                 "warn",
                 {
@@ -53,13 +55,30 @@ export default [
             "@typescript-eslint/no-explicit-any": "warn",
             "@typescript-eslint/no-var-requires": "off",
             "@typescript-eslint/no-require-imports": "off",
+            
+            // React rules
             "react/react-in-jsx-scope": "off",
             "react/prop-types": "off",
+            
+            // General rules
             "no-undef": "off", // TypeScript handles this
             "no-unused-vars": "off", // Use @typescript-eslint/no-unused-vars instead
             "no-extra-semi": "error",
             "no-redeclare": "error",
-            "prefer-const": "error"
+            "prefer-const": "error",
+            
+            // Auto-fixable formatting rules
+            "semi": ["error", "always"],
+            "quotes": ["error", "single", { "avoidEscape": true }],
+            "comma-dangle": ["error", "never"],
+            "object-curly-spacing": ["error", "always"],
+            "array-bracket-spacing": ["error", "never"],
+            "indent": ["error", 4, { "SwitchCase": 1 }],
+            "no-trailing-spaces": "error",
+            "eol-last": "error",
+            "no-multiple-empty-lines": ["error", { "max": 1 }],
+            "no-console": "warn",
+            "no-debugger": "error"
         },
         settings: {
             react: {

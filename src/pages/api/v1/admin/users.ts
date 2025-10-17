@@ -1,6 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { apiStatusCodes } from "@/config/constants"
+import { apiStatusCodes } from '@/config/constants';
 import {
     Gamification,
     Payment,
@@ -8,41 +8,41 @@ import {
     UserCourse,
     UserProject,
     UserSheet
-} from "@/database"
-import { sendAPIResponse } from "@/utils"
-import { cors } from "@/utils"
-import { connectDB } from "@/middleware"
+} from '@/database';
+import { sendAPIResponse } from '@/utils';
+import { cors } from '@/utils';
+import { connectDB } from '@/middleware';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    await cors(req, res)
+    await cors(req, res);
 
-    if (req.method === "OPTIONS") {
-        res.status(200).end()
-        return
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
     }
 
-    await connectDB()
+    await connectDB();
 
-    const { method, query } = req
+    const { method, query } = req;
     const {
         action,
         userId,
         segment,
-        page = "1",
-        limit = "20",
+        page = '1',
+        limit = '20',
         startDate,
         endDate,
-        sortBy = "createdAt",
-        order = "desc"
-    } = query
+        sortBy = 'createdAt',
+        order = 'desc'
+    } = query;
 
-    if (method !== "GET") {
+    if (method !== 'GET') {
         return res.status(apiStatusCodes.METHOD_NOT_ALLOWED).json(
             sendAPIResponse({
                 status: false,
                 message: `Method ${method} not allowed`
             })
-        )
+        );
     }
 
     return handleUserManagementRequest(
@@ -56,8 +56,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         endDate as string,
         sortBy as string,
         order as string
-    )
-}
+    );
+};
 
 const handleUserManagementRequest = async (
     res: NextApiResponse,
@@ -72,23 +72,23 @@ const handleUserManagementRequest = async (
     order: string
 ) => {
     try {
-        const dateRange = getDateRange(startDate, endDate)
-        const sortOrder = order === "desc" ? -1 : 1
+        const dateRange = getDateRange(startDate, endDate);
+        const sortOrder = order === 'desc' ? -1 : 1;
 
         switch (action) {
-            case "segments":
-                return await getUserSegments(res, dateRange)
-            case "details":
-                return await getUserDetails(res, userId)
-            case "activity":
-                return await getUserActivity(res, userId, dateRange)
-            case "cohort-analysis":
-                return await getCohortAnalysis(res, dateRange)
-            case "retention":
-                return await getRetentionAnalysis(res, dateRange)
-            case "engagement-score":
-                return await getEngagementScores(res, dateRange)
-            case "list":
+            case 'segments':
+                return await getUserSegments(res, dateRange);
+            case 'details':
+                return await getUserDetails(res, userId);
+            case 'activity':
+                return await getUserActivity(res, userId, dateRange);
+            case 'cohort-analysis':
+                return await getCohortAnalysis(res, dateRange);
+            case 'retention':
+                return await getRetentionAnalysis(res, dateRange);
+            case 'engagement-score':
+                return await getEngagementScores(res, dateRange);
+            case 'list':
                 return await getFilteredUsers(
                     res,
                     segment,
@@ -97,43 +97,43 @@ const handleUserManagementRequest = async (
                     sortBy,
                     sortOrder,
                     dateRange
-                )
-            case "growth":
-                return await getUserGrowthAnalysis(res, dateRange)
-            case "demographics":
-                return await getUserDemographics(res, dateRange)
+                );
+            case 'growth':
+                return await getUserGrowthAnalysis(res, dateRange);
+            case 'demographics':
+                return await getUserDemographics(res, dateRange);
             default:
                 return res.status(apiStatusCodes.BAD_REQUEST).json(
                     sendAPIResponse({
                         status: false,
-                        message: "Invalid action specified"
+                        message: 'Invalid action specified'
                     })
-                )
+                );
         }
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
                 error,
-                message: "Error processing user management request"
+                message: 'Error processing user management request'
             })
-        )
+        );
     }
-}
+};
 
 const getDateRange = (startDate: string, endDate: string) => {
-    const end = endDate ? new Date(endDate) : new Date()
+    const end = endDate ? new Date(endDate) : new Date();
     const start = startDate
         ? new Date(startDate)
-        : new Date(end.getTime() - 30 * 24 * 60 * 60 * 1000)
-    return { start, end }
-}
+        : new Date(end.getTime() - 30 * 24 * 60 * 60 * 1000);
+    return { start, end };
+};
 
 const getUserSegments = async (
     res: NextApiResponse,
     dateRange: { start: Date; end: Date }
 ) => {
-    const { start, end } = dateRange
+    const { start, end } = dateRange;
 
     // User segments by activity level
     const activitySegments = await User.aggregate([
@@ -144,35 +144,35 @@ const getUserSegments = async (
         },
         {
             $lookup: {
-                from: "usercourses",
-                localField: "_id",
-                foreignField: "userId",
-                as: "courses"
+                from: 'usercourses',
+                localField: '_id',
+                foreignField: 'userId',
+                as: 'courses'
             }
         },
         {
             $lookup: {
-                from: "userprojects",
-                localField: "_id",
-                foreignField: "userId",
-                as: "projects"
+                from: 'userprojects',
+                localField: '_id',
+                foreignField: 'userId',
+                as: 'projects'
             }
         },
         {
             $lookup: {
-                from: "usersheets",
-                localField: "_id",
-                foreignField: "userId",
-                as: "sheets"
+                from: 'usersheets',
+                localField: '_id',
+                foreignField: 'userId',
+                as: 'sheets'
             }
         },
         {
             $addFields: {
                 totalEnrollments: {
                     $add: [
-                        { $size: "$courses" },
-                        { $size: "$projects" },
-                        { $size: "$sheets" }
+                        { $size: '$courses' },
+                        { $size: '$projects' },
+                        { $size: '$sheets' }
                     ]
                 }
             }
@@ -183,30 +183,30 @@ const getUserSegments = async (
                     $switch: {
                         branches: [
                             {
-                                case: { $eq: ["$totalEnrollments", 0] },
-                                then: "Inactive"
+                                case: { $eq: ['$totalEnrollments', 0] },
+                                then: 'Inactive'
                             },
                             {
-                                case: { $lte: ["$totalEnrollments", 2] },
-                                then: "Low Activity"
+                                case: { $lte: ['$totalEnrollments', 2] },
+                                then: 'Low Activity'
                             },
                             {
-                                case: { $lte: ["$totalEnrollments", 5] },
-                                then: "Medium Activity"
+                                case: { $lte: ['$totalEnrollments', 5] },
+                                then: 'Medium Activity'
                             },
                             {
-                                case: { $gt: ["$totalEnrollments", 5] },
-                                then: "High Activity"
+                                case: { $gt: ['$totalEnrollments', 5] },
+                                then: 'High Activity'
                             }
                         ],
-                        default: "Unknown"
+                        default: 'Unknown'
                     }
                 },
                 userCount: { $sum: 1 },
-                averageEnrollments: { $avg: "$totalEnrollments" }
+                averageEnrollments: { $avg: '$totalEnrollments' }
             }
         }
-    ])
+    ]);
 
     // User segments by role
     const roleSegments = await User.aggregate([
@@ -217,14 +217,14 @@ const getUserSegments = async (
         },
         {
             $group: {
-                _id: "$occupation",
+                _id: '$occupation',
                 userCount: { $sum: 1 },
                 onboardedCount: {
-                    $sum: { $cond: [{ $eq: ["$isOnboarded", true] }, 1, 0] }
+                    $sum: { $cond: [{ $eq: ['$isOnboarded', true] }, 1, 0] }
                 }
             }
         }
-    ])
+    ]);
 
     // Revenue segments
     const revenueSegments = await User.aggregate([
@@ -235,10 +235,10 @@ const getUserSegments = async (
         },
         {
             $lookup: {
-                from: "payments",
-                localField: "_id",
-                foreignField: "user",
-                as: "payments"
+                from: 'payments',
+                localField: '_id',
+                foreignField: 'user',
+                as: 'payments'
             }
         },
         {
@@ -246,12 +246,12 @@ const getUserSegments = async (
                 totalSpent: {
                     $sum: {
                         $map: {
-                            input: "$payments",
-                            as: "payment",
+                            input: '$payments',
+                            as: 'payment',
                             in: {
                                 $cond: [
-                                    { $eq: ["$$payment.isPaid", true] },
-                                    "$$payment.amount",
+                                    { $eq: ['$$payment.isPaid', true] },
+                                    '$$payment.amount',
                                     0
                                 ]
                             }
@@ -266,30 +266,30 @@ const getUserSegments = async (
                     $switch: {
                         branches: [
                             {
-                                case: { $eq: ["$totalSpent", 0] },
-                                then: "Free Users"
+                                case: { $eq: ['$totalSpent', 0] },
+                                then: 'Free Users'
                             },
                             {
-                                case: { $lte: ["$totalSpent", 1000] },
-                                then: "Low Value"
+                                case: { $lte: ['$totalSpent', 1000] },
+                                then: 'Low Value'
                             },
                             {
-                                case: { $lte: ["$totalSpent", 5000] },
-                                then: "Medium Value"
+                                case: { $lte: ['$totalSpent', 5000] },
+                                then: 'Medium Value'
                             },
                             {
-                                case: { $gt: ["$totalSpent", 5000] },
-                                then: "High Value"
+                                case: { $gt: ['$totalSpent', 5000] },
+                                then: 'High Value'
                             }
                         ],
-                        default: "Unknown"
+                        default: 'Unknown'
                     }
                 },
                 userCount: { $sum: 1 },
-                totalRevenue: { $sum: "$totalSpent" }
+                totalRevenue: { $sum: '$totalSpent' }
             }
         }
-    ])
+    ]);
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -300,78 +300,78 @@ const getUserSegments = async (
                 revenueSegments
             }
         })
-    )
-}
+    );
+};
 
 const getUserDetails = async (res: NextApiResponse, userId: string) => {
     if (!userId) {
         return res.status(apiStatusCodes.BAD_REQUEST).json(
             sendAPIResponse({
                 status: false,
-                message: "User ID is required"
+                message: 'User ID is required'
             })
-        )
+        );
     }
 
     // Get user basic info
-    const userInfo = await User.findById(userId)
+    const userInfo = await User.findById(userId);
     if (!userInfo) {
         return res.status(apiStatusCodes.NOT_FOUND).json(
             sendAPIResponse({
                 status: false,
-                message: "User not found"
+                message: 'User not found'
             })
-        )
+        );
     }
 
     // Get user's learning progress
     const [courses, projects, sheets] = await Promise.all([
         UserCourse.find({ userId }).populate(
-            "courseId",
-            "name slug coverImageURL"
+            'courseId',
+            'name slug coverImageURL'
         ),
         UserProject.find({ userId }).populate(
-            "projectId",
-            "name slug coverImageURL"
+            'projectId',
+            'name slug coverImageURL'
         ),
         UserSheet.find({ userId }).populate(
-            "sheetId",
-            "name slug coverImageURL"
+            'sheetId',
+            'name slug coverImageURL'
         )
-    ])
+    ]);
 
     // Get user's payments
     const payments = await Payment.find({ user: userId }).sort({
         createdAt: -1
-    })
+    });
 
     // Get user's gamification data
-    const gamificationData = await Gamification.findOne({ userId })
+    const gamificationData = await Gamification.findOne({ userId });
 
     // Calculate engagement metrics
-    const totalEnrollments = courses.length + projects.length + sheets.length
-    const completedCourses = courses.filter((c) => c.isCompleted).length
+    const totalEnrollments = courses.length + projects.length + sheets.length;
+    const completedCourses = courses.filter((c) => c.isCompleted).length;
     const completedProjects = projects.filter((p) => {
         // Project completion logic - check if all sections are completed
-        const totalSections = p.sections?.length || 0
+        const totalSections = p.sections?.length || 0;
         const completedSections =
             p.sections?.filter((section) =>
                 section.chapters?.every((chapter) => chapter.isCompleted)
-            ).length || 0
-        return totalSections > 0 && completedSections === totalSections
-    }).length
+            ).length || 0;
+        return totalSections > 0 && completedSections === totalSections;
+    }).length;
     const completedSheets = sheets.filter((s) => {
         // Sheet completion logic - check if all questions are completed
-        const totalQuestions = s.questions?.length || 0
+        const totalQuestions = s.questions?.length || 0;
         const completedQuestions =
-            s.questions?.filter((q) => q.isCompleted).length || 0
-        return totalQuestions > 0 && completedQuestions === totalQuestions
-    }).length
+            s.questions?.filter((q) => q.isCompleted).length || 0;
+        return totalQuestions > 0 && completedQuestions === totalQuestions;
+    }).length;
     const totalCompleted =
-        completedCourses + completedProjects + completedSheets
+        completedCourses + completedProjects + completedSheets;
 
     const engagementScore =
-        totalEnrollments > 0 ? (totalCompleted / totalEnrollments) * 100 : 0
+        totalEnrollments > 0 ? (totalCompleted / totalEnrollments) * 100 : 0;
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -390,8 +390,8 @@ const getUserDetails = async (res: NextApiResponse, userId: string) => {
                 gamificationData
             }
         })
-    )
-}
+    );
+};
 
 const getUserActivity = async (
     res: NextApiResponse,
@@ -402,12 +402,12 @@ const getUserActivity = async (
         return res.status(apiStatusCodes.BAD_REQUEST).json(
             sendAPIResponse({
                 status: false,
-                message: "User ID is required"
+                message: 'User ID is required'
             })
-        )
+        );
     }
 
-    const { start, end } = dateRange
+    const { start, end } = dateRange;
 
     // Get user's recent activity
     const recentActivity = await Promise.all([
@@ -415,21 +415,21 @@ const getUserActivity = async (
             userId,
             updatedAt: { $gte: start, $lte: end }
         })
-            .populate("courseId", "name")
+            .populate('courseId', 'name')
             .sort({ updatedAt: -1 }),
         UserProject.find({
             userId,
             updatedAt: { $gte: start, $lte: end }
         })
-            .populate("projectId", "name")
+            .populate('projectId', 'name')
             .sort({ updatedAt: -1 }),
         UserSheet.find({
             userId,
             updatedAt: { $gte: start, $lte: end }
         })
-            .populate("sheetId", "name")
+            .populate('sheetId', 'name')
             .sort({ updatedAt: -1 })
-    ])
+    ]);
 
     // Get activity timeline
     const activityTimeline = await UserCourse.aggregate([
@@ -444,8 +444,8 @@ const getUserActivity = async (
                 _id: {
                     date: {
                         $dateToString: {
-                            format: "%Y-%m-%d",
-                            date: "$updatedAt"
+                            format: '%Y-%m-%d',
+                            date: '$updatedAt'
                         }
                     }
                 },
@@ -453,9 +453,9 @@ const getUserActivity = async (
             }
         },
         {
-            $sort: { "_id.date": 1 }
+            $sort: { '_id.date': 1 }
         }
-    ])
+    ]);
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -469,14 +469,14 @@ const getUserActivity = async (
                 activityTimeline
             }
         })
-    )
-}
+    );
+};
 
 const getCohortAnalysis = async (
     res: NextApiResponse,
     dateRange: { start: Date; end: Date }
 ) => {
-    const { start, end } = dateRange
+    const { start, end } = dateRange;
 
     // Cohort analysis by registration month
     const cohortAnalysis = await User.aggregate([
@@ -488,19 +488,19 @@ const getCohortAnalysis = async (
         {
             $group: {
                 _id: {
-                    year: { $year: "$createdAt" },
-                    month: { $month: "$createdAt" }
+                    year: { $year: '$createdAt' },
+                    month: { $month: '$createdAt' }
                 },
                 userCount: { $sum: 1 },
                 onboardedCount: {
-                    $sum: { $cond: [{ $eq: ["$isOnboarded", true] }, 1, 0] }
+                    $sum: { $cond: [{ $eq: ['$isOnboarded', true] }, 1, 0] }
                 }
             }
         },
         {
-            $sort: { "_id.year": 1, "_id.month": 1 }
+            $sort: { '_id.year': 1, '_id.month': 1 }
         }
-    ])
+    ]);
 
     // Retention analysis
     const retentionAnalysis = await User.aggregate([
@@ -511,18 +511,18 @@ const getCohortAnalysis = async (
         },
         {
             $lookup: {
-                from: "usercourses",
-                localField: "_id",
-                foreignField: "userId",
-                as: "courses"
+                from: 'usercourses',
+                localField: '_id',
+                foreignField: 'userId',
+                as: 'courses'
             }
         },
         {
             $addFields: {
-                hasActivity: { $gt: [{ $size: "$courses" }, 0] },
+                hasActivity: { $gt: [{ $size: '$courses' }, 0] },
                 daysSinceRegistration: {
                     $divide: [
-                        { $subtract: [new Date(), "$createdAt"] },
+                        { $subtract: [new Date(), '$createdAt'] },
                         1000 * 60 * 60 * 24
                     ]
                 }
@@ -534,28 +534,28 @@ const getCohortAnalysis = async (
                     $switch: {
                         branches: [
                             {
-                                case: { $lte: ["$daysSinceRegistration", 7] },
-                                then: "Week 1"
+                                case: { $lte: ['$daysSinceRegistration', 7] },
+                                then: 'Week 1'
                             },
                             {
-                                case: { $lte: ["$daysSinceRegistration", 30] },
-                                then: "Month 1"
+                                case: { $lte: ['$daysSinceRegistration', 30] },
+                                then: 'Month 1'
                             },
                             {
-                                case: { $lte: ["$daysSinceRegistration", 90] },
-                                then: "Month 3"
+                                case: { $lte: ['$daysSinceRegistration', 90] },
+                                then: 'Month 3'
                             },
                             {
-                                case: { $gt: ["$daysSinceRegistration", 90] },
-                                then: "3+ Months"
+                                case: { $gt: ['$daysSinceRegistration', 90] },
+                                then: '3+ Months'
                             }
                         ],
-                        default: "Unknown"
+                        default: 'Unknown'
                     }
                 },
                 totalUsers: { $sum: 1 },
                 activeUsers: {
-                    $sum: { $cond: [{ $eq: ["$hasActivity", true] }, 1, 0] }
+                    $sum: { $cond: [{ $eq: ['$hasActivity', true] }, 1, 0] }
                 }
             }
         },
@@ -565,13 +565,13 @@ const getCohortAnalysis = async (
                 activeUsers: 1,
                 retentionRate: {
                     $multiply: [
-                        { $divide: ["$activeUsers", "$totalUsers"] },
+                        { $divide: ['$activeUsers', '$totalUsers'] },
                         100
                     ]
                 }
             }
         }
-    ])
+    ]);
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -581,14 +581,14 @@ const getCohortAnalysis = async (
                 retentionAnalysis
             }
         })
-    )
-}
+    );
+};
 
 const getRetentionAnalysis = async (
     res: NextApiResponse,
     dateRange: { start: Date; end: Date }
 ) => {
-    const { start, end } = dateRange
+    const { start, end } = dateRange;
 
     // User retention by days since registration
     const retentionByDays = await User.aggregate([
@@ -599,58 +599,58 @@ const getRetentionAnalysis = async (
         },
         {
             $lookup: {
-                from: "usercourses",
-                let: { userId: "$_id" },
+                from: 'usercourses',
+                let: { userId: '$_id' },
                 pipeline: [
                     {
                         $match: {
                             $expr: {
                                 $and: [
-                                    { $eq: ["$userId", "$$userId"] },
-                                    { $gte: ["$updatedAt", start] },
-                                    { $lte: ["$updatedAt", end] }
+                                    { $eq: ['$userId', '$$userId'] },
+                                    { $gte: ['$updatedAt', start] },
+                                    { $lte: ['$updatedAt', end] }
                                 ]
                             }
                         }
                     }
                 ],
-                as: "recentActivity"
+                as: 'recentActivity'
             }
         },
         {
             $addFields: {
                 daysSinceRegistration: {
                     $divide: [
-                        { $subtract: [new Date(), "$createdAt"] },
+                        { $subtract: [new Date(), '$createdAt'] },
                         1000 * 60 * 60 * 24
                     ]
                 },
-                hasRecentActivity: { $gt: [{ $size: "$recentActivity" }, 0] }
+                hasRecentActivity: { $gt: [{ $size: '$recentActivity' }, 0] }
             }
         },
         {
             $group: {
                 _id: {
                     $floor: {
-                        $divide: ["$daysSinceRegistration", 7]
+                        $divide: ['$daysSinceRegistration', 7]
                     }
                 },
                 totalUsers: { $sum: 1 },
                 activeUsers: {
                     $sum: {
-                        $cond: [{ $eq: ["$hasRecentActivity", true] }, 1, 0]
+                        $cond: [{ $eq: ['$hasRecentActivity', true] }, 1, 0]
                     }
                 }
             }
         },
         {
             $project: {
-                week: { $add: ["$_id", 1] },
+                week: { $add: ['$_id', 1] },
                 totalUsers: 1,
                 activeUsers: 1,
                 retentionRate: {
                     $multiply: [
-                        { $divide: ["$activeUsers", "$totalUsers"] },
+                        { $divide: ['$activeUsers', '$totalUsers'] },
                         100
                     ]
                 }
@@ -659,7 +659,7 @@ const getRetentionAnalysis = async (
         {
             $sort: { week: 1 }
         }
-    ])
+    ]);
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -668,14 +668,14 @@ const getRetentionAnalysis = async (
                 retentionByDays
             }
         })
-    )
-}
+    );
+};
 
 const getEngagementScores = async (
     res: NextApiResponse,
     dateRange: { start: Date; end: Date }
 ) => {
-    const { start, end } = dateRange
+    const { start, end } = dateRange;
 
     // Calculate engagement scores for users
     const engagementScores = await User.aggregate([
@@ -686,63 +686,63 @@ const getEngagementScores = async (
         },
         {
             $lookup: {
-                from: "usercourses",
-                localField: "_id",
-                foreignField: "userId",
-                as: "courses"
+                from: 'usercourses',
+                localField: '_id',
+                foreignField: 'userId',
+                as: 'courses'
             }
         },
         {
             $lookup: {
-                from: "userprojects",
-                localField: "_id",
-                foreignField: "userId",
-                as: "projects"
+                from: 'userprojects',
+                localField: '_id',
+                foreignField: 'userId',
+                as: 'projects'
             }
         },
         {
             $lookup: {
-                from: "usersheets",
-                localField: "_id",
-                foreignField: "userId",
-                as: "sheets"
+                from: 'usersheets',
+                localField: '_id',
+                foreignField: 'userId',
+                as: 'sheets'
             }
         },
         {
             $lookup: {
-                from: "gamifications",
-                localField: "_id",
-                foreignField: "userId",
-                as: "gamification"
+                from: 'gamifications',
+                localField: '_id',
+                foreignField: 'userId',
+                as: 'gamification'
             }
         },
         {
             $addFields: {
                 totalEnrollments: {
                     $add: [
-                        { $size: "$courses" },
-                        { $size: "$projects" },
-                        { $size: "$sheets" }
+                        { $size: '$courses' },
+                        { $size: '$projects' },
+                        { $size: '$sheets' }
                     ]
                 },
                 completedCourses: {
                     $size: {
                         $filter: {
-                            input: "$courses",
-                            cond: { $eq: ["$$this.isCompleted", true] }
+                            input: '$courses',
+                            cond: { $eq: ['$$this.isCompleted', true] }
                         }
                     }
                 },
                 completedProjects: {
                     $size: {
                         $filter: {
-                            input: "$projects",
-                            cond: { $eq: ["$$this.isCompleted", true] }
+                            input: '$projects',
+                            cond: { $eq: ['$$this.isCompleted', true] }
                         }
                     }
                 },
                 totalPoints: {
-                    $ifNull: [{ $arrayElemAt: ["$gamification.points", 0] }, 0]
+                    $ifNull: [{ $arrayElemAt: ['$gamification.points', 0] }, 0]
                 }
             }
         },
@@ -750,7 +750,7 @@ const getEngagementScores = async (
             $addFields: {
                 completionRate: {
                     $cond: [
-                        { $eq: ["$totalEnrollments", 0] },
+                        { $eq: ['$totalEnrollments', 0] },
                         0,
                         {
                             $multiply: [
@@ -758,11 +758,11 @@ const getEngagementScores = async (
                                     $divide: [
                                         {
                                             $add: [
-                                                "$completedCourses",
-                                                "$completedProjects"
+                                                '$completedCourses',
+                                                '$completedProjects'
                                             ]
                                         },
-                                        "$totalEnrollments"
+                                        '$totalEnrollments'
                                     ]
                                 },
                                 100
@@ -772,10 +772,10 @@ const getEngagementScores = async (
                 },
                 engagementScore: {
                     $add: [
-                        { $multiply: ["$totalEnrollments", 10] },
-                        { $multiply: ["$completedCourses", 50] },
-                        { $multiply: ["$completedProjects", 100] },
-                        { $multiply: ["$totalPoints", 0.1] }
+                        { $multiply: ['$totalEnrollments', 10] },
+                        { $multiply: ['$completedCourses', 50] },
+                        { $multiply: ['$completedProjects', 100] },
+                        { $multiply: ['$totalPoints', 0.1] }
                     ]
                 }
             }
@@ -786,27 +786,27 @@ const getEngagementScores = async (
                     $switch: {
                         branches: [
                             {
-                                case: { $lt: ["$engagementScore", 100] },
-                                then: "Low Engagement"
+                                case: { $lt: ['$engagementScore', 100] },
+                                then: 'Low Engagement'
                             },
                             {
-                                case: { $lt: ["$engagementScore", 500] },
-                                then: "Medium Engagement"
+                                case: { $lt: ['$engagementScore', 500] },
+                                then: 'Medium Engagement'
                             },
                             {
-                                case: { $gte: ["$engagementScore", 500] },
-                                then: "High Engagement"
+                                case: { $gte: ['$engagementScore', 500] },
+                                then: 'High Engagement'
                             }
                         ],
-                        default: "No Engagement"
+                        default: 'No Engagement'
                     }
                 },
                 userCount: { $sum: 1 },
-                averageScore: { $avg: "$engagementScore" },
-                averageCompletionRate: { $avg: "$completionRate" }
+                averageScore: { $avg: '$engagementScore' },
+                averageCompletionRate: { $avg: '$completionRate' }
             }
         }
-    ])
+    ]);
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -815,8 +815,8 @@ const getEngagementScores = async (
                 engagementScores
             }
         })
-    )
-}
+    );
+};
 
 const getFilteredUsers = async (
     res: NextApiResponse,
@@ -827,38 +827,38 @@ const getFilteredUsers = async (
     sortOrder: number,
     dateRange: { start: Date; end: Date }
 ) => {
-    const { start, end } = dateRange
-    const skip = (page - 1) * limit
+    const { start, end } = dateRange;
+    const skip = (page - 1) * limit;
 
     const matchCriteria: any = {
         createdAt: { $gte: start, $lte: end }
-    }
+    };
 
     // Add segment-specific filters
-    if (segment === "premium") {
-        const premiumUsers = await Payment.distinct("user", { isPaid: true })
-        matchCriteria._id = { $in: premiumUsers }
-    } else if (segment === "onboarded") {
-        matchCriteria.isOnboarded = true
-    } else if (segment === "inactive") {
+    if (segment === 'premium') {
+        const premiumUsers = await Payment.distinct('user', { isPaid: true });
+        matchCriteria._id = { $in: premiumUsers };
+    } else if (segment === 'onboarded') {
+        matchCriteria.isOnboarded = true;
+    } else if (segment === 'inactive') {
         // Users with no recent activity
-        const activeUsers = await UserCourse.distinct("userId", {
+        const activeUsers = await UserCourse.distinct('userId', {
             updatedAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
-        })
-        matchCriteria._id = { $nin: activeUsers }
+        });
+        matchCriteria._id = { $nin: activeUsers };
     }
 
     const sortCriteria: Record<string, 1 | -1> = {
         [sortBy]: sortOrder as 1 | -1
-    }
+    };
     const users = await User.find(matchCriteria)
         .sort(sortCriteria)
         .skip(skip)
         .limit(limit)
-        .lean()
+        .lean();
 
-    const totalUsers = await User.countDocuments(matchCriteria)
-    const totalPages = Math.ceil(totalUsers / limit)
+    const totalUsers = await User.countDocuments(matchCriteria);
+    const totalPages = Math.ceil(totalUsers / limit);
 
     // Enrich user data with additional metrics
     const enrichedUsers = await Promise.all(
@@ -870,9 +870,9 @@ const getFilteredUsers = async (
                     UserSheet.countDocuments({ userId: user._id }),
                     Payment.aggregate([
                         { $match: { user: user._id, isPaid: true } },
-                        { $group: { _id: null, total: { $sum: "$amount" } } }
+                        { $group: { _id: null, total: { $sum: '$amount' } } }
                     ])
-                ])
+                ]);
 
             return {
                 ...user,
@@ -880,9 +880,9 @@ const getFilteredUsers = async (
                     totalEnrollments: courseCount + projectCount + sheetCount,
                     totalSpent: totalPayments[0]?.total || 0
                 }
-            }
+            };
         })
-    )
+    );
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -898,14 +898,14 @@ const getFilteredUsers = async (
                 }
             }
         })
-    )
-}
+    );
+};
 
 const getUserGrowthAnalysis = async (
     res: NextApiResponse,
     dateRange: { start: Date; end: Date }
 ) => {
-    const { start, end } = dateRange
+    const { start, end } = dateRange;
 
     // Daily user growth
     const dailyGrowth = await User.aggregate([
@@ -919,8 +919,8 @@ const getUserGrowthAnalysis = async (
                 _id: {
                     date: {
                         $dateToString: {
-                            format: "%Y-%m-%d",
-                            date: "$createdAt"
+                            format: '%Y-%m-%d',
+                            date: '$createdAt'
                         }
                     }
                 },
@@ -928,9 +928,9 @@ const getUserGrowthAnalysis = async (
             }
         },
         {
-            $sort: { "_id.date": 1 }
+            $sort: { '_id.date': 1 }
         }
-    ])
+    ]);
 
     // Growth by source (if you have provider data)
     const growthBySource = await User.aggregate([
@@ -941,11 +941,11 @@ const getUserGrowthAnalysis = async (
         },
         {
             $group: {
-                _id: "$provider",
+                _id: '$provider',
                 userCount: { $sum: 1 }
             }
         }
-    ])
+    ]);
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -955,14 +955,14 @@ const getUserGrowthAnalysis = async (
                 growthBySource
             }
         })
-    )
-}
+    );
+};
 
 const getUserDemographics = async (
     res: NextApiResponse,
     dateRange: { start: Date; end: Date }
 ) => {
-    const { start, end } = dateRange
+    const { start, end } = dateRange;
 
     // Demographics by role
     const roleDistribution = await User.aggregate([
@@ -973,11 +973,11 @@ const getUserDemographics = async (
         },
         {
             $group: {
-                _id: "$occupation",
+                _id: '$occupation',
                 count: { $sum: 1 }
             }
         }
-    ])
+    ]);
 
     // Purpose distribution
     const purposeDistribution = await User.aggregate([
@@ -987,15 +987,15 @@ const getUserDemographics = async (
             }
         },
         {
-            $unwind: "$purpose"
+            $unwind: '$purpose'
         },
         {
             $group: {
-                _id: "$purpose",
+                _id: '$purpose',
                 count: { $sum: 1 }
             }
         }
-    ])
+    ]);
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -1005,7 +1005,7 @@ const getUserDemographics = async (
                 purposeDistribution
             }
         })
-    )
-}
+    );
+};
 
-export default handler
+export default handler;

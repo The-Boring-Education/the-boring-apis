@@ -1,29 +1,29 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { apiStatusCodes } from "@/config/constants"
-import { getCertificateById } from "@/database"
-import { sendAPIResponse } from "@/utils"
-import { connectDB } from "@/middleware"
+import { apiStatusCodes } from '@/config/constants';
+import { getCertificateById } from '@/database';
+import { sendAPIResponse } from '@/utils';
+import { connectDB } from '@/middleware';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    await connectDB()
-    const { method, query } = req
+    await connectDB();
+    const { method, query } = req;
     const { certificateId } = query as {
         certificateId: string
-    }
+    };
 
     switch (method) {
-        case "GET":
-            return handleGetACertificate(req, res, certificateId)
+        case 'GET':
+            return handleGetACertificate(req, res, certificateId);
         default:
             return res.status(apiStatusCodes.BAD_REQUEST).json(
                 sendAPIResponse({
                     status: false,
                     message: `Method ${req.method} Not Allowed`
                 })
-            )
+            );
     }
-}
+};
 
 const handleGetACertificate = async (
     req: NextApiRequest,
@@ -35,12 +35,12 @@ const handleGetACertificate = async (
             return res.status(apiStatusCodes.BAD_REQUEST).json(
                 sendAPIResponse({
                     status: false,
-                    message: "Certificate ID is required"
+                    message: 'Certificate ID is required'
                 })
-            )
+            );
         }
 
-        const { data } = await getCertificateById(certificateId)
+        const { data } = await getCertificateById(certificateId);
 
         if (data) {
             return res.status(apiStatusCodes.OKAY).json(
@@ -48,24 +48,24 @@ const handleGetACertificate = async (
                     status: true,
                     data
                 })
-            )
+            );
         }
 
         return res.status(apiStatusCodes.NOT_FOUND).json(
             sendAPIResponse({
                 status: false,
-                message: "Certificate not found"
+                message: 'Certificate not found'
             })
-        )
+        );
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Failed while fetching Certificate",
+                message: 'Failed while fetching Certificate',
                 error: true
             })
-        )
+        );
     }
-}
+};
 
-export default handler
+export default handler;

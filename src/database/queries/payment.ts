@@ -2,9 +2,9 @@ import type {
     AddPaymentToDBRequestPayloadProps,
     DatabaseQueryResponseType,
     UpdatePaymentStatusPayloadProps
-} from "@/interfaces"
+} from '@/interfaces';
 
-import { Payment, PrepYatraSubscription } from "../models"
+import { Payment, PrepYatraSubscription } from '../models';
 
 const addPaymentToDB = async ({
     userId,
@@ -27,28 +27,28 @@ const addPaymentToDB = async ({
             isPaid: false,
             ...(appliedCoupon && { appliedCoupon }),
             ...(couponCode && { couponCode })
-        })
+        });
 
-        await payment.save()
-        return { data: payment }
+        await payment.save();
+        return { data: payment };
     } catch (error) {
-        return { error: "Failed to save payment to DB" }
+        return { error: 'Failed to save payment to DB' };
     }
-}
+};
 
 const getPaymentByOrderIdFromDB = async (
     orderId: string
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const payment = await Payment.findOne({ orderId })
+        const payment = await Payment.findOne({ orderId });
         if (!payment) {
-            return { error: "Payment not found" }
+            return { error: 'Payment not found' };
         }
-        return { data: payment }
+        return { data: payment };
     } catch (error) {
-        return { error: "Failed to find payment" }
+        return { error: 'Failed to find payment' };
     }
-}
+};
 
 const updatePaymentStatusToDB = async ({
     orderId,
@@ -56,22 +56,22 @@ const updatePaymentStatusToDB = async ({
     status
 }: UpdatePaymentStatusPayloadProps): Promise<DatabaseQueryResponseType> => {
     try {
-        const payment = await Payment.findOne({ orderId })
+        const payment = await Payment.findOne({ orderId });
         if (!payment) {
-            return { error: "Payment not found" }
+            return { error: 'Payment not found' };
         }
 
-        payment.isPaid = status === "SUCCESS"
+        payment.isPaid = status === 'SUCCESS';
         if (paymentId) {
-            payment.paymentId = paymentId
+            payment.paymentId = paymentId;
         }
 
-        await payment.save()
-        return { data: payment }
+        await payment.save();
+        return { data: payment };
     } catch (error: any) {
-        return { error: `Failed to update payment status: ${error.message}` }
+        return { error: `Failed to update payment status: ${error.message}` };
     }
-}
+};
 
 const checkPaymentStatusFromDB = async (
     userId: string,
@@ -81,39 +81,39 @@ const checkPaymentStatusFromDB = async (
         const activeSubscription = await PrepYatraSubscription.findOne({
             userId,
             isActive: true
-        })
+        });
 
         if (activeSubscription) {
             return {
                 data: { purchased: true }
-            }
+            };
         }
 
-        const payment = await Payment.findOne({ user: userId, productId })
+        const payment = await Payment.findOne({ user: userId, productId });
 
         if (!payment) {
             return {
                 data: { purchased: false },
-                error: "No payment record found"
-            }
+                error: 'No payment record found'
+            };
         }
 
         if (payment.isPaid) {
-            return { data: { purchased: true } }
+            return { data: { purchased: true } };
         } else {
             return {
                 data: { purchased: false },
-                error: "Payment not completed"
-            }
+                error: 'Payment not completed'
+            };
         }
     } catch (error) {
-        return { error: "Error checking payment status" }
+        return { error: 'Error checking payment status' };
     }
-}
+};
 
 export {
     addPaymentToDB,
     checkPaymentStatusFromDB,
     getPaymentByOrderIdFromDB,
     updatePaymentStatusToDB
-}
+};

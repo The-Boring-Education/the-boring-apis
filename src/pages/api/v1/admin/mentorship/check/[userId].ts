@@ -1,30 +1,30 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { apiStatusCodes } from "@/config/constants"
-import { isUserMenteeInDB } from "@/database"
-import { sendAPIResponse } from "@/utils"
-import { cors } from "@/utils"
-import { connectDB } from "@/middleware"
+import { apiStatusCodes } from '@/config/constants';
+import { isUserMenteeInDB } from '@/database';
+import { sendAPIResponse } from '@/utils';
+import { cors } from '@/utils';
+import { connectDB } from '@/middleware';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    await cors(req, res)
+    await cors(req, res);
 
-    if (req.method === "OPTIONS") {
-        res.status(200).end()
-        return
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
     }
 
-    await connectDB()
+    await connectDB();
 
-    const { userId } = req.query
+    const { userId } = req.query;
 
-    if (!userId || typeof userId !== "string") {
+    if (!userId || typeof userId !== 'string') {
         return res
             .status(apiStatusCodes.BAD_REQUEST)
-            .json(sendAPIResponse({ status: false, message: "Invalid userId" }))
+            .json(sendAPIResponse({ status: false, message: 'Invalid userId' }));
     }
 
-    if (req.method !== "GET") {
+    if (req.method !== 'GET') {
         return res
             .status(apiStatusCodes.METHOD_NOT_ALLOWED)
             .json(
@@ -32,36 +32,36 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     status: false,
                     message: `Method ${req.method} not allowed`
                 })
-            )
+            );
     }
 
     try {
-        const { data, error } = await isUserMenteeInDB(userId)
+        const { data, error } = await isUserMenteeInDB(userId);
         if (error) {
             return res
                 .status(apiStatusCodes.INTERNAL_SERVER_ERROR)
                 .json(
                     sendAPIResponse({
                         status: false,
-                        message: "Failed to check mentee status",
+                        message: 'Failed to check mentee status',
                         error
                     })
-                )
+                );
         }
         return res
             .status(apiStatusCodes.OKAY)
-            .json(sendAPIResponse({ status: true, data }))
+            .json(sendAPIResponse({ status: true, data }));
     } catch (error) {
         return res
             .status(apiStatusCodes.INTERNAL_SERVER_ERROR)
             .json(
                 sendAPIResponse({
                     status: false,
-                    message: "Unexpected error",
+                    message: 'Unexpected error',
                     error
                 })
-            )
+            );
     }
-}
+};
 
-export default handler
+export default handler;

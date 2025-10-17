@@ -33,112 +33,112 @@ export interface UserQuizAnalyticsModel {
 }
 
 const ProgressTimelineSchema = new Schema<ProgressTimelineEntry>(
-  {
-    date: {
-      type: Date,
-      required: true,
+    {
+        date: {
+            type: Date,
+            required: true
+        },
+        score: {
+            type: Number,
+            required: true,
+            min: 0,
+            max: 100
+        },
+        difficulty: {
+            type: String,
+            required: true
+        },
+        timeSpent: {
+            type: Number,
+            required: true,
+            min: 0
+        }
     },
-    score: {
-      type: Number,
-      required: true,
-      min: 0,
-      max: 100,
-    },
-    difficulty: {
-      type: String,
-      required: true,
-    },
-    timeSpent: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-  },
-  { _id: false }
+    { _id: false }
 );
 
 const DifficultyPerformanceSubSchema = new Schema(
-  {
-    attempts: {
-      type: Number,
-      default: 0,
-      min: 0,
+    {
+        attempts: {
+            type: Number,
+            default: 0,
+            min: 0
+        },
+        successRate: {
+            type: Number,
+            default: 0,
+            min: 0,
+            max: 1
+        }
     },
-    successRate: {
-      type: Number,
-      default: 0,
-      min: 0,
-      max: 1,
-    },
-  },
-  { _id: false }
+    { _id: false }
 );
 
 const DifficultyPerformanceSchema = new Schema<DifficultyPerformance>(
-  {
-    easy: DifficultyPerformanceSubSchema,
-    medium: DifficultyPerformanceSubSchema,
-    hard: DifficultyPerformanceSubSchema,
-  },
-  { _id: false }
+    {
+        easy: DifficultyPerformanceSubSchema,
+        medium: DifficultyPerformanceSubSchema,
+        hard: DifficultyPerformanceSubSchema
+    },
+    { _id: false }
 );
 
 const UserQuizAnalyticsSchema = new Schema<UserQuizAnalyticsModel>(
-  {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: DATABASE_MODELS.USER,
-      required: [true, 'User ID is required'],
+    {
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: DATABASE_MODELS.USER,
+            required: [true, 'User ID is required']
+        },
+        categoryName: {
+            type: String,
+            required: [true, 'Category name is required']
+        },
+        totalAttempts: {
+            type: Number,
+            default: 0,
+            min: 0
+        },
+        bestScore: {
+            type: Number,
+            default: 0,
+            min: 0,
+            max: 100
+        },
+        averageScore: {
+            type: Number,
+            default: 0,
+            min: 0,
+            max: 100
+        },
+        totalTimeSpent: {
+            type: Number,
+            default: 0,
+            min: 0
+        },
+        strengthAreas: {
+            type: [String],
+            default: []
+        },
+        improvementAreas: {
+            type: [String],
+            default: []
+        },
+        difficultyPerformance: {
+            type: DifficultyPerformanceSchema,
+            default: {
+                easy: { attempts: 0, successRate: 0 },
+                medium: { attempts: 0, successRate: 0 },
+                hard: { attempts: 0, successRate: 0 }
+            }
+        },
+        progressTimeline: [ProgressTimelineSchema],
+        lastAttemptAt: {
+            type: Date,
+            default: Date.now
+        }
     },
-    categoryName: {
-      type: String,
-      required: [true, 'Category name is required'],
-    },
-    totalAttempts: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-    bestScore: {
-      type: Number,
-      default: 0,
-      min: 0,
-      max: 100,
-    },
-    averageScore: {
-      type: Number,
-      default: 0,
-      min: 0,
-      max: 100,
-    },
-    totalTimeSpent: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-    strengthAreas: {
-      type: [String],
-      default: [],
-    },
-    improvementAreas: {
-      type: [String],
-      default: [],
-    },
-    difficultyPerformance: {
-      type: DifficultyPerformanceSchema,
-      default: {
-        easy: { attempts: 0, successRate: 0 },
-        medium: { attempts: 0, successRate: 0 },
-        hard: { attempts: 0, successRate: 0 },
-      },
-    },
-    progressTimeline: [ProgressTimelineSchema],
-    lastAttemptAt: {
-      type: Date,
-      default: Date.now,
-    },
-  },
-  { timestamps: true }
+    { timestamps: true }
 );
 
 // Unique index per user-category combination
@@ -149,7 +149,7 @@ UserQuizAnalyticsSchema.index({ categoryName: 1, bestScore: -1 });
 UserQuizAnalyticsSchema.index({ categoryName: 1, averageScore: -1 });
 
 const UserQuizAnalytics: Model<UserQuizAnalyticsModel> =
-  models?.UserQuizAnalytics || 
+  models?.UserQuizAnalytics ||
   model<UserQuizAnalyticsModel>(DATABASE_MODELS.USER_QUIZ_ANALYTICS, UserQuizAnalyticsSchema);
 
 export default UserQuizAnalytics;

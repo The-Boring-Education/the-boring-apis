@@ -1,37 +1,37 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { apiStatusCodes } from "@/config/constants"
+import { apiStatusCodes } from '@/config/constants';
 import {
     deleteACourseFromDBById,
     getACourseForUserFromDB,
     getACourseFromDBById,
     updateACourseInDB
-} from "@/database"
-import type { AddCourseRequestPayloadProps } from "@/interfaces"
-import { sendAPIResponse } from "@/utils"
-import { connectDB } from "@/middleware"
+} from '@/database';
+import type { AddCourseRequestPayloadProps } from '@/interfaces';
+import { sendAPIResponse } from '@/utils';
+import { connectDB } from '@/middleware';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    await connectDB()
-    const { method, query } = req
-    const { courseId, userId } = query as { courseId: string; userId: string }
+    await connectDB();
+    const { method, query } = req;
+    const { courseId, userId } = query as { courseId: string; userId: string };
 
     switch (method) {
-        case "GET":
-            return handleGetCourseById(req, res, userId, courseId)
-        case "PATCH":
-            return handleUpdateCourse(req, res, courseId)
-        case "DELETE":
-            return handleDeleteCourse(req, res, courseId)
+        case 'GET':
+            return handleGetCourseById(req, res, userId, courseId);
+        case 'PATCH':
+            return handleUpdateCourse(req, res, courseId);
+        case 'DELETE':
+            return handleDeleteCourse(req, res, courseId);
         default:
             return res.status(apiStatusCodes.BAD_REQUEST).json(
                 sendAPIResponse({
                     status: false,
                     message: `Method ${req.method} Not Allowed`
                 })
-            )
+            );
     }
-}
+};
 
 const handleDeleteCourse = async (
     req: NextApiRequest,
@@ -39,67 +39,67 @@ const handleDeleteCourse = async (
     courseId: string
 ) => {
     try {
-        const { error } = await deleteACourseFromDBById(courseId)
+        const { error } = await deleteACourseFromDBById(courseId);
 
         if (error)
             return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
                 sendAPIResponse({
                     status: false,
-                    message: "Failed while deleting course",
+                    message: 'Failed while deleting course',
                     error
                 })
-            )
+            );
 
         return res.status(apiStatusCodes.OKAY).json(
             sendAPIResponse({
                 status: true,
                 data: null
             })
-        )
+        );
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Failed while deleting course",
+                message: 'Failed while deleting course',
                 error
             })
-        )
+        );
     }
-}
+};
 
 const handleUpdateCourse = async (
     req: NextApiRequest,
     res: NextApiResponse,
     courseId: string
 ) => {
-    const updatedData = req.body as Partial<AddCourseRequestPayloadProps>
+    const updatedData = req.body as Partial<AddCourseRequestPayloadProps>;
 
-    const { error } = await getACourseFromDBById(courseId)
+    const { error } = await getACourseFromDBById(courseId);
 
     if (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Course not found",
+                message: 'Course not found',
                 error
             })
-        )
+        );
     }
 
     try {
         const { data, error } = await updateACourseInDB({
             updatedData,
             courseId
-        })
+        });
 
         if (error) {
             return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
                 sendAPIResponse({
                     status: false,
-                    message: "Failed while updating course",
+                    message: 'Failed while updating course',
                     error
                 })
-            )
+            );
         }
 
         return res.status(apiStatusCodes.OKAY).json(
@@ -107,17 +107,17 @@ const handleUpdateCourse = async (
                 status: true,
                 data
             })
-        )
+        );
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Failed while updating course",
+                message: 'Failed while updating course',
                 error
             })
-        )
+        );
     }
-}
+};
 
 const handleGetCourseById = async (
     req: NextApiRequest,
@@ -126,7 +126,7 @@ const handleGetCourseById = async (
     courseId: string
 ) => {
     try {
-        const { data, error } = await getACourseForUserFromDB(userId, courseId)
+        const { data, error } = await getACourseForUserFromDB(userId, courseId);
 
         if (error) {
             return res.status(apiStatusCodes.NOT_FOUND).json(
@@ -134,7 +134,7 @@ const handleGetCourseById = async (
                     status: false,
                     message: error
                 })
-            )
+            );
         }
 
         return res.status(apiStatusCodes.OKAY).json(
@@ -142,16 +142,16 @@ const handleGetCourseById = async (
                 status: true,
                 data
             })
-        )
+        );
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Failed to fetch courses with chapter status",
+                message: 'Failed to fetch courses with chapter status',
                 error
             })
-        )
+        );
     }
-}
+};
 
-export default handler
+export default handler;

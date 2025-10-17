@@ -1,6 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { apiStatusCodes } from "@/config/constants"
+import { apiStatusCodes } from '@/config/constants';
 import {
     Course,
     Feedback,
@@ -14,31 +14,31 @@ import {
     User,
     UserCourse,
     Webinar
-} from "@/database"
-import { sendAPIResponse } from "@/utils"
-import { cors } from "@/utils"
-import { connectDB } from "@/middleware"
+} from '@/database';
+import { sendAPIResponse } from '@/utils';
+import { cors } from '@/utils';
+import { connectDB } from '@/middleware';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    await cors(req, res)
+    await cors(req, res);
 
-    if (req.method === "OPTIONS") {
-        res.status(200).end()
-        return
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
     }
 
-    await connectDB()
+    await connectDB();
 
-    const { method, query } = req
-    const { type, startDate, endDate, period = "30d" } = query
+    const { method, query } = req;
+    const { type, startDate, endDate, period = '30d' } = query;
 
-    if (method !== "GET") {
+    if (method !== 'GET') {
         return res.status(apiStatusCodes.METHOD_NOT_ALLOWED).json(
             sendAPIResponse({
                 status: false,
                 message: `Method ${method} not allowed`
             })
-        )
+        );
     }
 
     return handleAnalyticsRequest(
@@ -47,8 +47,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         startDate as string,
         endDate as string,
         period as string
-    )
-}
+    );
+};
 
 const handleAnalyticsRequest = async (
     res: NextApiResponse,
@@ -58,70 +58,70 @@ const handleAnalyticsRequest = async (
     period: string
 ) => {
     try {
-        const dateRange = getDateRange(startDate, endDate, period)
+        const dateRange = getDateRange(startDate, endDate, period);
 
         switch (type) {
-            case "revenue":
-                return await getRevenueAnalytics(res, dateRange)
-            case "user-engagement":
-                return await getUserEngagementAnalytics(res, dateRange)
-            case "content-performance":
-                return await getContentPerformanceAnalytics(res, dateRange)
-            case "operational":
-                return await getOperationalMetrics(res, dateRange)
-            case "gamification":
-                return await getGamificationAnalytics(res, dateRange)
-            case "learning-patterns":
-                return await getLearningPatternAnalytics(res, dateRange)
-            case "platform-health":
-                return await getPlatformHealthMetrics(res, dateRange)
-            case "user-sources":
-                return await getUserSourceAnalytics(res, dateRange)
+            case 'revenue':
+                return await getRevenueAnalytics(res, dateRange);
+            case 'user-engagement':
+                return await getUserEngagementAnalytics(res, dateRange);
+            case 'content-performance':
+                return await getContentPerformanceAnalytics(res, dateRange);
+            case 'operational':
+                return await getOperationalMetrics(res, dateRange);
+            case 'gamification':
+                return await getGamificationAnalytics(res, dateRange);
+            case 'learning-patterns':
+                return await getLearningPatternAnalytics(res, dateRange);
+            case 'platform-health':
+                return await getPlatformHealthMetrics(res, dateRange);
+            case 'user-sources':
+                return await getUserSourceAnalytics(res, dateRange);
             default:
                 return res.status(apiStatusCodes.BAD_REQUEST).json(
                     sendAPIResponse({
                         status: false,
-                        message: "Invalid analytics type"
+                        message: 'Invalid analytics type'
                     })
-                )
+                );
         }
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
                 error,
-                message: "Error fetching analytics data"
+                message: 'Error fetching analytics data'
             })
-        )
+        );
     }
-}
+};
 
 const getDateRange = (startDate: string, endDate: string, period: string) => {
-    const end = endDate ? new Date(endDate) : new Date()
-    let start: Date
+    const end = endDate ? new Date(endDate) : new Date();
+    let start: Date;
 
     if (startDate) {
-        start = new Date(startDate)
+        start = new Date(startDate);
     } else {
         const days =
-            period === "7d"
+            period === '7d'
                 ? 7
-                : period === "30d"
-                ? 30
-                : period === "90d"
-                ? 90
-                : 365
-        start = new Date(end.getTime() - days * 24 * 60 * 60 * 1000)
+                : period === '30d'
+                    ? 30
+                    : period === '90d'
+                        ? 90
+                        : 365;
+        start = new Date(end.getTime() - days * 24 * 60 * 60 * 1000);
     }
 
-    return { start, end }
-}
+    return { start, end };
+};
 
 const getRevenueAnalytics = async (
     res: NextApiResponse,
     dateRange: { start: Date; end: Date }
 ) => {
-    const { start, end } = dateRange
+    const { start, end } = dateRange;
 
     // Revenue trends
     const revenueData = await Payment.aggregate([
@@ -134,16 +134,16 @@ const getRevenueAnalytics = async (
         {
             $group: {
                 _id: {
-                    year: { $year: "$createdAt" },
-                    month: { $month: "$createdAt" },
-                    day: { $dayOfMonth: "$createdAt" }
+                    year: { $year: '$createdAt' },
+                    month: { $month: '$createdAt' },
+                    day: { $dayOfMonth: '$createdAt' }
                 },
-                totalRevenue: { $sum: "$amount" },
+                totalRevenue: { $sum: '$amount' },
                 transactionCount: { $sum: 1 }
             }
         },
-        { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
-    ])
+        { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } }
+    ]);
 
     // Product-wise revenue
     const productRevenue = await Payment.aggregate([
@@ -155,12 +155,12 @@ const getRevenueAnalytics = async (
         },
         {
             $group: {
-                _id: "$productType",
-                totalRevenue: { $sum: "$amount" },
+                _id: '$productType',
+                totalRevenue: { $sum: '$amount' },
                 transactionCount: { $sum: 1 }
             }
         }
-    ])
+    ]);
 
     // Subscription metrics
     const subscriptionMetrics = await PrepYatraSubscription.aggregate([
@@ -171,28 +171,28 @@ const getRevenueAnalytics = async (
         },
         {
             $group: {
-                _id: "$type",
+                _id: '$type',
                 totalSubscriptions: { $sum: 1 },
-                totalRevenue: { $sum: "$amount" },
+                totalRevenue: { $sum: '$amount' },
                 activeSubscriptions: {
-                    $sum: { $cond: [{ $eq: ["$isActive", true] }, 1, 0] }
+                    $sum: { $cond: [{ $eq: ['$isActive', true] }, 1, 0] }
                 }
             }
         }
-    ])
+    ]);
 
     // Revenue conversion funnel
     const totalUsers = await User.countDocuments({
         createdAt: { $gte: start, $lte: end }
-    })
+    });
 
-    const paidUsers = await Payment.distinct("user", {
+    const paidUsers = await Payment.distinct('user', {
         isPaid: true,
         createdAt: { $gte: start, $lte: end }
-    })
+    });
 
     const conversionRate =
-        totalUsers > 0 ? (paidUsers.length / totalUsers) * 100 : 0
+        totalUsers > 0 ? (paidUsers.length / totalUsers) * 100 : 0;
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -213,9 +213,9 @@ const getRevenueAnalytics = async (
                 averageTransactionValue:
                     productRevenue.length > 0
                         ? productRevenue.reduce(
-                              (sum, item) => sum + item.totalRevenue,
-                              0
-                          ) /
+                            (sum, item) => sum + item.totalRevenue,
+                            0
+                        ) /
                           productRevenue.reduce(
                               (sum, item) => sum + item.transactionCount,
                               0
@@ -223,14 +223,14 @@ const getRevenueAnalytics = async (
                         : 0
             }
         })
-    )
-}
+    );
+};
 
 const getUserEngagementAnalytics = async (
     res: NextApiResponse,
     dateRange: { start: Date; end: Date }
 ) => {
-    const { start, end } = dateRange
+    const { start, end } = dateRange;
 
     // User growth over time
     const userGrowth = await User.aggregate([
@@ -242,15 +242,15 @@ const getUserEngagementAnalytics = async (
         {
             $group: {
                 _id: {
-                    year: { $year: "$createdAt" },
-                    month: { $month: "$createdAt" },
-                    day: { $dayOfMonth: "$createdAt" }
+                    year: { $year: '$createdAt' },
+                    month: { $month: '$createdAt' },
+                    day: { $dayOfMonth: '$createdAt' }
                 },
                 newUsers: { $sum: 1 }
             }
         },
-        { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
-    ])
+        { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } }
+    ]);
 
     // User engagement by role
     const engagementByRole = await User.aggregate([
@@ -261,14 +261,14 @@ const getUserEngagementAnalytics = async (
         },
         {
             $group: {
-                _id: "$occupation",
+                _id: '$occupation',
                 totalUsers: { $sum: 1 },
                 onboardedUsers: {
-                    $sum: { $cond: [{ $eq: ["$isOnboarded", true] }, 1, 0] }
+                    $sum: { $cond: [{ $eq: ['$isOnboarded', true] }, 1, 0] }
                 }
             }
         }
-    ])
+    ]);
 
     // Course completion rates
     const courseCompletionRates = await UserCourse.aggregate([
@@ -279,30 +279,30 @@ const getUserEngagementAnalytics = async (
         },
         {
             $group: {
-                _id: "$courseId",
+                _id: '$courseId',
                 totalEnrollments: { $sum: 1 },
                 completedCourses: {
-                    $sum: { $cond: [{ $eq: ["$isCompleted", true] }, 1, 0] }
+                    $sum: { $cond: [{ $eq: ['$isCompleted', true] }, 1, 0] }
                 }
             }
         },
         {
             $lookup: {
-                from: "courses",
-                localField: "_id",
-                foreignField: "_id",
-                as: "course"
+                from: 'courses',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'course'
             }
         },
         {
-            $unwind: "$course"
+            $unwind: '$course'
         },
         {
             $project: {
-                courseName: "$course.name",
+                courseName: '$course.name',
                 completionRate: {
                     $multiply: [
-                        { $divide: ["$completedCourses", "$totalEnrollments"] },
+                        { $divide: ['$completedCourses', '$totalEnrollments'] },
                         100
                     ]
                 },
@@ -310,7 +310,7 @@ const getUserEngagementAnalytics = async (
                 completedCourses: 1
             }
         }
-    ])
+    ]);
 
     // User activity patterns
     const activityPatterns = await UserCourse.aggregate([
@@ -322,13 +322,13 @@ const getUserEngagementAnalytics = async (
         {
             $group: {
                 _id: {
-                    hour: { $hour: "$updatedAt" },
-                    dayOfWeek: { $dayOfWeek: "$updatedAt" }
+                    hour: { $hour: '$updatedAt' },
+                    dayOfWeek: { $dayOfWeek: '$updatedAt' }
                 },
                 activityCount: { $sum: 1 }
             }
         }
-    ])
+    ]);
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -340,14 +340,14 @@ const getUserEngagementAnalytics = async (
                 activityPatterns
             }
         })
-    )
-}
+    );
+};
 
 const getContentPerformanceAnalytics = async (
     res: NextApiResponse,
     dateRange: { start: Date; end: Date }
 ) => {
-    const { start, end } = dateRange
+    const { start, end } = dateRange;
 
     // Most popular courses
     const popularCourses = await UserCourse.aggregate([
@@ -358,23 +358,23 @@ const getContentPerformanceAnalytics = async (
         },
         {
             $group: {
-                _id: "$courseId",
+                _id: '$courseId',
                 enrollmentCount: { $sum: 1 },
                 completionCount: {
-                    $sum: { $cond: [{ $eq: ["$isCompleted", true] }, 1, 0] }
+                    $sum: { $cond: [{ $eq: ['$isCompleted', true] }, 1, 0] }
                 }
             }
         },
         {
             $lookup: {
-                from: "courses",
-                localField: "_id",
-                foreignField: "_id",
-                as: "course"
+                from: 'courses',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'course'
             }
         },
         {
-            $unwind: "$course"
+            $unwind: '$course'
         },
         {
             $sort: { enrollmentCount: -1 }
@@ -382,7 +382,7 @@ const getContentPerformanceAnalytics = async (
         {
             $limit: 10
         }
-    ])
+    ]);
 
     // Feedback analysis
     const feedbackAnalysis = await Feedback.aggregate([
@@ -393,15 +393,15 @@ const getContentPerformanceAnalytics = async (
         },
         {
             $group: {
-                _id: "$type",
-                averageRating: { $avg: "$rating" },
+                _id: '$type',
+                averageRating: { $avg: '$rating' },
                 totalFeedback: { $sum: 1 },
                 ratings: {
-                    $push: "$rating"
+                    $push: '$rating'
                 }
             }
         }
-    ])
+    ]);
 
     // Chapter engagement
     const chapterEngagement = await UserCourse.aggregate([
@@ -411,15 +411,15 @@ const getContentPerformanceAnalytics = async (
             }
         },
         {
-            $unwind: "$chapters"
+            $unwind: '$chapters'
         },
         {
             $group: {
-                _id: "$chapters.chapterId",
+                _id: '$chapters.chapterId',
                 totalViews: { $sum: 1 },
                 completions: {
                     $sum: {
-                        $cond: [{ $eq: ["$chapters.isCompleted", true] }, 1, 0]
+                        $cond: [{ $eq: ['$chapters.isCompleted', true] }, 1, 0]
                     }
                 }
             }
@@ -428,7 +428,7 @@ const getContentPerformanceAnalytics = async (
             $project: {
                 completionRate: {
                     $multiply: [
-                        { $divide: ["$completions", "$totalViews"] },
+                        { $divide: ['$completions', '$totalViews'] },
                         100
                     ]
                 },
@@ -439,7 +439,7 @@ const getContentPerformanceAnalytics = async (
         {
             $sort: { completionRate: -1 }
         }
-    ])
+    ]);
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -450,14 +450,14 @@ const getContentPerformanceAnalytics = async (
                 chapterEngagement
             }
         })
-    )
-}
+    );
+};
 
 const getGamificationAnalytics = async (
     res: NextApiResponse,
     dateRange: { start: Date; end: Date }
 ) => {
-    const { start, end } = dateRange
+    const { start, end } = dateRange;
 
     // Points distribution
     const pointsDistribution = await Gamification.aggregate([
@@ -472,30 +472,30 @@ const getGamificationAnalytics = async (
                     $switch: {
                         branches: [
                             {
-                                case: { $lt: ["$points", 500] },
-                                then: "Beginner (0-499)"
+                                case: { $lt: ['$points', 500] },
+                                then: 'Beginner (0-499)'
                             },
                             {
-                                case: { $lt: ["$points", 1000] },
-                                then: "Intermediate (500-999)"
+                                case: { $lt: ['$points', 1000] },
+                                then: 'Intermediate (500-999)'
                             },
                             {
-                                case: { $lt: ["$points", 2000] },
-                                then: "Advanced (1000-1999)"
+                                case: { $lt: ['$points', 2000] },
+                                then: 'Advanced (1000-1999)'
                             },
                             {
-                                case: { $gte: ["$points", 2000] },
-                                then: "Expert (2000+)"
+                                case: { $gte: ['$points', 2000] },
+                                then: 'Expert (2000+)'
                             }
                         ],
-                        default: "Unknown"
+                        default: 'Unknown'
                     }
                 },
                 userCount: { $sum: 1 },
-                averagePoints: { $avg: "$points" }
+                averagePoints: { $avg: '$points' }
             }
         }
-    ])
+    ]);
 
     // Action performance
     const actionPerformance = await Gamification.aggregate([
@@ -505,20 +505,20 @@ const getGamificationAnalytics = async (
             }
         },
         {
-            $unwind: "$actions"
+            $unwind: '$actions'
         },
         {
             $group: {
-                _id: "$actions.actionType",
+                _id: '$actions.actionType',
                 totalActions: { $sum: 1 },
-                totalPoints: { $sum: "$actions.pointsEarned" },
-                averagePoints: { $avg: "$actions.pointsEarned" }
+                totalPoints: { $sum: '$actions.pointsEarned' },
+                averagePoints: { $avg: '$actions.pointsEarned' }
             }
         },
         {
             $sort: { totalActions: -1 }
         }
-    ])
+    ]);
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -528,14 +528,14 @@ const getGamificationAnalytics = async (
                 actionPerformance
             }
         })
-    )
-}
+    );
+};
 
 const getLearningPatternAnalytics = async (
     res: NextApiResponse,
     dateRange: { start: Date; end: Date }
 ) => {
-    const { start, end } = dateRange
+    const { start, end } = dateRange;
 
     // Learning time analysis
     const learningTimeAnalysis = await PrepLog.aggregate([
@@ -546,22 +546,22 @@ const getLearningPatternAnalytics = async (
         },
         {
             $group: {
-                _id: "$user",
-                totalTimeSpent: { $sum: "$timeSpent" },
+                _id: '$user',
+                totalTimeSpent: { $sum: '$timeSpent' },
                 sessionCount: { $sum: 1 },
-                averageSessionTime: { $avg: "$timeSpent" }
+                averageSessionTime: { $avg: '$timeSpent' }
             }
         },
         {
             $group: {
                 _id: null,
                 totalLearners: { $sum: 1 },
-                totalTimeSpent: { $sum: "$totalTimeSpent" },
-                averageTimePerLearner: { $avg: "$totalTimeSpent" },
-                averageSessionTime: { $avg: "$averageSessionTime" }
+                totalTimeSpent: { $sum: '$totalTimeSpent' },
+                averageTimePerLearner: { $avg: '$totalTimeSpent' },
+                averageSessionTime: { $avg: '$averageSessionTime' }
             }
         }
-    ])
+    ]);
 
     // Learning streaks
     const learningStreaks = await PrepLog.aggregate([
@@ -573,32 +573,32 @@ const getLearningPatternAnalytics = async (
         {
             $group: {
                 _id: {
-                    user: "$user",
+                    user: '$user',
                     date: {
                         $dateToString: {
-                            format: "%Y-%m-%d",
-                            date: "$createdAt"
+                            format: '%Y-%m-%d',
+                            date: '$createdAt'
                         }
                     }
                 },
-                dailyTime: { $sum: "$timeSpent" }
+                dailyTime: { $sum: '$timeSpent' }
             }
         },
         {
             $group: {
-                _id: "$_id.user",
+                _id: '$_id.user',
                 activeDays: { $sum: 1 },
-                totalTime: { $sum: "$dailyTime" }
+                totalTime: { $sum: '$dailyTime' }
             }
         },
         {
             $group: {
                 _id: null,
-                averageActiveDays: { $avg: "$activeDays" },
+                averageActiveDays: { $avg: '$activeDays' },
                 totalActiveLearners: { $sum: 1 }
             }
         }
-    ])
+    ]);
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -608,23 +608,23 @@ const getLearningPatternAnalytics = async (
                 learningStreaks
             }
         })
-    )
-}
+    );
+};
 
 const getOperationalMetrics = async (
     res: NextApiResponse,
     dateRange: { start: Date; end: Date }
 ) => {
-    const { start, end } = dateRange
+    const { start, end } = dateRange;
 
     // System health metrics
     const totalNotifications = await Notification.countDocuments({
         createdAt: { $gte: start, $lte: end }
-    })
+    });
 
     const totalFeedback = await Feedback.countDocuments({
         createdAt: { $gte: start, $lte: end }
-    })
+    });
 
     const averageRating = await Feedback.aggregate([
         {
@@ -635,10 +635,10 @@ const getOperationalMetrics = async (
         {
             $group: {
                 _id: null,
-                averageRating: { $avg: "$rating" }
+                averageRating: { $avg: '$rating' }
             }
         }
-    ])
+    ]);
 
     // Content creation metrics
     const contentCreation = await Promise.all([
@@ -648,7 +648,7 @@ const getOperationalMetrics = async (
             createdAt: { $gte: start, $lte: end }
         }),
         Webinar.countDocuments({ createdAt: { $gte: start, $lte: end } })
-    ])
+    ]);
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -665,14 +665,14 @@ const getOperationalMetrics = async (
                 }
             }
         })
-    )
-}
+    );
+};
 
 const getPlatformHealthMetrics = async (
     res: NextApiResponse,
     dateRange: { start: Date; end: Date }
 ) => {
-    const { start, end } = dateRange
+    const { start, end } = dateRange;
 
     // Database health
     const dbHealthMetrics = await Promise.all([
@@ -681,7 +681,7 @@ const getPlatformHealthMetrics = async (
         UserCourse.countDocuments(),
         Payment.countDocuments(),
         Feedback.countDocuments()
-    ])
+    ]);
 
     // Recent activity
     const recentActivity = await Promise.all([
@@ -689,7 +689,7 @@ const getPlatformHealthMetrics = async (
         UserCourse.countDocuments({ createdAt: { $gte: start, $lte: end } }),
         Payment.countDocuments({ createdAt: { $gte: start, $lte: end } }),
         Feedback.countDocuments({ createdAt: { $gte: start, $lte: end } })
-    ])
+    ]);
 
     return res.status(apiStatusCodes.OKAY).json(
         sendAPIResponse({
@@ -710,15 +710,15 @@ const getPlatformHealthMetrics = async (
                 }
             }
         })
-    )
-}
+    );
+};
 
 const getUserSourceAnalytics = async (
     res: NextApiResponse,
     dateRange: { start: Date; end: Date }
 ) => {
     try {
-        const { start, end } = dateRange
+        const { start, end } = dateRange;
 
         // Get user source breakdown
         const sourceBreakdown = await User.aggregate([
@@ -732,14 +732,14 @@ const getUserSourceAnalytics = async (
             },
             {
                 $group: {
-                    _id: "$from",
+                    _id: '$from',
                     userCount: { $sum: 1 }
                 }
             },
             {
                 $sort: { userCount: -1 }
             }
-        ])
+        ]);
 
         // Get total users in date range
         const totalUsers = await User.countDocuments({
@@ -747,29 +747,29 @@ const getUserSourceAnalytics = async (
                 $gte: start,
                 $lte: end
             }
-        })
+        });
 
         // Calculate percentages and format data
         const sourceBreakdownWithPercentage = sourceBreakdown.map((item) => ({
-            source: item._id || "direct",
+            source: item._id || 'direct',
             userCount: item.userCount,
             percentage:
                 totalUsers > 0
                     ? parseFloat(
-                          ((item.userCount / totalUsers) * 100).toFixed(2)
-                      )
+                        ((item.userCount / totalUsers) * 100).toFixed(2)
+                    )
                     : 0
-        }))
+        }));
 
         // Find top source
         const topSource =
             sourceBreakdownWithPercentage.length > 0
                 ? sourceBreakdownWithPercentage[0]
-                : { source: "direct", userCount: 0, percentage: 0 }
+                : { source: 'direct', userCount: 0, percentage: 0 };
 
         // Get 7-day growth for each source
-        const sevenDaysAgo = new Date()
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
         const previousWeekSourceBreakdown = await User.aggregate([
             {
@@ -782,38 +782,38 @@ const getUserSourceAnalytics = async (
             },
             {
                 $group: {
-                    _id: "$from",
+                    _id: '$from',
                     userCount: { $sum: 1 }
                 }
             }
-        ])
+        ]);
 
         // Calculate growth for each source
         const sourceBreakdownWithGrowth = sourceBreakdownWithPercentage.map(
             (current) => {
                 const previous = previousWeekSourceBreakdown.find(
                     (p) => p._id === current.source
-                )
-                const previousCount = previous ? previous.userCount : 0
+                );
+                const previousCount = previous ? previous.userCount : 0;
                 const growth =
                     previousCount > 0
                         ? parseFloat(
-                              (
-                                  ((current.userCount - previousCount) /
+                            (
+                                ((current.userCount - previousCount) /
                                       previousCount) *
                                   100
-                              ).toFixed(2)
-                          )
+                            ).toFixed(2)
+                        )
                         : current.userCount > 0
-                        ? 100
-                        : 0
+                            ? 100
+                            : 0;
 
                 return {
                     ...current,
                     growth
-                }
+                };
             }
-        )
+        );
 
         return res.status(apiStatusCodes.OKAY).json(
             sendAPIResponse({
@@ -830,16 +830,16 @@ const getUserSourceAnalytics = async (
                     }
                 }
             })
-        )
+        );
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Error fetching user source analytics",
+                message: 'Error fetching user source analytics',
                 error
             })
-        )
+        );
     }
-}
+};
 
-export default handler
+export default handler;

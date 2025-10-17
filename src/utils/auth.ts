@@ -1,18 +1,18 @@
-import { NextApiRequest } from "next/types"
+import { NextApiRequest } from 'next/types';
 
 // Conditional imports to avoid issues when Next.js is not available
-let _NextApiRequest: any
-let getSession: any
+let _NextApiRequest: any;
+let getSession: any;
 
 try {
-    const next = require("next")
-    const nextAuth = require("next-auth/react")
-    _NextApiRequest = next.NextApiRequest
-    getSession = nextAuth.getSession
+    const next = require('next');
+    const nextAuth = require('next-auth/react');
+    _NextApiRequest = next.NextApiRequest;
+    getSession = nextAuth.getSession;
 } catch (error) {
     // Next.js not available, define fallback types
-    _NextApiRequest = class {}
-    getSession = () => Promise.resolve(null)
+    _NextApiRequest = class {};
+    getSession = () => Promise.resolve(null);
 }
 
 export interface AuthUser {
@@ -29,23 +29,23 @@ export const getAuthenticatedUser = async (
     req: NextApiRequest
 ): Promise<AuthUser | null> => {
     try {
-        const session = await getSession({ req })
+        const session = await getSession({ req });
 
         if (!session?.user) {
-            return null
+            return null;
         }
 
         return {
-            id: session.user.id || "",
-            email: session.user.email || "",
+            id: session.user.id || '',
+            email: session.user.email || '',
             name: session.user.name || undefined,
             image: session.user.image || undefined
-        }
+        };
     } catch (error) {
-        console.error("Error getting authenticated user:", error)
-        return null
+        console.error('Error getting authenticated user:', error);
+        return null;
     }
-}
+};
 
 /**
  * Validate if user is authenticated
@@ -53,9 +53,9 @@ export const getAuthenticatedUser = async (
 export const isAuthenticated = async (
     req: NextApiRequest
 ): Promise<boolean> => {
-    const user = await getAuthenticatedUser(req)
-    return user !== null
-}
+    const user = await getAuthenticatedUser(req);
+    return user !== null;
+};
 
 /**
  * Check if user has required role (extend as needed)
@@ -64,10 +64,10 @@ export const hasRole = async (
     req: NextApiRequest,
     _requiredRole: string
 ): Promise<boolean> => {
-    const user = await getAuthenticatedUser(req)
-    if (!user) return false
+    const user = await getAuthenticatedUser(req);
+    if (!user) return false;
 
     // This would need to be extended based on your user model
     // For now, just return true if authenticated
-    return true
-}
+    return true;
+};

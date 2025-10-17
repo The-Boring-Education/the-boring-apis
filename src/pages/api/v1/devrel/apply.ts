@@ -1,9 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { apiStatusCodes } from "@/config/constants"
-import { DevRelLead } from "@/database"
-import { sendAPIResponse } from "@/utils"
-import { connectDB } from "@/middleware"
+import { apiStatusCodes } from '@/config/constants';
+import { DevRelLead } from '@/database';
+import { sendAPIResponse } from '@/utils';
+import { connectDB } from '@/middleware';
 
 interface CreateApplicationRequest {
     name: string
@@ -30,68 +30,68 @@ interface CreateApplicationRequest {
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    if (req.method !== "POST") {
+    if (req.method !== 'POST') {
         return res.status(apiStatusCodes.METHOD_NOT_ALLOWED).json(
             sendAPIResponse({
                 status: false,
-                message: "Method not allowed"
+                message: 'Method not allowed'
             })
-        )
+        );
     }
 
     try {
-        await connectDB()
+        await connectDB();
 
-        const applicationData: CreateApplicationRequest = req.body
+        const applicationData: CreateApplicationRequest = req.body;
 
         // Validate required fields
         const requiredFields = [
-            "name",
-            "email",
-            "techStack",
-            "experienceLevel",
-            "learningFocus",
-            "availability",
-            "motivation",
-            "whyTBE",
-            "commitments"
-        ]
+            'name',
+            'email',
+            'techStack',
+            'experienceLevel',
+            'learningFocus',
+            'availability',
+            'motivation',
+            'whyTBE',
+            'commitments'
+        ];
 
         const missingFields = requiredFields.filter(
             (field) => !applicationData[field as keyof CreateApplicationRequest]
-        )
+        );
 
         if (missingFields.length > 0) {
             return res.status(apiStatusCodes.BAD_REQUEST).json(
                 sendAPIResponse({
                     status: false,
                     message: `Missing required fields: ${missingFields.join(
-                        ", "
+                        ', '
                     )}`
                 })
-            )
+            );
         }
 
         // Check if application already exists
         const existingApplication = await DevRelLead.findByEmail(
             applicationData.email
-        )
+        );
 
         if (existingApplication) {
             return res.status(apiStatusCodes.BAD_REQUEST).json(
                 sendAPIResponse({
                     status: false,
-                    message: "Application already exists for this email address"
+                    message: 'Application already exists for this email address'
                 })
-            )
+            );
         }
 
         // Create DevRel Lead record
         const devRelLead = await DevRelLead.create({
             name: applicationData.name,
             email: applicationData.email,
-            role: "lead",
-            status: "applied",
+            role: 'lead',
+            status: 'applied',
             applicationData: {
                 techStack: applicationData.techStack,
                 experienceLevel: applicationData.experienceLevel,
@@ -118,30 +118,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 averageCompletionTime: 0,
                 streakCount: 0
             }
-        })
+        });
 
         return res.status(apiStatusCodes.RESOURCE_CREATED).json(
             sendAPIResponse({
                 status: true,
-                message: "Application submitted successfully!",
+                message: 'Application submitted successfully!',
                 data: {
                     applicationId: devRelLead._id,
                     email: applicationData.email,
-                    status: "applied",
+                    status: 'applied',
                     submittedAt: devRelLead.createdAt
                 }
             })
-        )
+        );
     } catch (error) {
-        console.error("Error processing application:", error)
+        console.error('Error processing application:', error);
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
                 error,
-                message: "Internal server error while processing application"
+                message: 'Internal server error while processing application'
             })
-        )
+        );
     }
-}
+};
 
-export default handler
+export default handler;

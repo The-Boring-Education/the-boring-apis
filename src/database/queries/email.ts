@@ -1,5 +1,5 @@
-import type { DatabaseQueryResponseType } from "@/interfaces"
-import { emailClient } from "@/services"
+import type { DatabaseQueryResponseType } from '@/interfaces';
+import { emailClient } from '@/services';
 
 interface EmailRequest {
     from_email: string
@@ -18,24 +18,24 @@ const sendEmailFromDB = async (
 ): Promise<DatabaseQueryResponseType> => {
     try {
         const formattedEmailData: EmailRequest = {
-            from_email: emailData.from_email || "theboringeducation@gmail.com",
-            from_name: emailData.from_name || "TBE",
+            from_email: emailData.from_email || 'theboringeducation@gmail.com',
+            from_name: emailData.from_name || 'TBE',
             to_email: emailData.to_email,
             to_name: emailData.to_name,
             subject: emailData.subject,
             html_content: emailData.html_content
-        }
+        };
 
-        const result = await emailClient.sendEmail(formattedEmailData)
+        const result = await emailClient.sendEmail(formattedEmailData);
 
         if (result.success) {
-            return { data: result }
+            return { data: result };
         } else {
-            return { error: result.error || "Failed to send email" }
+            return { error: result.error || 'Failed to send email' };
         }
     } catch (error) {
-        return { error: "Email service error" }
+        return { error: 'Email service error' };
     }
-}
+};
 
-export { sendEmailFromDB }
+export { sendEmailFromDB };

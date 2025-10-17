@@ -1,9 +1,9 @@
 import type {
     CreateUserInterestRequestProps,
     DatabaseQueryResponseType
-} from "@/interfaces"
+} from '@/interfaces';
 
-import { UserInterest } from "../models"
+import { UserInterest } from '../models';
 
 /**
  * Create a new user interest or update existing one
@@ -23,28 +23,28 @@ const createUserInterestInDB = async (
             source,
             ipAddress,
             userAgent
-        } = payload
+        } = payload;
 
         // Check if user already has an active interest for this event type
         const existingInterest = await UserInterest.findOne({
             userId,
             eventType,
             isActive: true
-        })
+        });
 
         if (existingInterest) {
             // Update existing interest instead of creating new one
-            existingInterest.eventDescription = eventDescription
+            existingInterest.eventDescription = eventDescription;
             existingInterest.metadata = {
                 ...existingInterest.metadata,
                 ...metadata
-            }
-            existingInterest.source = source
-            existingInterest.ipAddress = ipAddress
-            existingInterest.userAgent = userAgent
-            await existingInterest.save()
+            };
+            existingInterest.source = source;
+            existingInterest.ipAddress = ipAddress;
+            existingInterest.userAgent = userAgent;
+            await existingInterest.save();
 
-            return { data: existingInterest }
+            return { data: existingInterest };
         }
 
         // Create new interest
@@ -57,13 +57,13 @@ const createUserInterestInDB = async (
             ipAddress,
             userAgent,
             isActive: true
-        })
+        });
 
-        return { data: interest }
+        return { data: interest };
     } catch (error) {
-        return { error: "Failed to create user interest" }
+        return { error: 'Failed to create user interest' };
     }
-}
+};
 
 /**
  * Get user interests with filters and pagination
@@ -77,30 +77,30 @@ const getUserInterestsFromDB = async (filters: {
     limit?: number
 }): Promise<DatabaseQueryResponseType> => {
     try {
-        const { page = 1, limit = 10, ...queryFilters } = filters
+        const { page = 1, limit = 10, ...queryFilters } = filters;
 
         // Build query filters
-        const query: any = {}
-        if (queryFilters.userId) query.userId = queryFilters.userId
-        if (queryFilters.eventType) query.eventType = queryFilters.eventType
-        if (queryFilters.source) query.source = queryFilters.source
+        const query: any = {};
+        if (queryFilters.userId) query.userId = queryFilters.userId;
+        if (queryFilters.eventType) query.eventType = queryFilters.eventType;
+        if (queryFilters.source) query.source = queryFilters.source;
         if (queryFilters.isActive !== undefined)
-            query.isActive = queryFilters.isActive
+            query.isActive = queryFilters.isActive;
 
-        const skip = (page - 1) * limit
+        const skip = (page - 1) * limit;
 
         // Get interests with pagination
         const [interests, total] = await Promise.all([
             UserInterest.find(query)
-                .populate("userId", "name email image")
+                .populate('userId', 'name email image')
                 .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(limit)
                 .lean(),
             UserInterest.countDocuments(query)
-        ])
+        ]);
 
-        const totalPages = Math.ceil(total / limit)
+        const totalPages = Math.ceil(total / limit);
 
         return {
             data: {
@@ -114,11 +114,11 @@ const getUserInterestsFromDB = async (filters: {
                     hasPrevPage: page > 1
                 }
             }
-        }
+        };
     } catch (error) {
-        return { error: "Failed to get user interests" }
+        return { error: 'Failed to get user interests' };
     }
-}
+};
 
 /**
  * Update user interest status (activate/deactivate)
@@ -132,20 +132,20 @@ const updateUserInterestInDB = async (
             interestId,
             { isActive },
             { new: true }
-        ).populate("userId", "name email image")
+        ).populate('userId', 'name email image');
 
         if (!interest) {
-            return { error: "Interest not found" }
+            return { error: 'Interest not found' };
         }
 
-        return { data: interest }
+        return { data: interest };
     } catch (error) {
-        return { error: "Failed to update user interest" }
+        return { error: 'Failed to update user interest' };
     }
-}
+};
 
 export {
     createUserInterestInDB,
     getUserInterestsFromDB,
     updateUserInterestInDB
-}
+};

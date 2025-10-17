@@ -23,65 +23,65 @@ export interface QuizModel {
 }
 
 const QuizQuestionSchema = new Schema<QuizQuestionModel>(
-  {
-    question: {
-      type: String,
-      required: [true, 'Question is required'],
-    },
-    options: {
-      type: [String],
-      required: [true, 'Options are required'],
-      validate: [
-        {
-          validator(v: string[]) {
-            return v.length >= 2;
-          },
-          message: 'At least 2 options are required',
+    {
+        question: {
+            type: String,
+            required: [true, 'Question is required']
         },
-      ],
+        options: {
+            type: [String],
+            required: [true, 'Options are required'],
+            validate: [
+                {
+                    validator(v: string[]) {
+                        return v.length >= 2;
+                    },
+                    message: 'At least 2 options are required'
+                }
+            ]
+        },
+        correctAnswer: {
+            type: Number,
+            required: [true, 'Correct answer index is required']
+        },
+        explanation: {
+            type: String,
+            required: [true, 'Explanation is required']
+        },
+        detailedExplanation: {
+            type: String,
+            required: [true, 'Detailed explanation is required']
+        },
+        difficulty: {
+            type: String,
+            enum: ['easy', 'medium', 'hard'],
+            required: [true, 'Difficulty level is required']
+        }
     },
-    correctAnswer: {
-      type: Number,
-      required: [true, 'Correct answer index is required'],
-    },
-    explanation: {
-      type: String,
-      required: [true, 'Explanation is required'],
-    },
-    detailedExplanation: {
-      type: String,
-      required: [true, 'Detailed explanation is required'],
-    },
-    difficulty: {
-      type: String,
-      enum: ['easy', 'medium', 'hard'],
-      required: [true, 'Difficulty level is required'],
-    },
-  },
-  { _id: false }
+    { _id: false }
 );
 
 const QuizSchema = new Schema<QuizModel>(
-  {
-    categoryName: {
-      type: String,
-      required: [true, 'Category name is required'],
+    {
+        categoryName: {
+            type: String,
+            required: [true, 'Category name is required']
+        },
+        categoryDescription: {
+            type: String,
+            required: [true, 'Category description is required']
+        },
+        categoryIcon: {
+            type: String,
+            required: [true, 'Category icon is required']
+        },
+        questions: [QuizQuestionSchema],
+        isActive: {
+            type: Boolean,
+            default: true
+        }
     },
-    categoryDescription: {
-      type: String,
-      required: [true, 'Category description is required'],
-    },
-    categoryIcon: {
-      type: String,
-      required: [true, 'Category icon is required'],
-    },
-    questions: [QuizQuestionSchema],
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  { timestamps: true }
+    { timestamps: true }
 );
 
 const Quiz: Model<QuizModel> =

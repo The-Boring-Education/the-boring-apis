@@ -1,60 +1,60 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { apiStatusCodes } from "@/config/constants"
-import { Challenge, ChallengeLog } from "@/database"
-import { cors } from "@/utils"
-import { sendAPIResponse } from "@/utils"
-import { connectDB } from "@/middleware"
+import { apiStatusCodes } from '@/config/constants';
+import { Challenge, ChallengeLog } from '@/database';
+import { cors } from '@/utils';
+import { sendAPIResponse } from '@/utils';
+import { connectDB } from '@/middleware';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    await cors(req, res)
-    await connectDB()
-    const { method } = req
+    await cors(req, res);
+    await connectDB();
+    const { method } = req;
 
     switch (method) {
-        case "GET":
-            return handleGetStats(req, res)
+        case 'GET':
+            return handleGetStats(req, res);
         default:
             return res.status(apiStatusCodes.METHOD_NOT_ALLOWED).json(
                 sendAPIResponse({
                     status: false,
                     message: `Method ${req.method} Not Allowed`
                 })
-            )
+            );
     }
-}
+};
 
 const handleGetStats = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const { userId } = req.query
+        const { userId } = req.query;
 
         if (!userId) {
             return res.status(apiStatusCodes.BAD_REQUEST).json(
                 sendAPIResponse({
                     status: false,
-                    message: "User ID is required"
+                    message: 'User ID is required'
                 })
-            )
+            );
         }
 
-        const challenges = await Challenge.find({ user: String(userId) })
-        const challengeIds = challenges.map((c) => c._id)
+        const challenges = await Challenge.find({ user: String(userId) });
+        const challengeIds = challenges.map((c) => c._id);
 
         const logs = await ChallengeLog.find({
             challenge: { $in: challengeIds }
-        })
+        });
 
         // Calculate statistics
-        const totalChallenges = challenges.length
-        const activeChallenges = challenges.filter((c) => c.isActive).length
+        const totalChallenges = challenges.length;
+        const activeChallenges = challenges.filter((c) => c.isActive).length;
         const completedChallenges = challenges.filter(
             (c) => c.currentDay >= c.totalDays
-        ).length
+        ).length;
         const totalHours = logs.reduce(
             (sum, log) => sum + (log.hoursSpent || 0),
             0
-        )
-        const totalDaysLogged = logs.length
+        );
+        const totalDaysLogged = logs.length;
 
         const stats = {
             userId: String(userId),
@@ -71,25 +71,25 @@ const handleGetStats = async (req: NextApiRequest, res: NextApiResponse) => {
                 totalChallenges > 0
                     ? Math.round((completedChallenges / totalChallenges) * 100)
                     : 0
-        }
+        };
 
         return res.status(apiStatusCodes.OKAY).json(
             sendAPIResponse({
                 status: true,
-                message: "Stats retrieved successfully",
+                message: 'Stats retrieved successfully',
                 data: stats
             })
-        )
+        );
     } catch (error) {
-        console.error("Get Challenge Stats Error:", error)
+        console.error('Get Challenge Stats Error:', error);
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Internal server error",
-                error: error instanceof Error ? error.message : "Unknown error"
+                message: 'Internal server error',
+                error: error instanceof Error ? error.message : 'Unknown error'
             })
-        )
+        );
     }
-}
+};
 
-export default handler
+export default handler;

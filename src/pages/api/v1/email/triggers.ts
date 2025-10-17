@@ -1,51 +1,51 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { apiStatusCodes } from "@/config/constants"
-import type { EmailTriggerRequest } from "@/interfaces"
-import { emailTriggerService } from "@/services"
-import { sendAPIResponse } from "@/utils"
-import { connectDB } from "@/middleware"
+import { apiStatusCodes } from '@/config/constants';
+import type { EmailTriggerRequest } from '@/interfaces';
+import { emailTriggerService } from '@/services';
+import { sendAPIResponse } from '@/utils';
+import { connectDB } from '@/middleware';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        await connectDB()
+        await connectDB();
 
         switch (req.method) {
-            case "POST":
-                return handleEmailTrigger(req, res)
+            case 'POST':
+                return handleEmailTrigger(req, res);
             default:
                 return res.status(apiStatusCodes.BAD_REQUEST).json(
                     sendAPIResponse({
                         status: false,
                         message: `Method ${req.method} Not Allowed`
                     })
-                )
+                );
         }
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Something went wrong",
+                message: 'Something went wrong',
                 error
             })
-        )
+        );
     }
-}
+};
 
 const handleEmailTrigger = async (
     req: NextApiRequest,
     res: NextApiResponse
 ) => {
     try {
-        const { trigger, data } = req.body as EmailTriggerRequest
+        const { trigger, data } = req.body as EmailTriggerRequest;
 
         if (!trigger || !data) {
             return res.status(apiStatusCodes.BAD_REQUEST).json(
                 sendAPIResponse({
                     status: false,
-                    message: "Missing required fields: trigger, data"
+                    message: 'Missing required fields: trigger, data'
                 })
-            )
+            );
         }
 
         if (!data.userEmail || !data.userName || !data.userId) {
@@ -53,12 +53,12 @@ const handleEmailTrigger = async (
                 sendAPIResponse({
                     status: false,
                     message:
-                        "Missing required user data: userEmail, userName, userId"
+                        'Missing required user data: userEmail, userName, userId'
                 })
-            )
+            );
         }
 
-        const result = await emailTriggerService.sendTriggerEmail(trigger, data)
+        const result = await emailTriggerService.sendTriggerEmail(trigger, data);
 
         if (result.success) {
             return res.status(apiStatusCodes.OKAY).json(
@@ -67,7 +67,7 @@ const handleEmailTrigger = async (
                     message: `${trigger} email sent successfully`,
                     data: result
                 })
-            )
+            );
         } else {
             return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
                 sendAPIResponse({
@@ -75,18 +75,18 @@ const handleEmailTrigger = async (
                     message: `Failed to send ${trigger} email`,
                     error: result.error
                 })
-            )
+            );
         }
     } catch (error) {
-        console.error("Email trigger error:", error)
+        console.error('Email trigger error:', error);
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Failed to send email trigger",
+                message: 'Failed to send email trigger',
                 error
             })
-        )
+        );
     }
-}
+};
 
-export default handler
+export default handler;

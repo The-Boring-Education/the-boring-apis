@@ -1,54 +1,54 @@
 // Add Chapter API
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { apiStatusCodes } from "@/config/constants"
+import { apiStatusCodes } from '@/config/constants';
 import {
     deleteChapterFromSectionInDB,
     getChapterFromSectionInDB,
     updateChapterInSectionInDB
-} from "@/database"
-import type { UpdateChapterRequestPayloadProps } from "@/interfaces"
-import { sendAPIResponse } from "@/utils"
-import { connectDB } from "@/middleware"
+} from '@/database';
+import type { UpdateChapterRequestPayloadProps } from '@/interfaces';
+import { sendAPIResponse } from '@/utils';
+import { connectDB } from '@/middleware';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    await connectDB()
+    await connectDB();
 
-    const { method, query } = req
+    const { method, query } = req;
     const { projectId, sectionId, chapterId } = query as {
         projectId: string
         sectionId: string
         chapterId: string
-    }
+    };
 
     switch (method) {
-        case "GET":
-            return handleGetChapter(req, res, projectId, sectionId, chapterId)
-        case "PATCH":
+        case 'GET':
+            return handleGetChapter(req, res, projectId, sectionId, chapterId);
+        case 'PATCH':
             return handleUpdateChapter(
                 req,
                 res,
                 projectId,
                 sectionId,
                 chapterId
-            )
-        case "DELETE":
+            );
+        case 'DELETE':
             return handleDeleteChapter(
                 req,
                 res,
                 projectId,
                 sectionId,
                 chapterId
-            )
+            );
         default:
             return res.status(apiStatusCodes.BAD_REQUEST).json(
                 sendAPIResponse({
                     status: false,
                     message: `Method ${method} Not Allowed`
                 })
-            )
+            );
     }
-}
+};
 
 const handleGetChapter = async (
     req: NextApiRequest,
@@ -62,35 +62,35 @@ const handleGetChapter = async (
             projectId,
             sectionId,
             chapterId
-        )
+        );
 
         if (error) {
             return res.status(apiStatusCodes.NOT_FOUND).json(
                 sendAPIResponse({
                     status: false,
-                    message: "Error fetching chapters",
+                    message: 'Error fetching chapters',
                     error
                 })
-            )
+            );
         }
 
         return res.status(apiStatusCodes.OKAY).json(
             sendAPIResponse({
                 status: true,
-                message: "Chapter Fetched Successfully",
+                message: 'Chapter Fetched Successfully',
                 data
             })
-        )
+        );
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Error fetching Chapter",
+                message: 'Error fetching Chapter',
                 error
             })
-        )
+        );
     }
-}
+};
 
 const handleUpdateChapter = async (
     req: NextApiRequest,
@@ -101,7 +101,7 @@ const handleUpdateChapter = async (
 ) => {
     try {
         const { updatedChapterName, updatedChapterContent, updatedIsOptional } =
-            req.body as UpdateChapterRequestPayloadProps
+            req.body as UpdateChapterRequestPayloadProps;
 
         const { data, error } = await updateChapterInSectionInDB({
             projectId,
@@ -110,35 +110,35 @@ const handleUpdateChapter = async (
             updatedChapterName,
             updatedChapterContent,
             updatedIsOptional
-        })
+        });
 
         if (error) {
             return res.status(apiStatusCodes.NOT_FOUND).json(
                 sendAPIResponse({
                     status: false,
-                    message: "Error updating chapter",
+                    message: 'Error updating chapter',
                     error
                 })
-            )
+            );
         }
 
         return res.status(apiStatusCodes.OKAY).json(
             sendAPIResponse({
                 status: true,
-                message: "Chapter updated successfully",
+                message: 'Chapter updated successfully',
                 data
             })
-        )
+        );
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Error updating chapter",
+                message: 'Error updating chapter',
                 error
             })
-        )
+        );
     }
-}
+};
 
 const handleDeleteChapter = async (
     req: NextApiRequest,
@@ -152,33 +152,33 @@ const handleDeleteChapter = async (
             projectId,
             sectionId,
             chapterId
-        })
+        });
 
         if (error) {
             return res.status(apiStatusCodes.NOT_FOUND).json(
                 sendAPIResponse({
                     status: false,
-                    message: "Error deleting chapter",
+                    message: 'Error deleting chapter',
                     error
                 })
-            )
+            );
         }
 
         return res.status(apiStatusCodes.OKAY).json(
             sendAPIResponse({
                 status: true,
-                message: "Chapter deleted successfully"
+                message: 'Chapter deleted successfully'
             })
-        )
+        );
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Error deleting chapter",
+                message: 'Error deleting chapter',
                 error
             })
-        )
+        );
     }
-}
+};
 
-export default handler
+export default handler;

@@ -1,44 +1,44 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { apiStatusCodes } from "@/config/constants"
-import { getUserPrepLogStats } from "@/database"
-import { cors, sendAPIResponse } from "@/utils"
-import { connectDB } from "@/middleware"
+import { apiStatusCodes } from '@/config/constants';
+import { getUserPrepLogStats } from '@/database';
+import { cors, sendAPIResponse } from '@/utils';
+import { connectDB } from '@/middleware';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    await cors(req, res)
-    await connectDB()
+    await cors(req, res);
+    await connectDB();
 
     switch (req.method) {
-        case "GET":
-            return handleGetPrepLogStats(req, res)
+        case 'GET':
+            return handleGetPrepLogStats(req, res);
         default:
             return res.status(apiStatusCodes.METHOD_NOT_ALLOWED).json(
                 sendAPIResponse({
                     status: false,
                     message: `Method ${req.method} not allowed`
                 })
-            )
+            );
     }
-}
+};
 
 const handleGetPrepLogStats = async (
     req: NextApiRequest,
     res: NextApiResponse
 ) => {
     try {
-        const { userId } = req.query
+        const { userId } = req.query;
 
-        if (!userId || typeof userId !== "string") {
+        if (!userId || typeof userId !== 'string') {
             return res.status(apiStatusCodes.BAD_REQUEST).json(
                 sendAPIResponse({
                     status: false,
-                    message: "Missing or invalid userId"
+                    message: 'Missing or invalid userId'
                 })
-            )
+            );
         }
 
-        const { data, error } = await getUserPrepLogStats(userId)
+        const { data, error } = await getUserPrepLogStats(userId);
 
         if (error) {
             return res.status(apiStatusCodes.BAD_REQUEST).json(
@@ -46,7 +46,7 @@ const handleGetPrepLogStats = async (
                     status: false,
                     message: error
                 })
-            )
+            );
         }
 
         return res.status(apiStatusCodes.OKAY).json(
@@ -54,16 +54,16 @@ const handleGetPrepLogStats = async (
                 status: true,
                 data
             })
-        )
+        );
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Something went wrong while fetching prep log stats",
+                message: 'Something went wrong while fetching prep log stats',
                 error
             })
-        )
+        );
     }
-}
+};
 
-export default handler
+export default handler;

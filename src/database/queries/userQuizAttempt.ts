@@ -1,6 +1,6 @@
-import type { DatabaseQueryResponseType } from "@/interfaces"
+import type { DatabaseQueryResponseType } from '@/interfaces';
 
-import { QuizAttempt } from "../models"
+import { QuizAttempt } from '../models';
 
 interface QuizAttemptData {
     userId: string
@@ -63,23 +63,23 @@ export const addUserQuizAttemptToDB = async (
                 (attemptData.correctAnswers / attemptData.totalQuestions) * 100
             ), // Add missing pointsEarned
             completedAt: new Date(attemptData.completedAt)
-        })
+        });
 
-        const savedAttempt = await attempt.save()
-        return { data: savedAttempt }
+        const savedAttempt = await attempt.save();
+        return { data: savedAttempt };
     } catch (error) {
-        console.error("Error saving quiz attempt:", error)
+        console.error('Error saving quiz attempt:', error);
         console.error(
-            "Attempt data that failed:",
+            'Attempt data that failed:',
             JSON.stringify(attemptData, null, 2)
-        )
+        );
         if (error instanceof Error) {
-            console.error("Error details:", error.message)
-            console.error("Error stack:", error.stack)
+            console.error('Error details:', error.message);
+            console.error('Error stack:', error.stack);
         }
-        return { error: "Failed to save quiz attempt" }
+        return { error: 'Failed to save quiz attempt' };
     }
-}
+};
 
 // Get user's quiz performance analytics
 export const getUserQuizPerformanceFromDB = async (
@@ -87,12 +87,12 @@ export const getUserQuizPerformanceFromDB = async (
 ): Promise<DatabaseQueryResponseType> => {
     try {
         // Use string comparison for userId to avoid ObjectId conversion issues
-        const attempts = await QuizAttempt.find({}).lean()
+        const attempts = await QuizAttempt.find({}).lean();
 
         // Filter attempts by userId string comparison
         const userAttempts = attempts.filter(
             (attempt) => attempt.userId.toString() === userId
-        )
+        );
 
         if (userAttempts.length === 0) {
             return {
@@ -105,39 +105,39 @@ export const getUserQuizPerformanceFromDB = async (
                     categoryBreakdown: [],
                     recentAttempts: []
                 }
-            }
+            };
         }
 
         // Calculate overall stats
-        const totalAttempts = userAttempts.length
+        const totalAttempts = userAttempts.length;
         const uniqueQuizzes = new Set(
             userAttempts.map((a) => a.quizId.toString())
-        ).size
+        ).size;
         const averageScore = Math.round(
             userAttempts.reduce((sum, attempt) => sum + attempt.score, 0) /
                 totalAttempts
-        )
-        const bestScore = Math.max(...userAttempts.map((a) => a.score))
+        );
+        const bestScore = Math.max(...userAttempts.map((a) => a.score));
         const totalTimeSpent = userAttempts.reduce(
             (sum, attempt) => sum + (attempt.timeTaken || 0),
             0
-        )
+        );
 
         // Category breakdown
         const categoryMap = new Map<
             string,
             { scores: number[]; attempts: number }
-        >()
+        >();
 
         userAttempts.forEach((attempt) => {
-            const category = attempt.categoryName
+            const category = attempt.categoryName;
             if (!categoryMap.has(category)) {
-                categoryMap.set(category, { scores: [], attempts: 0 })
+                categoryMap.set(category, { scores: [], attempts: 0 });
             }
-            const categoryData = categoryMap.get(category)!
-            categoryData.scores.push(attempt.score)
-            categoryData.attempts++
-        })
+            const categoryData = categoryMap.get(category)!;
+            categoryData.scores.push(attempt.score);
+            categoryData.attempts++;
+        });
 
         const categoryBreakdown = Array.from(categoryMap.entries()).map(
             ([categoryName, data]) => ({
@@ -149,7 +149,7 @@ export const getUserQuizPerformanceFromDB = async (
                 ),
                 bestScore: Math.max(...data.scores)
             })
-        )
+        );
 
         // Recent attempts (last 10)
         const recentAttempts = userAttempts.slice(0, 10).map((attempt) => ({
@@ -160,7 +160,7 @@ export const getUserQuizPerformanceFromDB = async (
             completedAt:
                 attempt.completedAt?.toISOString() || new Date().toISOString(),
             totalTimeSpent: attempt.timeTaken || 0
-        }))
+        }));
 
         const performanceStats: UserPerformanceStats = {
             totalAttempts,
@@ -170,11 +170,11 @@ export const getUserQuizPerformanceFromDB = async (
             totalTimeSpent,
             categoryBreakdown,
             recentAttempts
-        }
+        };
 
-        return { data: performanceStats }
+        return { data: performanceStats };
     } catch (error) {
-        console.error("Error getting user performance:", error)
+        console.error('Error getting user performance:', error);
         // Return empty results instead of error for better UX
         return {
             data: {
@@ -186,9 +186,9 @@ export const getUserQuizPerformanceFromDB = async (
                 categoryBreakdown: [],
                 recentAttempts: []
             }
-        }
+        };
     }
-}
+};
 
 // Get leaderboard entries
 export const getLeaderboardFromDB = async (
@@ -198,24 +198,24 @@ export const getLeaderboardFromDB = async (
         const attempts = await QuizAttempt.aggregate([
             {
                 $lookup: {
-                    from: "users",
-                    localField: "userId",
-                    foreignField: "_id",
-                    as: "user"
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'user'
                 }
             },
             {
-                $unwind: "$user"
+                $unwind: '$user'
             },
             {
                 $group: {
-                    _id: "$userId",
-                    username: { $first: "$user.name" },
-                    image: { $first: "$user.image" },
-                    bestScore: { $max: "$score" },
+                    _id: '$userId',
+                    username: { $first: '$user.name' },
+                    image: { $first: '$user.image' },
+                    bestScore: { $max: '$score' },
                     totalAttempts: { $sum: 1 },
-                    averageScore: { $avg: "$score" },
-                    totalTimeSpent: { $sum: "$timeTaken" }
+                    averageScore: { $avg: '$score' },
+                    totalTimeSpent: { $sum: '$timeTaken' }
                 }
             },
             {
@@ -224,14 +224,14 @@ export const getLeaderboardFromDB = async (
             {
                 $limit: limit
             }
-        ])
+        ]);
 
-        return { data: attempts }
+        return { data: attempts };
     } catch (error) {
-        console.error("Error getting leaderboard:", error)
-        return { error: "Failed to get leaderboard" }
+        console.error('Error getting leaderboard:', error);
+        return { error: 'Failed to get leaderboard' };
     }
-}
+};
 
 // Get admin analytics for quiz system
 export const getQuizAdminAnalyticsFromDB =
@@ -244,44 +244,44 @@ export const getQuizAdminAnalyticsFromDB =
                 avgTimePerQuiz
             ] = await Promise.all([
                 QuizAttempt.countDocuments(),
-                QuizAttempt.distinct("userId").then((users) => users.length),
-                QuizAttempt.distinct("categoryName").then(
+                QuizAttempt.distinct('userId').then((users) => users.length),
+                QuizAttempt.distinct('categoryName').then(
                     (categories) => categories.length
                 ),
                 QuizAttempt.aggregate([
-                    { $group: { _id: null, avgTime: { $avg: "$timeTaken" } } }
+                    { $group: { _id: null, avgTime: { $avg: '$timeTaken' } } }
                 ]).then((result) => result[0]?.avgTime || 0)
-            ])
+            ]);
 
             // Category performance
             const categoryStats = await QuizAttempt.aggregate([
                 {
                     $group: {
-                        _id: "$categoryName",
+                        _id: '$categoryName',
                         totalAttempts: { $sum: 1 },
-                        averageScore: { $avg: "$score" },
-                        uniqueUsers: { $addToSet: "$userId" }
+                        averageScore: { $avg: '$score' },
+                        uniqueUsers: { $addToSet: '$userId' }
                     }
                 },
                 {
                     $addFields: {
-                        uniqueUserCount: { $size: "$uniqueUsers" }
+                        uniqueUserCount: { $size: '$uniqueUsers' }
                     }
                 },
                 {
                     $project: {
-                        categoryName: "$_id",
+                        categoryName: '$_id',
                         totalAttempts: 1,
-                        averageScore: { $round: ["$averageScore", 1] },
-                        uniqueUsers: "$uniqueUserCount"
+                        averageScore: { $round: ['$averageScore', 1] },
+                        uniqueUsers: '$uniqueUserCount'
                     }
                 },
                 { $sort: { totalAttempts: -1 } }
-            ])
+            ]);
 
             // Recent activity (last 7 days)
-            const sevenDaysAgo = new Date()
-            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
             const recentActivity = await QuizAttempt.aggregate([
                 { $match: { completedAt: { $gte: sevenDaysAgo } } },
@@ -289,16 +289,16 @@ export const getQuizAdminAnalyticsFromDB =
                     $group: {
                         _id: {
                             $dateToString: {
-                                format: "%Y-%m-%d",
-                                date: "$completedAt"
+                                format: '%Y-%m-%d',
+                                date: '$completedAt'
                             }
                         },
                         count: { $sum: 1 },
-                        avgScore: { $avg: "$score" }
+                        avgScore: { $avg: '$score' }
                     }
                 },
                 { $sort: { _id: 1 } }
-            ])
+            ]);
 
             const analytics = {
                 overview: {
@@ -309,11 +309,11 @@ export const getQuizAdminAnalyticsFromDB =
                 },
                 categoryStats,
                 recentActivity
-            }
+            };
 
-            return { data: analytics }
+            return { data: analytics };
         } catch (error) {
-            console.error("Error getting admin analytics:", error)
-            return { error: "Failed to get admin analytics" }
+            console.error('Error getting admin analytics:', error);
+            return { error: 'Failed to get admin analytics' };
         }
-    }
+    };

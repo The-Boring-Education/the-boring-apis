@@ -1,26 +1,26 @@
-import { createAuthOptions } from "@/config/auth"
-import NextAuth from "next-auth"
+import { createAuthOptions } from '@/config/auth';
+import NextAuth from 'next-auth';
 
-import { routes } from "@/config/constants"
-import { createUserInDB, getUserByEmailFromDB } from "@/database"
-import { connectDB } from "@/middleware/api"
+import { routes } from '@/config/constants';
+import { createUserInDB, getUserByEmailFromDB } from '@/database';
+import { connectDB } from '@/middleware/api';
 
 const authOptions = createAuthOptions({
     pages: {
         signIn: routes?.register
     },
     onSignIn: async (user, account) => {
-        if (!user) return false
+        if (!user) return false;
 
-        const { name, email } = user
+        const { name, email } = user;
 
-        if (!email || !name) return false
+        if (!email || !name) return false;
 
         try {
-            await connectDB()
+            await connectDB();
 
             // Find or create the user in MongoDB
-            const { data: existingUser } = await getUserByEmailFromDB(email)
+            const { data: existingUser } = await getUserByEmailFromDB(email);
 
             if (!existingUser) {
                 // Create a new user in MongoDB if not found
@@ -28,37 +28,37 @@ const authOptions = createAuthOptions({
                     name,
                     email,
                     image: user.image,
-                    provider: account?.provider || "google",
+                    provider: account?.provider || 'google',
                     providerAccountId: account?.providerAccountId || user.id
-                })
+                });
 
                 // Attach the MongoDB _id to the user object
-                user.id = result._id.toString()
+                user.id = result._id.toString();
             } else {
                 // If the user exists, attach the MongoDB _id to the user object
-                user.id = existingUser._id.toString()
+                user.id = existingUser._id.toString();
             }
 
-            return true // Allow the sign in
+            return true; // Allow the sign in
         } catch (error) {
-            console.error("Error signing in:", error)
-            return false
+            console.error('Error signing in:', error);
+            return false;
         }
     },
     onSession: async (session, token) => {
         // Attach the MongoDB user ID to the session object
-        session.user.id = token.sub
+        session.user.id = token.sub;
 
         const { data: existingUser } = await getUserByEmailFromDB(
             session.user.email
-        )
+        );
         if (existingUser) {
-            session.user.isOnboarded = existingUser.isOnboarded
+            session.user.isOnboarded = existingUser.isOnboarded;
         }
 
-        return session
+        return session;
     }
-})
+});
 
-export default NextAuth(authOptions)
-export { authOptions }
+export default NextAuth(authOptions);
+export { authOptions };

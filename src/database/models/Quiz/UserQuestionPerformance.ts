@@ -21,66 +21,66 @@ export interface UserQuestionPerformanceModel {
 }
 
 const UserQuestionPerformanceSchema = new Schema<UserQuestionPerformanceModel>(
-  {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: DATABASE_MODELS.USER,
-      required: [true, 'User ID is required'],
+    {
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: DATABASE_MODELS.USER,
+            required: [true, 'User ID is required']
+        },
+        questionId: {
+            type: Schema.Types.ObjectId,
+            required: [true, 'Question ID is required']
+        },
+        categoryName: {
+            type: String,
+            required: [true, 'Category name is required']
+        },
+        difficulty: {
+            type: String,
+            enum: ['easy', 'medium', 'hard'],
+            required: [true, 'Difficulty is required']
+        },
+        attempts: {
+            type: Number,
+            default: 0,
+            min: 0
+        },
+        correctAttempts: {
+            type: Number,
+            default: 0,
+            min: 0
+        },
+        averageTime: {
+            type: Number,
+            default: 0,
+            min: 0
+        },
+        lastAttemptedAt: {
+            type: Date,
+            default: Date.now
+        },
+        strengthLevel: {
+            type: Number,
+            default: 0,
+            min: 0,
+            max: 1
+        },
+        nextReviewDate: {
+            type: Date,
+            default: Date.now
+        },
+        easeFactor: {
+            type: Number,
+            default: 2.5, // SuperMemo-2 default
+            min: 1.3
+        },
+        interval: {
+            type: Number,
+            default: 1, // days
+            min: 1
+        }
     },
-    questionId: {
-      type: Schema.Types.ObjectId,
-      required: [true, 'Question ID is required'],
-    },
-    categoryName: {
-      type: String,
-      required: [true, 'Category name is required'],
-    },
-    difficulty: {
-      type: String,
-      enum: ['easy', 'medium', 'hard'],
-      required: [true, 'Difficulty is required'],
-    },
-    attempts: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-    correctAttempts: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-    averageTime: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-    lastAttemptedAt: {
-      type: Date,
-      default: Date.now,
-    },
-    strengthLevel: {
-      type: Number,
-      default: 0,
-      min: 0,
-      max: 1,
-    },
-    nextReviewDate: {
-      type: Date,
-      default: Date.now,
-    },
-    easeFactor: {
-      type: Number,
-      default: 2.5, // SuperMemo-2 default
-      min: 1.3,
-    },
-    interval: {
-      type: Number,
-      default: 1, // days
-      min: 1,
-    },
-  },
-  { timestamps: true }
+    { timestamps: true }
 );
 
 // Unique index to prevent duplicate records
@@ -92,7 +92,7 @@ UserQuestionPerformanceSchema.index({ userId: 1, categoryName: 1 });
 UserQuestionPerformanceSchema.index({ userId: 1, strengthLevel: 1 });
 
 const UserQuestionPerformance: Model<UserQuestionPerformanceModel> =
-  models?.UserQuestionPerformance || 
+  models?.UserQuestionPerformance ||
   model<UserQuestionPerformanceModel>(DATABASE_MODELS.USER_QUESTION_PERFORMANCE, UserQuestionPerformanceSchema);
 
 export default UserQuestionPerformance;

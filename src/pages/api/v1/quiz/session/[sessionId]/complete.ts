@@ -1,58 +1,58 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import type { QuizSessionQuestion } from "@/database"
-import { completeQuizSessionInDB } from "@/database"
-import { cors } from "@/utils"
-import { connectDB } from "@/middleware"
+import type { QuizSessionQuestion } from '@/database';
+import { completeQuizSessionInDB } from '@/database';
+import { cors } from '@/utils';
+import { connectDB } from '@/middleware';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-    await cors(req, res)
+    await cors(req, res);
 
-    if (req.method !== "POST") {
-        return res.status(405).json({ error: "Method not allowed" })
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { sessionId } = req.query
+    const { sessionId } = req.query;
 
     // Validation
-    if (!sessionId || typeof sessionId !== "string") {
-        return res.status(400).json({ error: "Session ID is required" })
+    if (!sessionId || typeof sessionId !== 'string') {
+        return res.status(400).json({ error: 'Session ID is required' });
     }
 
     try {
-        await connectDB()
+        await connectDB();
 
         const { data: session, error } = await completeQuizSessionInDB(
             sessionId
-        )
+        );
 
         if (error || !session) {
             return res
                 .status(400)
-                .json({ error: error || "Failed to complete session" })
+                .json({ error: error || 'Failed to complete session' });
         }
 
         // Calculate detailed results
         const answeredQuestions = session.questions.filter(
             (q: QuizSessionQuestion) => q.userAnswer !== undefined
-        )
+        );
         const correctAnswers = answeredQuestions.filter(
             (q: QuizSessionQuestion) => q.isCorrect
-        ).length
-        const totalTime = session.totalTime || 0
+        ).length;
+        const totalTime = session.totalTime || 0;
 
         // Calculate badge earned
-        let badgeEarned = "bronze"
-        if (session.score! >= 90) badgeEarned = "platinum"
-        else if (session.score! >= 80) badgeEarned = "gold"
-        else if (session.score! >= 70) badgeEarned = "silver"
+        let badgeEarned = 'bronze';
+        if (session.score! >= 90) badgeEarned = 'platinum';
+        else if (session.score! >= 80) badgeEarned = 'gold';
+        else if (session.score! >= 70) badgeEarned = 'silver';
 
         // Calculate streak bonus (simplified)
         const consecutiveCorrect = calculateConsecutiveCorrect(
             session.questions
-        )
+        );
         const streakBonus =
-            consecutiveCorrect >= 3 ? consecutiveCorrect * 10 : 0
+            consecutiveCorrect >= 3 ? consecutiveCorrect * 10 : 0;
 
         const response = {
             sessionId: session._id,
@@ -65,12 +65,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             streakBonus,
             pointsEarned: correctAnswers * 10 + streakBonus,
             performance: {
-                easy: calculateDifficultyPerformance(session.questions, "easy"),
+                easy: calculateDifficultyPerformance(session.questions, 'easy'),
                 medium: calculateDifficultyPerformance(
                     session.questions,
-                    "medium"
+                    'medium'
                 ),
-                hard: calculateDifficultyPerformance(session.questions, "hard")
+                hard: calculateDifficultyPerformance(session.questions, 'hard')
             },
             detailedResults: session.questions.map(
                 (q: QuizSessionQuestion, index: number) => ({
@@ -85,33 +85,33 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     detailedExplanation: q.detailedExplanation
                 })
             )
-        }
+        };
 
         res.status(200).json({
             success: true,
             data: response
-        })
+        });
     } catch (error) {
-        console.error("Error completing quiz session:", error)
-        res.status(500).json({ error: "Internal server error" })
+        console.error('Error completing quiz session:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 }
 
 // Helper function to calculate consecutive correct answers
 function calculateConsecutiveCorrect(questions: any[]): number {
-    let maxStreak = 0
-    let currentStreak = 0
+    let maxStreak = 0;
+    let currentStreak = 0;
 
     for (const question of questions) {
         if (question.isCorrect) {
-            currentStreak++
-            maxStreak = Math.max(maxStreak, currentStreak)
+            currentStreak++;
+            maxStreak = Math.max(maxStreak, currentStreak);
         } else {
-            currentStreak = 0
+            currentStreak = 0;
         }
     }
 
-    return maxStreak
+    return maxStreak;
 }
 
 // Helper function to calculate performance by difficulty
@@ -122,21 +122,21 @@ function calculateDifficultyPerformance(
     const difficultyQuestions = questions.filter(
         (q: QuizSessionQuestion) =>
             q.difficulty === difficulty && q.userAnswer !== undefined
-    )
+    );
 
     if (difficultyQuestions.length === 0) {
-        return { attempted: 0, correct: 0, percentage: 0 }
+        return { attempted: 0, correct: 0, percentage: 0 };
     }
 
     const correct = difficultyQuestions.filter(
         (q: QuizSessionQuestion) => q.isCorrect
-    ).length
+    ).length;
 
     return {
         attempted: difficultyQuestions.length,
         correct,
         percentage: Math.round((correct / difficultyQuestions.length) * 100)
-    }
+    };
 }
 
-export default handler
+export default handler;

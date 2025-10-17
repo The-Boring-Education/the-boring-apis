@@ -1,43 +1,43 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { getUserQuizSessionsFromDB } from "@/database"
-import { cors } from "@/utils"
-import { connectDB } from "@/middleware"
+import { getUserQuizSessionsFromDB } from '@/database';
+import { cors } from '@/utils';
+import { connectDB } from '@/middleware';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-    await cors(req, res)
+    await cors(req, res);
 
-    if (req.method !== "GET") {
-        return res.status(405).json({ error: "Method not allowed" })
+    if (req.method !== 'GET') {
+        return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { userId } = req.query
-    const { status } = req.query
+    const { userId } = req.query;
+    const { status } = req.query;
 
     // Validation
-    if (!userId || typeof userId !== "string") {
-        return res.status(400).json({ error: "User ID is required" })
+    if (!userId || typeof userId !== 'string') {
+        return res.status(400).json({ error: 'User ID is required' });
     }
 
     if (
         status &&
-        !["in_progress", "completed", "abandoned"].includes(status as string)
+        !['in_progress', 'completed', 'abandoned'].includes(status as string)
     ) {
         return res.status(400).json({
-            error: "Invalid status. Must be in_progress, completed, or abandoned"
-        })
+            error: 'Invalid status. Must be in_progress, completed, or abandoned'
+        });
     }
 
     try {
-        await connectDB()
+        await connectDB();
 
         const { data: sessions, error } = await getUserQuizSessionsFromDB(
             userId,
-            status as "in_progress" | "completed" | "abandoned"
-        )
+            status as 'in_progress' | 'completed' | 'abandoned'
+        );
 
         if (error) {
-            return res.status(400).json({ error })
+            return res.status(400).json({ error });
         }
 
         // Format sessions for frontend consumption
@@ -45,7 +45,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             sessions?.map((session: any) => {
                 const answeredQuestions = session.questions.filter(
                     (q: any) => q.userAnswer !== undefined
-                ).length
+                ).length;
 
                 return {
                     sessionId: session._id,
@@ -66,19 +66,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     startedAt: session.startedAt,
                     completedAt: session.completedAt,
                     canResume:
-                        session.status === "in_progress" &&
+                        session.status === 'in_progress' &&
                         answeredQuestions < session.questionCount
-                }
-            }) || []
+                };
+            }) || [];
 
         res.status(200).json({
             success: true,
             data: formattedSessions
-        })
+        });
     } catch (error) {
-        console.error("Error fetching user sessions:", error)
-        res.status(500).json({ error: "Internal server error" })
+        console.error('Error fetching user sessions:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 }
 
-export default handler
+export default handler;

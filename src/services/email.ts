@@ -1,6 +1,6 @@
-import type { ExternalEmailRequest } from "@/interfaces"
+import type { ExternalEmailRequest } from '@/interfaces';
 
-import { emailTriggerService } from "./triggers"
+import { emailTriggerService } from './triggers';
 
 export const sendWelcomeEmail = async (data: {
     email: string
@@ -8,16 +8,16 @@ export const sendWelcomeEmail = async (data: {
     id: string
 }) => {
     const request: ExternalEmailRequest = {
-        emailType: "WELCOME",
+        emailType: 'WELCOME',
         userData: {
             email: data.email,
             name: data.name,
             id: data.id
         }
-    }
+    };
 
-    return emailTriggerService.sendExternalEmail(request)
-}
+    return emailTriggerService.sendExternalEmail(request);
+};
 
 export const sendCourseEnrollmentEmail = async (data: {
     email: string
@@ -27,7 +27,7 @@ export const sendCourseEnrollmentEmail = async (data: {
     courseDescription?: string
 }) => {
     const request: ExternalEmailRequest = {
-        emailType: "COURSE_ENROLLMENT",
+        emailType: 'COURSE_ENROLLMENT',
         userData: {
             email: data.email,
             name: data.name,
@@ -37,10 +37,10 @@ export const sendCourseEnrollmentEmail = async (data: {
             courseName: data.courseName,
             courseDescription: data.courseDescription
         }
-    }
+    };
 
-    return emailTriggerService.sendExternalEmail(request)
-}
+    return emailTriggerService.sendExternalEmail(request);
+};
 
 export const sendProjectEnrollmentEmail = async (data: {
     email: string
@@ -50,7 +50,7 @@ export const sendProjectEnrollmentEmail = async (data: {
     projectDescription?: string
 }) => {
     const request: ExternalEmailRequest = {
-        emailType: "PROJECT_ENROLLMENT",
+        emailType: 'PROJECT_ENROLLMENT',
         userData: {
             email: data.email,
             name: data.name,
@@ -60,10 +60,10 @@ export const sendProjectEnrollmentEmail = async (data: {
             projectName: data.projectName,
             projectDescription: data.projectDescription
         }
-    }
+    };
 
-    return emailTriggerService.sendExternalEmail(request)
-}
+    return emailTriggerService.sendExternalEmail(request);
+};
 
 export const sendInterviewPrepEnrollmentEmail = async (data: {
     email: string
@@ -73,7 +73,7 @@ export const sendInterviewPrepEnrollmentEmail = async (data: {
     sheetDescription?: string
 }) => {
     const request: ExternalEmailRequest = {
-        emailType: "INTERVIEW_PREP_ENROLLMENT",
+        emailType: 'INTERVIEW_PREP_ENROLLMENT',
         userData: {
             email: data.email,
             name: data.name,
@@ -83,10 +83,10 @@ export const sendInterviewPrepEnrollmentEmail = async (data: {
             sheetName: data.sheetName,
             sheetDescription: data.sheetDescription
         }
-    }
+    };
 
-    return emailTriggerService.sendExternalEmail(request)
-}
+    return emailTriggerService.sendExternalEmail(request);
+};
 
 export const sendCourseCompletionEmail = async (data: {
     email: string
@@ -98,7 +98,7 @@ export const sendCourseCompletionEmail = async (data: {
     certificateUrl?: string
 }) => {
     const request: ExternalEmailRequest = {
-        emailType: "COURSE_COMPLETION",
+        emailType: 'COURSE_COMPLETION',
         userData: {
             email: data.email,
             name: data.name,
@@ -110,10 +110,10 @@ export const sendCourseCompletionEmail = async (data: {
             completionDate: data.completionDate,
             certificateUrl: data.certificateUrl
         }
-    }
+    };
 
-    return emailTriggerService.sendExternalEmail(request)
-}
+    return emailTriggerService.sendExternalEmail(request);
+};
 
 export const sendEmail = async (request: ExternalEmailRequest) =>
-    emailTriggerService.sendExternalEmail(request)
+    emailTriggerService.sendExternalEmail(request);

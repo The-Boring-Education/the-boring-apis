@@ -1,6 +1,6 @@
-import mongoose, { type Model } from "mongoose"
+import mongoose, { type Model } from 'mongoose';
 
-import type { DatabaseQueryResponseType } from "@/interfaces"
+import type { DatabaseQueryResponseType } from '@/interfaces';
 
 /**
  * General utility to get total count of documents for any Mongoose model.
@@ -9,12 +9,12 @@ const getTotalCountFromModel = async (
     model: Model<any>
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const count = await model.countDocuments()
-        return { data: count }
+        const count = await model.countDocuments();
+        return { data: count };
     } catch (error) {
-        return { error: "Error while counting documents" }
+        return { error: 'Error while counting documents' };
     }
-}
+};
 
 /**
  * General utility to get paginated documents for any Mongoose model.
@@ -28,12 +28,12 @@ const getAllDocumentsFromModel = async (
     sortOptions: Record<string, 1 | -1> = { createdAt: -1 }
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const skip = (page - 1) * limit
-        const query = model.find().sort(sortOptions).skip(skip).limit(limit)
-        if (populateOptions) query.populate(populateOptions)
-        const docs = await query.exec()
+        const skip = (page - 1) * limit;
+        const query = model.find().sort(sortOptions).skip(skip).limit(limit);
+        if (populateOptions) query.populate(populateOptions);
+        const docs = await query.exec();
 
-        const total = await model.countDocuments()
+        const total = await model.countDocuments();
         return {
             data: {
                 items: docs,
@@ -41,18 +41,18 @@ const getAllDocumentsFromModel = async (
                 currentPage: page,
                 totalPages: Math.ceil(total / limit)
             }
-        }
+        };
     } catch (error) {
-        return { error: "Error while fetching documents" }
+        return { error: 'Error while fetching documents' };
     }
-}
+};
 
 /**
  * Utility to convert string or ObjectId to mongoose ObjectId
  */
 const toObjectId = (id: string | mongoose.Types.ObjectId) => {
-    if (id instanceof mongoose.Types.ObjectId) return id
-    return new mongoose.Types.ObjectId(id)
-}
+    if (id instanceof mongoose.Types.ObjectId) return id;
+    return new mongoose.Types.ObjectId(id);
+};
 
-export { getAllDocumentsFromModel, getTotalCountFromModel, toObjectId }
+export { getAllDocumentsFromModel, getTotalCountFromModel, toObjectId };

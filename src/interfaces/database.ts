@@ -1,4 +1,4 @@
-import type { Document, Schema, Types } from "mongoose"
+import type { Document, Schema, Types } from 'mongoose';
 
 import type {
     APIMethodTypes,
@@ -24,7 +24,7 @@ import type {
     UserPointsActionType,
     UserRoleType,
     WorkDomainType
-} from "./api"
+} from './api';
 
 export interface UserModel {
     name: string
@@ -235,7 +235,7 @@ export interface WebhookEvent {
     order_id: string
     payment_id?: string
     isPaid: boolean
-    payment_status: "SUCCESS" | "FAILED"
+    payment_status: 'SUCCESS' | 'FAILED'
 }
 
 export interface Video {
@@ -440,11 +440,11 @@ export interface ChallengeModel extends Document {
     description?: string
     totalDays: number
     currentDay: number
-    status: "active" | "completed" | "paused" | "cancelled"
+    status: 'active' | 'completed' | 'paused' | 'cancelled'
     startDate: Date
     endDate: Date
     isPredefined: boolean
-    predefinedType?: "21DaysPython" | "21DaysJava" | "50DaysInternship"
+    predefinedType?: '21DaysPython' | '21DaysJava' | '50DaysInternship'
     gamificationPoints: number
 }
 
@@ -466,7 +466,7 @@ export interface UserInterestModel {
     eventDescription?: string
     metadata?: Record<string, any>
     isActive: boolean
-    source: "WEBAPP" | "PREPYATRA" | "ADMIN" | "API"
+    source: 'WEBAPP' | 'PREPYATRA' | 'ADMIN' | 'API'
     ipAddress?: string
     userAgent?: string
 }
@@ -837,7 +837,7 @@ export interface BuildOrderPayloadProps {
 export interface UpdatePaymentStatusPayloadProps {
     orderId: string
     paymentId: string | undefined
-    status: "SUCCESS" | "FAILED"
+    status: 'SUCCESS' | 'FAILED'
 }
 
 export interface PrepYatraPaymentPayload
@@ -879,16 +879,16 @@ export interface MarkQuestionStarredRequestProps {
 // User Interest API Interfaces
 export interface CreateUserInterestRequestProps {
     userId: string
-    eventType: import("@/config/constants").InterestEventType
+    eventType: import('@/config/constants').InterestEventType
     eventDescription?: string
     metadata?: Record<string, any>
-    source: "WEBAPP" | "PREPYATRA" | "ADMIN" | "API"
+    source: 'WEBAPP' | 'PREPYATRA' | 'ADMIN' | 'API'
 }
 
 export interface GetUserInterestsRequestProps {
     userId?: string
-    eventType?: import("@/config/constants").InterestEventType
-    source?: "WEBAPP" | "PREPYATRA" | "ADMIN" | "API"
+    eventType?: import('@/config/constants').InterestEventType
+    source?: 'WEBAPP' | 'PREPYATRA' | 'ADMIN' | 'API'
     isActive?: boolean
     page?: number
     limit?: number
@@ -897,11 +897,11 @@ export interface GetUserInterestsRequestProps {
 export interface UserInterestResponseProps {
     _id: string
     userId: string
-    eventType: import("@/config/constants").InterestEventType
+    eventType: import('@/config/constants').InterestEventType
     eventDescription?: string
     metadata?: Record<string, any>
     isActive: boolean
-    source: "WEBAPP" | "PREPYATRA" | "ADMIN" | "API"
+    source: 'WEBAPP' | 'PREPYATRA' | 'ADMIN' | 'API'
     ipAddress?: string
     userAgent?: string
     createdAt: string

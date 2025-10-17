@@ -10,12 +10,12 @@ export interface MentorshipDocumentModel {
 }
 
 const mentorshipSchema: Schema<MentorshipDocumentModel> = new Schema(
-  {
-    user: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
-    note: { type: String },
-    selectedAt: { type: Date, default: () => new Date() },
-  },
-  { timestamps: true }
+    {
+        user: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+        note: { type: String },
+        selectedAt: { type: Date, default: () => new Date() }
+    },
+    { timestamps: true }
 );
 
 const Mentorship: Model<MentorshipDocumentModel> =

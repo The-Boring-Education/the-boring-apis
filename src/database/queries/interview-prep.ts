@@ -1,4 +1,4 @@
-import { modelSelectParams } from "@/config/constants"
+import { modelSelectParams } from '@/config/constants';
 import type {
     AddInterviewQuestionRequestPayloadProps,
     AddInterviewSheetRequestPayloadProps,
@@ -6,76 +6,76 @@ import type {
     DatabaseQueryResponseType,
     SheetEnrollmentRequestProps,
     UpdateInterviewSheetRequestPayloadProps
-} from "@/interfaces"
+} from '@/interfaces';
 
-import { InterviewSheet, UserSheet } from "../models"
-import { toObjectId } from "./common"
-import { updateUserPointsInDB } from "./gamification"
+import { InterviewSheet, UserSheet } from '../models';
+import { toObjectId } from './common';
+import { updateUserPointsInDB } from './gamification';
 
 const addAInterviewSheetToDB = async (
     sheetPayload: AddInterviewSheetRequestPayloadProps
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const sheet = new InterviewSheet(sheetPayload)
-        await sheet.save()
-        return { data: sheet }
+        const sheet = new InterviewSheet(sheetPayload);
+        await sheet.save();
+        return { data: sheet };
     } catch (error) {
-        return { error }
+        return { error };
     }
-}
+};
 
 const getAllInterviewSheetsFromDB =
     async (): Promise<DatabaseQueryResponseType> => {
         try {
             const sheet = await InterviewSheet.find()
                 .select(modelSelectParams.coursePreview)
-                .exec()
+                .exec();
 
             if (!sheet) {
-                return { error: "InterviewSheet not found" }
+                return { error: 'InterviewSheet not found' };
             }
 
-            return { data: sheet }
+            return { data: sheet };
         } catch (error) {
-            return { error }
+            return { error };
         }
-    }
+    };
 
 const getInterviewSheetBySlugFromDB = async (
     slug: string,
     userId?: string
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const sheet = await InterviewSheet.findOne({ slug })
+        const sheet = await InterviewSheet.findOne({ slug });
 
         if (!sheet) {
-            return { error: "Sheet not found" }
+            return { error: 'Sheet not found' };
         }
 
-        let isEnrolled = false
-        let mappedQuestions = sheet.questions.map((q) => q.toObject())
+        let isEnrolled = false;
+        let mappedQuestions = sheet.questions.map((q) => q.toObject());
 
         if (userId) {
             const userSheet = await UserSheet.findOne({
                 userId,
                 sheetId: sheet._id
-            })
+            });
 
-            isEnrolled = !!userSheet
+            isEnrolled = !!userSheet;
 
             if (userSheet) {
                 mappedQuestions = sheet.questions.map((question) => {
                     const userQuestion = userSheet.questions.find(
                         (uq) =>
                             uq.questionId.toString() === question._id.toString()
-                    )
+                    );
 
                     return {
                         ...question.toObject(),
                         isCompleted: userQuestion?.isCompleted || false,
                         isStarred: userQuestion?.isStarred || false
-                    }
-                })
+                    };
+                });
             }
         }
 
@@ -85,27 +85,27 @@ const getInterviewSheetBySlugFromDB = async (
                 isEnrolled,
                 questions: mappedQuestions
             }
-        }
+        };
     } catch (error) {
-        return { error }
+        return { error };
     }
-}
+};
 
 const getInterviewSheetByIDFromDB = async (
     id: string
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const sheet = await InterviewSheet.findOne({ _id: id })
+        const sheet = await InterviewSheet.findOne({ _id: id });
 
         if (!sheet) {
-            return { error: "Sheet not found" }
+            return { error: 'Sheet not found' };
         }
 
-        return { data: sheet }
+        return { data: sheet };
     } catch (error) {
-        return { error }
+        return { error };
     }
-}
+};
 
 const updateInterviewSheetInDB = async ({
     sheetId,
@@ -116,15 +116,15 @@ const updateInterviewSheetInDB = async ({
             sheetId,
             updatedData,
             { new: true }
-        )
+        );
 
-        if (!updatedCourse) return { error: "Sheet does not exists" }
+        if (!updatedCourse) return { error: 'Sheet does not exists' };
 
-        return { data: updatedCourse }
+        return { data: updatedCourse };
     } catch (error) {
-        return { error: "Failed while updating sheet" }
+        return { error: 'Failed while updating sheet' };
     }
-}
+};
 
 const updateInterviewQuestionInDB = async (
     sheetId: string,
@@ -138,23 +138,23 @@ const updateInterviewQuestionInDB = async (
 ) => {
     try {
         const course = await InterviewSheet.findOneAndUpdate(
-            { _id: sheetId, "questions._id": questionId },
+            { _id: sheetId, 'questions._id': questionId },
             {
                 $set: {
-                    "questions.$.title": title,
-                    "questions.$.question": question,
-                    "questions.$.answer": answer,
-                    "questions.$.frequency": frequency
+                    'questions.$.title': title,
+                    'questions.$.question': question,
+                    'questions.$.answer': answer,
+                    'questions.$.frequency': frequency
                 }
             },
             { new: true }
-        )
+        );
 
-        return { data: course }
+        return { data: course };
     } catch (error) {
-        return { error: "Failed to update chapter to course" }
+        return { error: 'Failed to update chapter to course' };
     }
-}
+};
 
 // Delete a question from a sheet
 const deleteQuestionFromSheetInDB = async (
@@ -166,13 +166,13 @@ const deleteQuestionFromSheetInDB = async (
             { _id: sheetId },
             { $pull: { questions: { _id: questionId } } },
             { new: true }
-        )
+        );
 
-        return { data: course }
+        return { data: course };
     } catch (error) {
-        return { error: "Failed to delete question from sheet" }
+        return { error: 'Failed to delete question from sheet' };
     }
-}
+};
 
 const addQuestionToInterviewSheetInDB = async (
     sheetId: string,
@@ -183,59 +183,59 @@ const addQuestionToInterviewSheetInDB = async (
             { _id: sheetId },
             { $push: { questions: question } },
             { new: true }
-        )
+        );
 
         if (!updatedSheet) {
-            return { error: "Interview sheet not found" }
+            return { error: 'Interview sheet not found' };
         }
 
-        return { data: updatedSheet }
+        return { data: updatedSheet };
     } catch (error) {
-        return { error: "Failed to add question to interview sheet" }
+        return { error: 'Failed to add question to interview sheet' };
     }
-}
+};
 
 const enrollInASheet = async ({
     userId,
     sheetId
 }: SheetEnrollmentRequestProps): Promise<DatabaseQueryResponseType> => {
     try {
-        const sheet = await InterviewSheet.findById(sheetId).lean()
+        const sheet = await InterviewSheet.findById(sheetId).lean();
         if (!sheet) {
-            return { error: "Sheet not found" }
+            return { error: 'Sheet not found' };
         }
 
         const questions = sheet.questions.map((question: any) => ({
             questionId: question._id,
             isCompleted: false
-        }))
+        }));
 
         const userSheet = await UserSheet.create({
             userId,
             sheetId,
             questions
-        })
+        });
 
         // Enrollment Sheet was successful add Points
-        await updateUserPointsInDB(userId, "ENROLL_SHEET")
+        await updateUserPointsInDB(userId, 'ENROLL_SHEET');
 
-        return { data: userSheet }
+        return { data: userSheet };
     } catch (error) {
-        return { error: "Failed while enrolling in a sheet" }
+        return { error: 'Failed while enrolling in a sheet' };
     }
-}
+};
 
 const getEnrolledSheetFromDB = async ({
     userId,
     sheetId
 }: SheetEnrollmentRequestProps): Promise<DatabaseQueryResponseType> => {
     try {
-        const enrolledSheet = await UserSheet.findOne({ userId, sheetId })
-        return { data: enrolledSheet }
+        const enrolledSheet = await UserSheet.findOne({ userId, sheetId });
+        return { data: enrolledSheet };
     } catch (error) {
-        return { error: "Failed while fetching enrolled sheet" }
+        return { error: 'Failed while fetching enrolled sheet' };
     }
-}
+};
 
 const getAllEnrolledSheetsFromDB = async (
     userId: string
@@ -243,21 +243,21 @@ const getAllEnrolledSheetsFromDB = async (
     try {
         const enrolledSheets = await UserSheet.find({ userId })
             .populate({
-                path: "sheet",
+                path: 'sheet',
                 select: modelSelectParams.coursePreview
             })
-            .exec()
+            .exec();
 
         return {
             data: enrolledSheets.map((sheet) => ({
                 ...sheet.sheet.toObject(),
                 isEnrolled: true
             }))
-        }
+        };
     } catch (error) {
-        return { error: "Failed while fetching enrolled sheets" }
+        return { error: 'Failed while fetching enrolled sheets' };
     }
-}
+};
 
 const markQuestionCompletedByUser = async (
     userId: string,
@@ -267,109 +267,109 @@ const markQuestionCompletedByUser = async (
 ): Promise<DatabaseQueryResponseType> => {
     try {
         const updatedSheet = await UserSheet.findOneAndUpdate(
-            { userId, sheetId, "questions.questionId": questionId },
-            { $set: { "questions.$.isCompleted": isCompleted } },
+            { userId, sheetId, 'questions.questionId': questionId },
+            { $set: { 'questions.$.isCompleted': isCompleted } },
             { new: true }
-        )
+        );
 
         if (!updatedSheet) {
-            return { error: "User or question not found" }
+            return { error: 'User or question not found' };
         }
 
-        return { data: updatedSheet }
+        return { data: updatedSheet };
     } catch (error) {
-        return { error: "Failed to mark question as completed" }
+        return { error: 'Failed to mark question as completed' };
     }
-}
+};
 
 const getAllQuestionsByUser = async (userId: string) => {
     try {
         const userSheets = await UserSheet.find({ userId }).populate(
-            "questions.questionId"
-        )
+            'questions.questionId'
+        );
 
         if (!userSheets.length) {
-            return { data: [], error: "No questions found for this user" }
+            return { data: [], error: 'No questions found for this user' };
         }
 
-        const allQuestions = userSheets.flatMap((sheet) => sheet.questions)
+        const allQuestions = userSheets.flatMap((sheet) => sheet.questions);
 
-        return { data: allQuestions, error: null }
+        return { data: allQuestions, error: null };
     } catch (error) {
         return {
             data: null,
-            error: "Error fetching questions from the database"
-        }
+            error: 'Error fetching questions from the database'
+        };
     }
-}
+};
 
 const getASheetFromDBById = async (
     sheetId: string,
     userId?: string
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const sheet = await InterviewSheet.findById(sheetId)
+        const sheet = await InterviewSheet.findById(sheetId);
 
         if (!sheet) {
-            return { error: "Sheet not found" }
+            return { error: 'Sheet not found' };
         }
 
         if (userId) {
-            const { data } = await getEnrolledSheetFromDB({ userId, sheetId })
+            const { data } = await getEnrolledSheetFromDB({ userId, sheetId });
 
             return {
                 data: {
                     ...sheet.toObject(),
                     isEnrolled: !!data
                 } as BaseInterviewSheetResponseProps
-            }
+            };
         }
 
-        return { data: sheet }
+        return { data: sheet };
     } catch (error) {
-        return { error: `Failed while fetching a sheet ${error}` }
+        return { error: `Failed while fetching a sheet ${error}` };
     }
-}
+};
 
 const getASheetForUserFromDB = async (userId: string, sheetId: string) => {
     try {
         const userSheet = await UserSheet.findOne({ userId, sheetId })
             .populate({
-                path: "sheet"
+                path: 'sheet'
             })
-            .exec()
+            .exec();
 
         if (!userSheet) {
-            const { data: sheet } = await getASheetFromDBById(sheetId)
-            return { data: { ...sheet.toObject(), isEnrolled: false } }
+            const { data: sheet } = await getASheetFromDBById(sheetId);
+            return { data: { ...sheet.toObject(), isEnrolled: false } };
         }
 
         const mappedQuestions = userSheet.sheet.questions.map((question) => {
             const userQuestion = userSheet.questions.find(
                 (uc) => uc.questionId.toString() === question._id.toString()
-            )
+            );
             return {
                 ...question.toObject(),
                 isCompleted: userQuestion?.isCompleted,
                 isStarred: userQuestion?.isStarred
-            }
-        })
+            };
+        });
 
         const updatedSheetResponse = {
             ...userSheet.sheet.toObject(),
             questions: mappedQuestions
-        }
+        };
 
         return {
             data: {
                 ...updatedSheetResponse,
                 isEnrolled: true
             } as BaseInterviewSheetResponseProps
-        }
+        };
     } catch (error) {
-        return { error: "Failed to fetch courses with chapter status" }
+        return { error: 'Failed to fetch courses with chapter status' };
     }
-}
+};
 
 const markQuestionStarredByUser = async (
     userId: string,
@@ -378,40 +378,40 @@ const markQuestionStarredByUser = async (
     isStarred: boolean
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const qid = toObjectId(questionId)
+        const qid = toObjectId(questionId);
 
         const updatedSheet = await UserSheet.findOneAndUpdate(
-            { userId, sheetId, "questions.questionId": qid },
-            { $set: { "questions.$.isStarred": isStarred } },
+            { userId, sheetId, 'questions.questionId': qid },
+            { $set: { 'questions.$.isStarred': isStarred } },
             { new: true }
-        )
+        );
 
         if (!updatedSheet) {
-            return { error: "User or question not found" }
+            return { error: 'User or question not found' };
         }
 
-        return { data: updatedSheet }
+        return { data: updatedSheet };
     } catch (error) {
-        return { error: "Failed to mark question as starred" }
+        return { error: 'Failed to mark question as starred' };
     }
-}
+};
 
 const getStarredQuestionsFromDB = async (userId: string, sheetId: string) => {
     try {
-        const userSheet = await UserSheet.findOne({ userId, sheetId })
+        const userSheet = await UserSheet.findOne({ userId, sheetId });
 
         if (!userSheet) {
-            return { data: [], error: "UserSheet not found" }
+            return { data: [], error: 'UserSheet not found' };
         }
 
         const starredQuestions = userSheet.questions.filter(
             (q) => q.isStarred === true
-        )
-        return { data: starredQuestions }
+        );
+        return { data: starredQuestions };
     } catch (error) {
-        return { error: "Failed to get starred questions" }
+        return { error: 'Failed to get starred questions' };
     }
-}
+};
 
 export {
     addAInterviewSheetToDB,
@@ -430,4 +430,4 @@ export {
     markQuestionStarredByUser,
     updateInterviewQuestionInDB,
     updateInterviewSheetInDB
-}
+};

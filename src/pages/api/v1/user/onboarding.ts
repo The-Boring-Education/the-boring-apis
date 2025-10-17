@@ -1,44 +1,44 @@
-import type { NextApiRequest, NextApiResponse } from "next"
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { apiStatusCodes } from "@/config/constants"
+import { apiStatusCodes } from '@/config/constants';
 import {
     getUserByUserNameFromDB,
     onboardPrepYatraUserTODB,
     onboardUserToDB
-} from "@/database"
+} from '@/database';
 import type {
     AddOnboardingPayloadProps,
     AddPrepYatraOnboardingPayloadProps
-} from "@/interfaces"
-import { cors, sendAPIResponse } from "@/utils"
-import { connectDB } from "@/middleware"
+} from '@/interfaces';
+import { cors, sendAPIResponse } from '@/utils';
+import { connectDB } from '@/middleware';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    await cors(req, res)
-    await connectDB()
+    await cors(req, res);
+    await connectDB();
 
-    const { method } = req
+    const { method } = req;
     const { userId, userName } = req.query as {
         userId: string
         userName: string
-    }
+    };
 
     switch (method) {
-        case "GET":
-            return getUserByUsername(req, res, userName)
-        case "POST":
-            return handleUserOnboarding(req, res, userId)
-        case "PUT":
-            return handlePrepYatraOnboarding(req, res, userId)
+        case 'GET':
+            return getUserByUsername(req, res, userName);
+        case 'POST':
+            return handleUserOnboarding(req, res, userId);
+        case 'PUT':
+            return handlePrepYatraOnboarding(req, res, userId);
         default:
             return res.status(apiStatusCodes.BAD_REQUEST).json(
                 sendAPIResponse({
                     status: false,
                     message: `Method ${method} Not Allowed`
                 })
-            )
+            );
     }
-}
+};
 
 const getUserByUsername = async (
     req: NextApiRequest,
@@ -49,41 +49,41 @@ const getUserByUsername = async (
         return res.status(apiStatusCodes.BAD_REQUEST).json(
             sendAPIResponse({
                 status: false,
-                message: "Username is required"
+                message: 'Username is required'
             })
-        )
+        );
     }
 
     try {
-        const { data, error } = await getUserByUserNameFromDB(userName)
+        const { data, error } = await getUserByUserNameFromDB(userName);
 
         if (error) {
             // Username already exists
             return res.status(apiStatusCodes.OKAY).json(
                 sendAPIResponse({
                     status: false,
-                    message: "Username already taken. Please choose another."
+                    message: 'Username already taken. Please choose another.'
                 })
-            )
+            );
         }
 
         return res.status(apiStatusCodes.OKAY).json(
             sendAPIResponse({
                 status: true,
                 data,
-                message: "Username is available."
+                message: 'Username is available.'
             })
-        )
+        );
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
-                message: "Error while checking userName",
+                message: 'Error while checking userName',
                 error
             })
-        )
+        );
     }
-}
+};
 
 const handleUserOnboarding = async (
     req: NextApiRequest,
@@ -92,16 +92,16 @@ const handleUserOnboarding = async (
 ) => {
     try {
         const { userName, occupation, purpose, contactNo, from } =
-            req.body as AddOnboardingPayloadProps
+            req.body as AddOnboardingPayloadProps;
 
         if (!userId || !userName || !occupation || !purpose || !contactNo) {
             return res.status(apiStatusCodes.BAD_REQUEST).json(
                 sendAPIResponse({
                     status: false,
-                    error: "Missing required fields",
-                    message: "Please provide all required fields"
+                    error: 'Missing required fields',
+                    message: 'Please provide all required fields'
                 })
-            )
+            );
         }
 
         const { data, error: updateUserError } = await onboardUserToDB(
@@ -111,35 +111,35 @@ const handleUserOnboarding = async (
             purpose,
             contactNo,
             from
-        )
+        );
 
         if (updateUserError) {
             return res.status(apiStatusCodes.BAD_REQUEST).json(
                 sendAPIResponse({
                     status: false,
                     error: updateUserError,
-                    message: "Error while onboarding user"
+                    message: 'Error while onboarding user'
                 })
-            )
+            );
         }
 
         return res.status(apiStatusCodes.OKAY).json(
             sendAPIResponse({
                 status: true,
                 data,
-                message: "User onboarded successfully"
+                message: 'User onboarded successfully'
             })
-        )
+        );
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
                 error,
-                message: "Error while onboarding user"
+                message: 'Error while onboarding user'
             })
-        )
+        );
     }
-}
+};
 
 const handlePrepYatraOnboarding = async (
     req: NextApiRequest,
@@ -148,16 +148,16 @@ const handlePrepYatraOnboarding = async (
 ) => {
     try {
         const { workDomain, linkedInUrl, from } =
-            req.body as AddPrepYatraOnboardingPayloadProps
+            req.body as AddPrepYatraOnboardingPayloadProps;
 
         if (!userId || !workDomain) {
             return res.status(apiStatusCodes.BAD_REQUEST).json(
                 sendAPIResponse({
                     status: false,
-                    error: "Missing required fields",
-                    message: "Please provide all required fields"
+                    error: 'Missing required fields',
+                    message: 'Please provide all required fields'
                 })
-            )
+            );
         }
 
         const { data, error: onboardUserError } =
@@ -166,34 +166,34 @@ const handlePrepYatraOnboarding = async (
                 workDomain,
                 linkedInUrl,
                 from
-            )
+            );
 
         if (onboardUserError) {
             return res.status(apiStatusCodes.BAD_REQUEST).json(
                 sendAPIResponse({
                     status: false,
                     error: onboardUserError,
-                    message: "Error while onboarding user"
+                    message: 'Error while onboarding user'
                 })
-            )
+            );
         }
 
         return res.status(apiStatusCodes.OKAY).json(
             sendAPIResponse({
                 status: true,
                 data,
-                message: "User onboarded successfully"
+                message: 'User onboarded successfully'
             })
-        )
+        );
     } catch (error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
                 error,
-                message: "Error while onboarding user"
+                message: 'Error while onboarding user'
             })
-        )
+        );
     }
-}
+};
 
-export default handler
+export default handler;

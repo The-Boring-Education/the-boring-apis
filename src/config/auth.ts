@@ -1,9 +1,9 @@
-import type { NextAuthOptions } from "next-auth"
-import type { NextApiRequest, NextApiResponse } from "next"
-import { getServerSession } from "next-auth"
-import { createGoogleProvider } from "./google"
-import { sessionConfig, getCookieConfig, getAuthSecret } from "./session"
-import type { AuthConfig } from "./types"
+import type { NextAuthOptions } from 'next-auth';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { getServerSession } from 'next-auth';
+import { createGoogleProvider } from './google';
+import { sessionConfig, getCookieConfig, getAuthSecret } from './session';
+import type { AuthConfig } from './types';
 
 /**
  * Factory function to create NextAuth configuration
@@ -13,7 +13,7 @@ import type { AuthConfig } from "./types"
  * @returns NextAuth configuration object
  */
 export const createAuthOptions = (config: AuthConfig = {}): NextAuthOptions => {
-    const { pages, onSignIn, onSession } = config
+    const { pages, onSignIn, onSession } = config;
 
     return {
         providers: [createGoogleProvider()],
@@ -25,19 +25,19 @@ export const createAuthOptions = (config: AuthConfig = {}): NextAuthOptions => {
         cookies: getCookieConfig(),
 
         pages: pages || {
-            signIn: "/auth/signin",
-            error: "/auth/error"
+            signIn: '/auth/signin',
+            error: '/auth/error'
         },
 
         callbacks: {
             async signIn({ user, account }) {
                 // If custom sign-in logic is provided, use it
                 if (onSignIn) {
-                    return await onSignIn(user as any, account)
+                    return await onSignIn(user as any, account);
                 }
 
                 // Default: allow sign-in
-                return true
+                return true;
             },
 
             async jwt({ token, user, account }) {
@@ -47,24 +47,24 @@ export const createAuthOptions = (config: AuthConfig = {}): NextAuthOptions => {
                         ...token,
                         accessToken: account.access_token,
                         provider: account.provider
-                    }
+                    };
                 }
 
-                return token
+                return token;
             },
 
             async session({ session, token }) {
                 // Attach user ID from token to session
                 if (session.user) {
-                    session.user.id = token.sub || ""
+                    session.user.id = token.sub || '';
 
                     // If custom session logic is provided, use it
                     if (onSession) {
-                        return await onSession(session, token)
+                        return await onSession(session, token);
                     }
                 }
 
-                return session
+                return session;
             }
         },
 
@@ -72,19 +72,19 @@ export const createAuthOptions = (config: AuthConfig = {}): NextAuthOptions => {
             async signIn({ user, account }) {
                 console.log(
                     `User signed in: ${user.email} via ${account?.provider}`
-                )
+                );
             },
 
             async signOut({ session }) {
                 console.log(
-                    `User signed out: ${session?.user?.email || "unknown"}`
-                )
+                    `User signed out: ${session?.user?.email || 'unknown'}`
+                );
             }
         },
 
-        debug: process.env.NODE_ENV === "development"
-    }
-}
+        debug: process.env.NODE_ENV === 'development'
+    };
+};
 
 /**
  * Server-side authentication middleware for API routes
@@ -98,32 +98,32 @@ export const withAuth = (authOptions: NextAuthOptions) => {
     ) => {
         return async (req: NextApiRequest, res: NextApiResponse) => {
             try {
-                const session = await getServerSession(req, res, authOptions)
+                const session = await getServerSession(req, res, authOptions);
 
                 if (!session || !session.user) {
                     return res.status(401).json({
                         success: false,
                         error: true,
-                        message: "Authentication required"
-                    })
+                        message: 'Authentication required'
+                    });
                 }
 
                 // Attach session to request for handler to use
-                ;(req as any).session = session
-                ;(req as any).user = session.user
+                (req as any).session = session
+                ;(req as any).user = session.user;
 
-                return handler(req, res)
+                return handler(req, res);
             } catch (error) {
-                console.error("Auth middleware error:", error)
+                console.error('Auth middleware error:', error);
                 return res.status(500).json({
                     success: false,
                     error: true,
-                    message: "Authentication error"
-                })
+                    message: 'Authentication error'
+                });
             }
-        }
-    }
-}
+        };
+    };
+};
 
 /**
  * Server-side admin authentication middleware
@@ -142,37 +142,37 @@ export const withAdminAuth = (
     ) => {
         return async (req: NextApiRequest, res: NextApiResponse) => {
             try {
-                const session = await getServerSession(req, res, authOptions)
+                const session = await getServerSession(req, res, authOptions);
 
                 if (!session || !session.user) {
                     return res.status(401).json({
                         success: false,
                         error: true,
-                        message: "Authentication required"
-                    })
+                        message: 'Authentication required'
+                    });
                 }
 
-                if (!adminEmails.includes(session.user.email || "")) {
+                if (!adminEmails.includes(session.user.email || '')) {
                     return res.status(403).json({
                         success: false,
                         error: true,
-                        message: "Admin access required"
-                    })
+                        message: 'Admin access required'
+                    });
                 }
 
                 // Attach session to request for handler to use
-                ;(req as any).session = session
-                ;(req as any).user = session.user
+                (req as any).session = session
+                ;(req as any).user = session.user;
 
-                return handler(req, res)
+                return handler(req, res);
             } catch (error) {
-                console.error("Admin auth middleware error:", error)
+                console.error('Admin auth middleware error:', error);
                 return res.status(500).json({
                     success: false,
                     error: true,
-                    message: "Authentication error"
-                })
+                    message: 'Authentication error'
+                });
             }
-        }
-    }
-}
+        };
+    };
+};

@@ -4,37 +4,37 @@ import { DATABASE_MODELS } from '@/config/constants';
 import type { JobAggregateModel } from '@/interfaces';
 
 const JobAggregateSchema = new Schema<JobAggregateModel>(
-  {
-    trendingSkills: [
-      {
-        _id: false,
-        name: String,
-        count: Number,
-      },
-    ],
-    topLocations: [
-      {
-        _id: false,
-        name: String,
-        count: Number,
-      },
-    ],
-    jobDomains: [
-      {
-        _id: false,
-        name: String,
-        count: Number,
-      },
-    ],
-    companyTypes: [
-      {
-        _id: false,
-        name: String,
-        count: Number,
-      },
-    ],
-  },
-  { timestamps: true }
+    {
+        trendingSkills: [
+            {
+                _id: false,
+                name: String,
+                count: Number
+            }
+        ],
+        topLocations: [
+            {
+                _id: false,
+                name: String,
+                count: Number
+            }
+        ],
+        jobDomains: [
+            {
+                _id: false,
+                name: String,
+                count: Number
+            }
+        ],
+        companyTypes: [
+            {
+                _id: false,
+                name: String,
+                count: Number
+            }
+        ]
+    },
+    { timestamps: true }
 );
 
 const JobAggregate: Model<JobAggregateModel> =

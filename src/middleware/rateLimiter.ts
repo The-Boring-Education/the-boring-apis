@@ -11,37 +11,37 @@ const WINDOW_SIZE_IN_MS = 60 * 1000; // 1 minute
 // Rate limiter middleware function that wraps a handler
 const rateLimiter =
   (handler: (req: NextApiRequest, res: NextApiResponse) => void) =>
-  (req: NextApiRequest, res: NextApiResponse) => {
-    const ip =
+      (req: NextApiRequest, res: NextApiResponse) => {
+          const ip =
       req.headers['x-forwarded-for']?.toString() ||
       req.socket.remoteAddress ||
       'unknown';
 
-    const currentTime = Date.now();
+          const currentTime = Date.now();
 
-    const ipData = rateLimitMap.get(ip) || {
-      count: 0,
-      lastRequestTime: currentTime,
-    };
+          const ipData = rateLimitMap.get(ip) || {
+              count: 0,
+              lastRequestTime: currentTime
+          };
 
-    if (currentTime - ipData.lastRequestTime < WINDOW_SIZE_IN_MS) {
-      if (ipData.count >= REQUEST_LIMIT) {
-        res
-          .status(429)
-          .json({ message: 'Too many requests, please try again later.' });
-        return;
-      }
+          if (currentTime - ipData.lastRequestTime < WINDOW_SIZE_IN_MS) {
+              if (ipData.count >= REQUEST_LIMIT) {
+                  res
+                      .status(429)
+                      .json({ message: 'Too many requests, please try again later.' });
+                  return;
+              }
 
-      ipData.count += 1;
-    } else {
-      ipData.count = 1;
-      ipData.lastRequestTime = currentTime;
-    }
+              ipData.count += 1;
+          } else {
+              ipData.count = 1;
+              ipData.lastRequestTime = currentTime;
+          }
 
-    rateLimitMap.set(ip, ipData);
+          rateLimitMap.set(ip, ipData);
 
-    // Calling the original handler
-    handler(req, res);
-  };
+          // Calling the original handler
+          handler(req, res);
+      };
 
 export default rateLimiter;

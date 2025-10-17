@@ -4,39 +4,39 @@ import { DATABASE_MODELS, FEEDBACK_TYPES } from '@/config/constants';
 import type { FeedbackModel } from '@/interfaces';
 
 const FeedbackSchema: Schema<FeedbackModel> = new Schema(
-  {
-    rating: {
-      type: Number,
-      required: [true, 'Rating is required'],
-      min: [1, 'Minimum rating is 1'],
-      max: [5, 'Maximum rating is 5'],
-    },
+    {
+        rating: {
+            type: Number,
+            required: [true, 'Rating is required'],
+            min: [1, 'Minimum rating is 1'],
+            max: [5, 'Maximum rating is 5']
+        },
 
-    feedback: {
-      type: String,
-    },
+        feedback: {
+            type: String
+        },
 
-    type: {
-      type: String,
-      required: [true, 'Feedback type is required'],
-      enum: FEEDBACK_TYPES,
-      default: 'GENERAL',
-    },
+        type: {
+            type: String,
+            required: [true, 'Feedback type is required'],
+            enum: FEEDBACK_TYPES,
+            default: 'GENERAL'
+        },
 
-    ref: {
-      type: Schema.Types.ObjectId,
-      refPath: 'type',
-    },
+        ref: {
+            type: Schema.Types.ObjectId,
+            refPath: 'type'
+        },
 
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: DATABASE_MODELS.USER,
-      required: [true, 'User reference is required'],
+        user: {
+            type: Schema.Types.ObjectId,
+            ref: DATABASE_MODELS.USER,
+            required: [true, 'User reference is required']
+        }
     },
-  },
-  {
-    timestamps: true,
-  }
+    {
+        timestamps: true
+    }
 );
 
 const Feedback: Model<FeedbackModel> =

@@ -2,50 +2,50 @@ import type {
     DatabaseQueryResponseType,
     UserPointsAction,
     UserPointsActionType
-} from "@/interfaces"
-import { calculateUserPointsForAction } from "@/utils"
+} from '@/interfaces';
+import { calculateUserPointsForAction } from '@/utils';
 
-import { Gamification } from "../models"
+import { Gamification } from '../models';
 
 const addGamificationDocInDB = async (
     userId: string
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const gamification = new Gamification({ userId })
-        await gamification.save()
-        return { data: gamification }
+        const gamification = new Gamification({ userId });
+        await gamification.save();
+        return { data: gamification };
     } catch (error) {
-        return { error }
+        return { error };
     }
-}
+};
 
 const getUserPointsFromDB = async (
     userId: string
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const gamification = await Gamification.findOne({ userId })
+        const gamification = await Gamification.findOne({ userId });
 
         if (!gamification) {
-            return { error: "User not found" }
+            return { error: 'User not found' };
         }
 
-        return { data: gamification }
+        return { data: gamification };
     } catch (error) {
-        return { error: "Error fetching user points" }
+        return { error: 'Error fetching user points' };
     }
-}
+};
 
 const updateUserPointsInDB = async (
     userId: string,
     actionType: UserPointsActionType
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const pointsEarned = calculateUserPointsForAction(actionType)
+        const pointsEarned = calculateUserPointsForAction(actionType);
 
         const action: UserPointsAction = {
             actionType,
             pointsEarned
-        }
+        };
 
         const updatedGamification = await Gamification.findOneAndUpdate(
             { userId },
@@ -54,24 +54,24 @@ const updateUserPointsInDB = async (
                 $inc: { points: pointsEarned }
             },
             { new: true }
-        )
+        );
 
         if (!updatedGamification) {
-            return { error: "User not found" }
+            return { error: 'User not found' };
         }
 
-        return { data: updatedGamification }
+        return { data: updatedGamification };
     } catch (error) {
-        return { error: "Error updating user points" }
+        return { error: 'Error updating user points' };
     }
-}
+};
 
 const deductUserPointsFromDB = async (
     userId: string,
     actionType: UserPointsActionType
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const pointsToDeduct = calculateUserPointsForAction(actionType)
+        const pointsToDeduct = calculateUserPointsForAction(actionType);
 
         const updatedGamification = await Gamification.findOneAndUpdate(
             { userId },
@@ -80,7 +80,7 @@ const deductUserPointsFromDB = async (
                     $set: {
                         points: {
                             $max: [
-                                { $subtract: ["$points", pointsToDeduct] },
+                                { $subtract: ['$points', pointsToDeduct] },
                                 0
                             ]
                         }
@@ -88,17 +88,17 @@ const deductUserPointsFromDB = async (
                 }
             ],
             { new: true }
-        )
+        );
 
         if (!updatedGamification) {
-            return { error: "User not found" }
+            return { error: 'User not found' };
         }
 
-        return { data: updatedGamification }
+        return { data: updatedGamification };
     } catch (error) {
-        return { error: "Error reducing points" }
+        return { error: 'Error reducing points' };
     }
-}
+};
 
 const handleGamificationPoints = async (
     isCompleted: boolean,
@@ -108,20 +108,20 @@ const handleGamificationPoints = async (
     try {
         const { error, data } = isCompleted
             ? await updateUserPointsInDB(userId, actionType)
-            : await deductUserPointsFromDB(userId, actionType)
+            : await deductUserPointsFromDB(userId, actionType);
 
         if (error)
             return {
-                error: "Gamification action failed"
-            }
+                error: 'Gamification action failed'
+            };
 
         return {
             data
-        }
+        };
     } catch (error) {
-        return { error: "Unexpected error in handleGamificationPoints" }
+        return { error: 'Unexpected error in handleGamificationPoints' };
     }
-}
+};
 
 const getLeaderboardFromDB = async (
     limit = 10
@@ -130,31 +130,31 @@ const getLeaderboardFromDB = async (
         const leaderboard = await Gamification.aggregate([
             {
                 $lookup: {
-                    from: "users",
-                    localField: "userId",
-                    foreignField: "_id",
-                    as: "user"
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'user'
                 }
             },
-            { $unwind: "$user" },
+            { $unwind: '$user' },
             {
                 $project: {
                     userId: 1,
                     points: 1,
-                    "user.name": 1,
-                    "user.image": 1,
-                    "user.email": 1
+                    'user.name': 1,
+                    'user.image': 1,
+                    'user.email': 1
                 }
             },
             { $sort: { points: -1 } },
             { $limit: limit }
-        ])
+        ]);
 
-        return { data: leaderboard }
+        return { data: leaderboard };
     } catch (error) {
-        return { error: "Error fetching leaderboard" }
+        return { error: 'Error fetching leaderboard' };
     }
-}
+};
 
 const getActionsWithinDateRange = async (
     start: Date,
@@ -162,7 +162,7 @@ const getActionsWithinDateRange = async (
 ): Promise<DatabaseQueryResponseType> =>
     await Gamification.find({
         createdAt: { $gte: start, $lte: end }
-    }).lean()
+    }).lean();
 
 export {
     addGamificationDocInDB,
@@ -171,4 +171,4 @@ export {
     getUserPointsFromDB,
     handleGamificationPoints,
     updateUserPointsInDB
-}
+};

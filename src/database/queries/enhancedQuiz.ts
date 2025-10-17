@@ -1,17 +1,17 @@
-import { Schema } from "mongoose"
+import { Schema } from 'mongoose';
 
-import type { DatabaseQueryResponseType } from "@/interfaces"
+import type { DatabaseQueryResponseType } from '@/interfaces';
 
-import type { QuizSessionModel, QuizSessionQuestion } from "../models"
+import type { QuizSessionModel, QuizSessionQuestion } from '../models';
 import {
     Quiz,
     QuizAttempt,
     QuizSession,
     UserQuestionPerformance,
     UserQuizAnalytics
-} from "../models"
-import type { QuizModel } from "../models/Quiz/Quiz"
-import type { UserQuestionPerformanceModel } from "../models/Quiz/UserQuestionPerformance"
+} from '../models';
+import type { QuizModel } from '../models/Quiz/Quiz';
+import type { UserQuestionPerformanceModel } from '../models/Quiz/UserQuestionPerformance';
 
 // ====================
 // Quiz Session Management
@@ -26,20 +26,20 @@ const createQuizSessionInDB = async ({
 }: {
     userId: string
     quizId: string
-    difficulty: "easy" | "medium" | "hard" | "mixed"
+    difficulty: 'easy' | 'medium' | 'hard' | 'mixed'
     questionCount: number
 }): Promise<DatabaseQueryResponseType> => {
     try {
         // Get the full quiz
-        const quiz = await Quiz.findById(quizId).lean()
+        const quiz = await Quiz.findById(quizId).lean();
         if (!quiz || !quiz.isActive) {
-            return { error: "Quiz not found or inactive" }
+            return { error: 'Quiz not found or inactive' };
         }
 
         // Get user's performance data for intelligent selection
         const userPerformance = await UserQuestionPerformance.find({
             userId
-        }).lean()
+        }).lean();
 
         // Select questions intelligently
         const selectedQuestions = await selectQuestionsIntelligently({
@@ -47,18 +47,18 @@ const createQuizSessionInDB = async ({
             difficulty,
             questionCount,
             userPerformance
-        })
+        });
 
         if (selectedQuestions.length === 0) {
             return {
-                error: "No questions available for the selected difficulty"
-            }
+                error: 'No questions available for the selected difficulty'
+            };
         }
 
         // Create session
         const sessionData: Omit<
             QuizSessionModel,
-            "_id" | "createdAt" | "updatedAt"
+            '_id' | 'createdAt' | 'updatedAt'
         > = {
             userId: new Schema.Types.ObjectId(userId),
             quizId: new Schema.Types.ObjectId(quizId),
@@ -66,19 +66,19 @@ const createQuizSessionInDB = async ({
             difficulty,
             questionCount: selectedQuestions.length,
             questions: selectedQuestions,
-            status: "in_progress",
+            status: 'in_progress',
             startedAt: new Date()
-        }
+        };
 
-        const session = new QuizSession(sessionData)
-        await session.save()
+        const session = new QuizSession(sessionData);
+        await session.save();
 
-        return { data: session }
+        return { data: session };
     } catch (error) {
-        console.error("Error creating quiz session:", error)
-        return { error: "Failed to create quiz session" }
+        console.error('Error creating quiz session:', error);
+        return { error: 'Failed to create quiz session' };
     }
-}
+};
 
 // Intelligent question selection algorithm
 const selectQuestionsIntelligently = async ({
@@ -88,59 +88,59 @@ const selectQuestionsIntelligently = async ({
     userPerformance
 }: {
     quiz: QuizModel
-    difficulty: "easy" | "medium" | "hard" | "mixed"
+    difficulty: 'easy' | 'medium' | 'hard' | 'mixed'
     questionCount: number
     userPerformance: UserQuestionPerformanceModel[]
 }): Promise<QuizSessionQuestion[]> => {
-    let availableQuestions = quiz.questions || []
+    let availableQuestions = quiz.questions || [];
 
     // Filter by difficulty
-    if (difficulty !== "mixed") {
+    if (difficulty !== 'mixed') {
         availableQuestions = availableQuestions.filter(
             (q) => q.difficulty === difficulty
-        )
+        );
     }
 
     // Create performance map for quick lookup
     const performanceMap = new Map(
         userPerformance.map((p) => [p.questionId.toString(), p])
-    )
+    );
 
     // Calculate weights for each question
     const weightedQuestions = availableQuestions.map((question) => {
-        let weight = 1.0
-        const questionId = (question as any)._id || Math.random().toString()
-        const performance = performanceMap.get(questionId)
+        let weight = 1.0;
+        const questionId = (question as any)._id || Math.random().toString();
+        const performance = performanceMap.get(questionId);
 
         if (performance) {
             // Spaced repetition check - higher weight if due for review
             if (performance.nextReviewDate <= new Date()) {
-                weight *= 2.0
+                weight *= 2.0;
             }
 
             // Recent question penalty - reduce weight if attempted recently
             const daysSinceLastAttempt = Math.floor(
                 (Date.now() - performance.lastAttemptedAt.getTime()) /
                     (1000 * 60 * 60 * 24)
-            )
+            );
             if (daysSinceLastAttempt < 7) {
-                weight *= 0.5
+                weight *= 0.5;
             }
 
             // Weak area bias - increase weight for areas with low strength
             if (performance.strengthLevel < 0.6) {
-                weight *= 1.5
+                weight *= 1.5;
             }
         } else {
             // New question - slight boost
-            weight *= 1.2
+            weight *= 1.2;
         }
 
-        return { question, weight }
-    })
+        return { question, weight };
+    });
 
     // Sort by weight and select top questions
-    weightedQuestions.sort((a, b) => b.weight - a.weight)
+    weightedQuestions.sort((a, b) => b.weight - a.weight);
 
     const selectedQuestions = weightedQuestions
         .slice(0, questionCount)
@@ -154,10 +154,10 @@ const selectQuestionsIntelligently = async ({
             difficulty: question.difficulty,
             explanation: question.explanation,
             detailedExplanation: question.detailedExplanation
-        }))
+        }));
 
-    return selectedQuestions
-}
+    return selectedQuestions;
+};
 
 // Submit answer for a question in a session
 const submitAnswerInDB = async ({
@@ -172,17 +172,17 @@ const submitAnswerInDB = async ({
     timeSpent: number
 }): Promise<DatabaseQueryResponseType> => {
     try {
-        const session = await QuizSession.findById(sessionId)
-        if (!session || session.status !== "in_progress") {
-            return { error: "Session not found or not active" }
+        const session = await QuizSession.findById(sessionId);
+        if (!session || session.status !== 'in_progress') {
+            return { error: 'Session not found or not active' };
         }
 
-        const question = session.questions[questionIndex]
+        const question = session.questions[questionIndex];
         if (!question) {
-            return { error: "Question not found" }
+            return { error: 'Question not found' };
         }
 
-        const isCorrect = answer === question.correctAnswer
+        const isCorrect = answer === question.correctAnswer;
 
         // Update question in session
         session.questions[questionIndex] = {
@@ -191,9 +191,9 @@ const submitAnswerInDB = async ({
             isCorrect,
             timeSpent,
             answeredAt: new Date()
-        }
+        };
 
-        await session.save()
+        await session.save();
 
         // Update user question performance
         await updateUserQuestionPerformance({
@@ -203,7 +203,7 @@ const submitAnswerInDB = async ({
             difficulty: question.difficulty,
             isCorrect,
             timeSpent
-        })
+        });
 
         return {
             data: {
@@ -211,45 +211,45 @@ const submitAnswerInDB = async ({
                 explanation: question.explanation,
                 detailedExplanation: question.detailedExplanation
             }
-        }
+        };
     } catch (error) {
-        console.error("Error submitting answer:", error)
-        return { error: "Failed to submit answer" }
+        console.error('Error submitting answer:', error);
+        return { error: 'Failed to submit answer' };
     }
-}
+};
 
 // Complete a quiz session
 const completeQuizSessionInDB = async (
     sessionId: string
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const session = await QuizSession.findById(sessionId)
+        const session = await QuizSession.findById(sessionId);
         if (!session) {
-            return { error: "Session not found" }
+            return { error: 'Session not found' };
         }
 
         const answeredQuestions = session.questions.filter(
             (q) => q.userAnswer !== undefined
-        )
+        );
         const correctAnswers = answeredQuestions.filter(
             (q) => q.isCorrect
-        ).length
+        ).length;
         const totalTime = answeredQuestions.reduce(
             (sum, q) => sum + (q.timeSpent || 0),
             0
-        )
+        );
         const score = Math.round(
             (correctAnswers / answeredQuestions.length) * 100
-        )
+        );
 
         // Update session
-        session.status = "completed"
-        session.completedAt = new Date()
-        session.totalTime = totalTime
-        session.score = score
-        session.percentage = score
+        session.status = 'completed';
+        session.completedAt = new Date();
+        session.totalTime = totalTime;
+        session.score = score;
+        session.percentage = score;
 
-        await session.save()
+        await session.save();
 
         // Create traditional quiz attempt for backward compatibility
         const attemptData = {
@@ -268,9 +268,9 @@ const completeQuizSessionInDB = async (
             timeTaken: totalTime,
             pointsEarned: correctAnswers * 10,
             completedAt: new Date()
-        }
+        };
 
-        await QuizAttempt.create(attemptData)
+        await QuizAttempt.create(attemptData);
 
         // Update user analytics
         await updateUserAnalyticsInDB({
@@ -279,14 +279,14 @@ const completeQuizSessionInDB = async (
             score,
             difficulty: session.difficulty,
             timeSpent: totalTime
-        })
+        });
 
-        return { data: session }
+        return { data: session };
     } catch (error) {
-        console.error("Error completing session:", error)
-        return { error: "Failed to complete session" }
+        console.error('Error completing session:', error);
+        return { error: 'Failed to complete session' };
     }
-}
+};
 
 // ====================
 // User Performance Tracking
@@ -304,7 +304,7 @@ const updateUserQuestionPerformance = async ({
     userId: string
     questionId: string
     categoryName: string
-    difficulty: "easy" | "medium" | "hard"
+    difficulty: 'easy' | 'medium' | 'hard'
     isCorrect: boolean
     timeSpent: number
 }): Promise<void> => {
@@ -312,7 +312,7 @@ const updateUserQuestionPerformance = async ({
         let performance = await UserQuestionPerformance.findOne({
             userId,
             questionId
-        })
+        });
 
         if (!performance) {
             performance = new UserQuestionPerformance({
@@ -328,34 +328,34 @@ const updateUserQuestionPerformance = async ({
                 nextReviewDate: new Date(),
                 easeFactor: 2.5,
                 interval: 1
-            })
+            });
         }
 
         // Update basic stats
-        performance.attempts++
+        performance.attempts++;
         if (isCorrect) {
-            performance.correctAttempts++
+            performance.correctAttempts++;
         }
 
         // Update average time
         performance.averageTime =
             (performance.averageTime * (performance.attempts - 1) + timeSpent) /
-            performance.attempts
+            performance.attempts;
 
         // Update strength level (0-1 scale)
         performance.strengthLevel =
-            performance.correctAttempts / performance.attempts
+            performance.correctAttempts / performance.attempts;
 
         // Update spaced repetition parameters (SuperMemo-2 algorithm)
-        updateSpacedRepetition(performance, isCorrect, timeSpent)
+        updateSpacedRepetition(performance, isCorrect, timeSpent);
 
-        performance.lastAttemptedAt = new Date()
+        performance.lastAttemptedAt = new Date();
 
-        await performance.save()
+        await performance.save();
     } catch (error) {
-        console.error("Error updating question performance:", error)
+        console.error('Error updating question performance:', error);
     }
-}
+};
 
 // SuperMemo-2 spaced repetition algorithm
 const updateSpacedRepetition = (
@@ -365,34 +365,34 @@ const updateSpacedRepetition = (
 ): void => {
     if (isCorrect) {
         if (performance.interval === 1) {
-            performance.interval = 6
+            performance.interval = 6;
         } else {
             performance.interval = Math.round(
                 performance.interval * performance.easeFactor
-            )
+            );
         }
 
         // Adjust ease factor based on response quality (time-based)
         const responseQuality =
-            timeSpent < 10 ? 5 : timeSpent < 20 ? 4 : timeSpent < 30 ? 3 : 2
+            timeSpent < 10 ? 5 : timeSpent < 20 ? 4 : timeSpent < 30 ? 3 : 2;
         performance.easeFactor = Math.max(
             1.3,
             performance.easeFactor +
                 (0.1 -
                     (5 - responseQuality) *
                         (0.08 + (5 - responseQuality) * 0.02))
-        )
+        );
     } else {
         // Reset interval for incorrect answers
-        performance.interval = 1
-        performance.easeFactor = Math.max(1.3, performance.easeFactor - 0.2)
+        performance.interval = 1;
+        performance.easeFactor = Math.max(1.3, performance.easeFactor - 0.2);
     }
 
     // Calculate next review date
     performance.nextReviewDate = new Date(
         Date.now() + performance.interval * 24 * 60 * 60 * 1000
-    )
-}
+    );
+};
 
 // ====================
 // Analytics
@@ -416,7 +416,7 @@ const updateUserAnalyticsInDB = async ({
         let analytics = await UserQuizAnalytics.findOne({
             userId,
             categoryName
-        })
+        });
 
         if (!analytics) {
             analytics = new UserQuizAnalytics({
@@ -435,30 +435,30 @@ const updateUserAnalyticsInDB = async ({
                 },
                 progressTimeline: [],
                 lastAttemptAt: new Date()
-            })
+            });
         }
 
         // Update basic stats
-        analytics.totalAttempts++
-        analytics.bestScore = Math.max(analytics.bestScore, score)
+        analytics.totalAttempts++;
+        analytics.bestScore = Math.max(analytics.bestScore, score);
         analytics.averageScore =
             (analytics.averageScore * (analytics.totalAttempts - 1) + score) /
-            analytics.totalAttempts
-        analytics.totalTimeSpent += timeSpent
+            analytics.totalAttempts;
+        analytics.totalTimeSpent += timeSpent;
 
         // Update difficulty performance
         if (
-            difficulty !== "mixed" &&
-            ["easy", "medium", "hard"].includes(difficulty)
+            difficulty !== 'mixed' &&
+            ['easy', 'medium', 'hard'].includes(difficulty)
         ) {
-            const diffKey = difficulty as "easy" | "medium" | "hard"
-            analytics.difficultyPerformance[diffKey].attempts++
-            const successRate = score >= 70 ? 1 : 0
+            const diffKey = difficulty as 'easy' | 'medium' | 'hard';
+            analytics.difficultyPerformance[diffKey].attempts++;
+            const successRate = score >= 70 ? 1 : 0;
             analytics.difficultyPerformance[diffKey].successRate =
                 (analytics.difficultyPerformance[diffKey].successRate *
                     (analytics.difficultyPerformance[diffKey].attempts - 1) +
                     successRate) /
-                analytics.difficultyPerformance[diffKey].attempts
+                analytics.difficultyPerformance[diffKey].attempts;
         }
 
         // Add to progress timeline (keep last 30 entries)
@@ -467,19 +467,19 @@ const updateUserAnalyticsInDB = async ({
             score,
             difficulty,
             timeSpent
-        })
+        });
 
         if (analytics.progressTimeline.length > 30) {
-            analytics.progressTimeline = analytics.progressTimeline.slice(-30)
+            analytics.progressTimeline = analytics.progressTimeline.slice(-30);
         }
 
-        analytics.lastAttemptAt = new Date()
+        analytics.lastAttemptAt = new Date();
 
-        await analytics.save()
+        await analytics.save();
     } catch (error) {
-        console.error("Error updating analytics:", error)
+        console.error('Error updating analytics:', error);
     }
-}
+};
 
 // Get user analytics
 const getUserAnalyticsFromDB = async (
@@ -487,17 +487,17 @@ const getUserAnalyticsFromDB = async (
     categoryName?: string
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const filter: any = { userId }
+        const filter: any = { userId };
         if (categoryName) {
-            filter.categoryName = categoryName
+            filter.categoryName = categoryName;
         }
 
-        const analytics = await UserQuizAnalytics.find(filter).lean()
-        return { data: analytics }
+        const analytics = await UserQuizAnalytics.find(filter).lean();
+        return { data: analytics };
     } catch (error) {
-        return { error: "Failed to fetch user analytics" }
+        return { error: 'Failed to fetch user analytics' };
     }
-}
+};
 
 // Get quiz leaderboard
 const getQuizLeaderboardFromDB = async (
@@ -505,29 +505,29 @@ const getQuizLeaderboardFromDB = async (
     limit = 50
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const matchFilter: any = {}
+        const matchFilter: any = {};
         if (categoryName) {
-            matchFilter.categoryName = categoryName
+            matchFilter.categoryName = categoryName;
         }
 
         const leaderboard = await UserQuizAnalytics.aggregate([
             { $match: matchFilter },
             {
                 $lookup: {
-                    from: "users",
-                    localField: "userId",
-                    foreignField: "_id",
-                    as: "user"
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'user'
                 }
             },
-            { $unwind: "$user" },
+            { $unwind: '$user' },
             {
                 $project: {
                     userId: 1,
-                    userName: "$user.name",
-                    userImage: "$user.image",
+                    userName: '$user.name',
+                    userImage: '$user.image',
                     categoryName: 1,
-                    totalScore: "$bestScore",
+                    totalScore: '$bestScore',
                     totalAttempts: 1,
                     averageScore: 1,
                     bestStreak: { $literal: 0 } // TODO: Calculate from attempts
@@ -542,88 +542,88 @@ const getQuizLeaderboardFromDB = async (
                         $switch: {
                             branches: [
                                 {
-                                    case: { $gte: ["$totalScore", 90] },
-                                    then: "platinum"
+                                    case: { $gte: ['$totalScore', 90] },
+                                    then: 'platinum'
                                 },
                                 {
-                                    case: { $gte: ["$totalScore", 80] },
-                                    then: "gold"
+                                    case: { $gte: ['$totalScore', 80] },
+                                    then: 'gold'
                                 },
                                 {
-                                    case: { $gte: ["$totalScore", 70] },
-                                    then: "silver"
+                                    case: { $gte: ['$totalScore', 70] },
+                                    then: 'silver'
                                 }
                             ],
-                            default: "bronze"
+                            default: 'bronze'
                         }
                     }
                 }
             }
-        ])
+        ]);
 
-        return { data: leaderboard }
+        return { data: leaderboard };
     } catch (error) {
-        return { error: "Failed to fetch leaderboard" }
+        return { error: 'Failed to fetch leaderboard' };
     }
-}
+};
 
 // Get user quiz sessions
 const getUserQuizSessionsFromDB = async (
     userId: string,
-    status?: "in_progress" | "completed" | "abandoned"
+    status?: 'in_progress' | 'completed' | 'abandoned'
 ): Promise<DatabaseQueryResponseType> => {
     try {
-        const filter: any = { userId }
+        const filter: any = { userId };
         if (status) {
-            filter.status = status
+            filter.status = status;
         }
 
         const sessions = await QuizSession.find(filter)
             .sort({ startedAt: -1 })
-            .lean()
+            .lean();
 
-        return { data: sessions }
+        return { data: sessions };
     } catch (error) {
-        return { error: "Failed to fetch user sessions" }
+        return { error: 'Failed to fetch user sessions' };
     }
-}
+};
 
 // Get quiz admin analytics (aggregated)
 const getQuizAdminAnalyticsFromDB =
     async (): Promise<DatabaseQueryResponseType> => {
         try {
             // Get total sessions
-            const totalSessions = await QuizSession.countDocuments()
+            const totalSessions = await QuizSession.countDocuments();
 
             // Get total questions answered
             const totalQuestionsAnswered = await QuizSession.aggregate([
-                { $match: { status: "completed" } },
-                { $group: { _id: null, total: { $sum: "$questionCount" } } }
-            ])
+                { $match: { status: 'completed' } },
+                { $group: { _id: null, total: { $sum: '$questionCount' } } }
+            ]);
 
             // Get average session time
             const avgSessionTime = await QuizSession.aggregate([
-                { $match: { status: "completed" } },
-                { $group: { _id: null, avgTime: { $avg: "$totalTimeSpent" } } }
-            ])
+                { $match: { status: 'completed' } },
+                { $group: { _id: null, avgTime: { $avg: '$totalTimeSpent' } } }
+            ]);
 
             // Get top performing categories
             const topCategories = await UserQuizAnalytics.aggregate([
                 {
                     $group: {
-                        _id: "$categoryName",
-                        attempts: { $sum: "$totalAttempts" },
-                        avgScore: { $avg: "$averageScore" }
+                        _id: '$categoryName',
+                        attempts: { $sum: '$totalAttempts' },
+                        avgScore: { $avg: '$averageScore' }
                     }
                 },
                 { $sort: { attempts: -1 } },
                 { $limit: 5 }
-            ])
+            ]);
 
             // Get difficulty distribution
             const difficultyDist = await QuizSession.aggregate([
-                { $group: { _id: "$difficulty", count: { $sum: 1 } } }
-            ])
+                { $group: { _id: '$difficulty', count: { $sum: 1 } } }
+            ]);
 
             // Get user engagement metrics
             const userEngagement = await QuizSession.aggregate([
@@ -631,8 +631,8 @@ const getQuizAdminAnalyticsFromDB =
                     $group: {
                         _id: {
                             $dateToString: {
-                                format: "%Y-%m-%d",
-                                date: "$startedAt"
+                                format: '%Y-%m-%d',
+                                date: '$startedAt'
                             }
                         },
                         sessions: { $sum: 1 }
@@ -640,7 +640,7 @@ const getQuizAdminAnalyticsFromDB =
                 },
                 { $sort: { _id: -1 } },
                 { $limit: 7 }
-            ])
+            ]);
 
             const analytics = {
                 totalQuizSessions: totalSessions,
@@ -652,12 +652,12 @@ const getQuizAdminAnalyticsFromDB =
                     averageScore: Math.round(cat.avgScore * 10) / 10
                 })),
                 difficultyDistribution: difficultyDist.reduce((acc, diff) => {
-                    acc[diff._id] = diff.count
-                    return acc
+                    acc[diff._id] = diff.count;
+                    return acc;
                 }, {} as any),
                 userEngagement: {
                     dailyActiveSessions: userEngagement[0]?.sessions || 0,
-                    weeklyActiveUsers: await QuizSession.distinct("userId", {
+                    weeklyActiveUsers: await QuizSession.distinct('userId', {
                         startedAt: {
                             $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
                         }
@@ -665,43 +665,43 @@ const getQuizAdminAnalyticsFromDB =
                     averageSessionsPerUser:
                         totalSessions > 0
                             ? Math.round(
-                                  (totalSessions /
+                                (totalSessions /
                                       (await QuizSession.distinct(
-                                          "userId"
+                                          'userId'
                                       ).then((users) => users.length))) *
                                       10
-                              ) / 10
+                            ) / 10
                             : 0
                 }
-            }
+            };
 
-            return { data: analytics }
+            return { data: analytics };
         } catch (error) {
-            console.error("Error fetching admin analytics:", error)
-            return { error: "Failed to fetch admin analytics" }
+            console.error('Error fetching admin analytics:', error);
+            return { error: 'Failed to fetch admin analytics' };
         }
-    }
+    };
 
 // Get active sessions for admin monitoring
 const getActiveSessionsFromDB =
     async (): Promise<DatabaseQueryResponseType> => {
         try {
             const activeSessions = await QuizSession.find({
-                status: { $in: ["in_progress", "paused"] },
+                status: { $in: ['in_progress', 'paused'] },
                 startedAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } // Last 24 hours
             })
-                .populate("userId", "name email")
+                .populate('userId', 'name email')
                 .sort({ startedAt: -1 })
-                .lean()
+                .lean();
 
             const formattedSessions = activeSessions.map((session) => {
                 const answeredCount = session.questions.filter(
                     (q) => q.userAnswer !== undefined
-                ).length
+                ).length;
                 return {
                     sessionId: session._id.toString(),
                     userId: session.userId.toString(),
-                    userName: (session.userId as any).name || "Unknown User",
+                    userName: (session.userId as any).name || 'Unknown User',
                     categoryName: session.categoryName,
                     difficulty: session.difficulty,
                     status: session.status,
@@ -711,25 +711,25 @@ const getActiveSessionsFromDB =
                         percentage:
                             answeredCount > 0
                                 ? Math.round(
-                                      (answeredCount / session.questionCount) *
+                                    (answeredCount / session.questionCount) *
                                           100
-                                  )
+                                )
                                 : 0
                     },
                     startedAt: session.startedAt.toISOString(),
                     score:
-                        session.status === "completed"
+                        session.status === 'completed'
                             ? session.score
                             : undefined
-                }
-            })
+                };
+            });
 
-            return { data: formattedSessions }
+            return { data: formattedSessions };
         } catch (error) {
-            console.error("Error fetching active sessions:", error)
-            return { error: "Failed to fetch active sessions" }
+            console.error('Error fetching active sessions:', error);
+            return { error: 'Failed to fetch active sessions' };
         }
-    }
+    };
 
 export {
     completeQuizSessionInDB,
@@ -742,4 +742,4 @@ export {
     submitAnswerInDB,
     updateUserAnalyticsInDB,
     updateUserQuestionPerformance
-}
+};
