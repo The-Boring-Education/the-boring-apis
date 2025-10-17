@@ -33,7 +33,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     await connectDB();
     return handleSubmitQuiz(id, req, res);
-  } catch (error) {
+  } catch (_error) {
     console.error('Quiz submit API error:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }

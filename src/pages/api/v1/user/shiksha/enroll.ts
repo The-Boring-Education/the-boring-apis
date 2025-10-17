@@ -32,7 +32,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           })
         );
     }
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -106,7 +106,7 @@ const handleCourseEnrollment = async (
           console.error('Failed to send course enrollment email:', error);
         });
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching user/course data for email:', error);
     }
 
@@ -117,7 +117,7 @@ const handleCourseEnrollment = async (
         message: 'Successfully enrolled in course',
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,

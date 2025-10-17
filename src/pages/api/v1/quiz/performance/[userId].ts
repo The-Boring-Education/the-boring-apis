@@ -20,7 +20,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     await connectDB();
     return handleGetUserPerformance(userId, req, res);
-  } catch (error) {
+  } catch (_error) {
     console.error('Performance API error:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }

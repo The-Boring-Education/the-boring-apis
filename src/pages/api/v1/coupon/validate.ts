@@ -12,7 +12,7 @@ interface ValidateCouponRequest {
   userId?: string;
 }
 
-interface ValidateCouponResponse {
+interface _ValidateCouponResponse {
   coupon: {
     _id: string;
     code: string;
@@ -86,7 +86,7 @@ const validateCoupon = async (
         isValid: coupon.isValid,
       },
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Error validating coupon:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json({
       status: false,

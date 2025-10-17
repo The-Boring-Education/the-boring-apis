@@ -31,7 +31,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     return res.status(200).json({ success: true, data });
-  } catch (error) {
+  } catch (_error) {
     console.error('Leaderboard API error:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }

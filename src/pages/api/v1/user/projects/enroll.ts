@@ -27,7 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           })
         );
     }
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -92,7 +92,7 @@ const handleProjectEnrollment = async (
           console.error('Failed to send project enrollment email:', error);
         });
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching user/project data for email:', error);
       // Don't fail the enrollment if email data fetch fails
     }
@@ -104,7 +104,7 @@ const handleProjectEnrollment = async (
         message: 'Successfully enrolled in project',
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,

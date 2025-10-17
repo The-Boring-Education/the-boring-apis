@@ -116,7 +116,7 @@ const generateLeaderboard = async (type: LeaderboardType) => {
     )
 
     if (sorted.length > 0) {
-        const top = sorted[0]
+        const _top = sorted[0]
     }
     return sorted
 }

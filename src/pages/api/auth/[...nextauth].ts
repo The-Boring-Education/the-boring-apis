@@ -40,7 +40,7 @@ const authOptions = createAuthOptions({
             }
 
             return true // Allow the sign in
-        } catch (error) {
+        } catch (_error) {
             console.error("Error signing in:", error)
             return false
         }

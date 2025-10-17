@@ -751,20 +751,6 @@ export interface AddWebinarRequestPayloadProps {
     enrolledUsersList: WebinarEnrolledUsersProps[]
 }
 
-export interface WebinarEnrolledUsersProps {
-    name: string
-    email: string
-}
-
-export interface AddCertificateRequestPayloadProps {
-    type: CertificateType
-    userName: string
-    userId: string
-    date: string
-    programName: string
-    programId: string
-}
-
 export interface AddNotificationRequestPayloadProps {
     type: NotificationType
     text: string

@@ -57,7 +57,7 @@ const handleGetChallenge = async (req: NextApiRequest, res: NextApiResponse) => 
         data: challenge,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Get Challenge Error:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
@@ -105,7 +105,7 @@ const handleUpdateChallenge = async (req: NextApiRequest, res: NextApiResponse) 
         data: updatedChallenge,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Update Challenge Error:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
@@ -147,7 +147,7 @@ const handleDeleteChallenge = async (req: NextApiRequest, res: NextApiResponse) 
         message: 'Challenge permanently deleted successfully',
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Delete Challenge Error:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({

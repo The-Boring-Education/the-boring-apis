@@ -37,7 +37,7 @@ interface UserPerformanceStats {
     }[]
 }
 
-interface LeaderboardEntry {
+interface _LeaderboardEntry {
     userId: string
     username: string
     averageScore: number
@@ -68,7 +68,7 @@ export const addUserQuizAttemptToDB = async (
 
         const savedAttempt = await attempt.save()
         return { data: savedAttempt }
-    } catch (error) {
+    } catch (_error) {
         console.error("Error saving quiz attempt:", error)
         console.error(
             "Attempt data that failed:",
@@ -174,7 +174,7 @@ export const getUserQuizPerformanceFromDB = async (
         }
 
         return { data: performanceStats }
-    } catch (error) {
+    } catch (_error) {
         console.error("Error getting user performance:", error)
         // Return empty results instead of error for better UX
         return {
@@ -228,7 +228,7 @@ export const getLeaderboardFromDB = async (
         ])
 
         return { data: attempts }
-    } catch (error) {
+    } catch (_error) {
         console.error("Error getting leaderboard:", error)
         return { error: "Failed to get leaderboard" }
     }
@@ -313,7 +313,7 @@ export const getQuizAdminAnalyticsFromDB =
             }
 
             return { data: analytics }
-        } catch (error) {
+        } catch (_error) {
             console.error("Error getting admin analytics:", error)
             return { error: "Failed to get admin analytics" }
         }

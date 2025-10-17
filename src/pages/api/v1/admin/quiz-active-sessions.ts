@@ -24,7 +24,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       success: true,
       data: sessions,
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching active sessions:', error);
     res.status(500).json({ error: 'Internal server error' });
   }

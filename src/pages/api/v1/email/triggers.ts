@@ -21,7 +21,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           })
         );
     }
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -76,7 +76,7 @@ const handleEmailTrigger = async (
         })
       );
     }
-  } catch (error) {
+  } catch (_error) {
     console.error('Email trigger error:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({

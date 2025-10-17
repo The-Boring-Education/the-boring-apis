@@ -65,7 +65,7 @@ const handleAddASheet = async (req: NextApiRequest, res: NextApiResponse) => {
         message: 'Sheet added successfully',
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -123,7 +123,7 @@ const handleAllGetSheet = async (req: NextApiRequest, res: NextApiResponse) => {
         data: allSheets,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,

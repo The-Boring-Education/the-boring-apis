@@ -41,7 +41,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(apiStatusCodes.OKAY).json(
       sendAPIResponse({ status: true, message: 'Mentorship status updated', data })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({ status: false, message: 'Unexpected error', error })
     );

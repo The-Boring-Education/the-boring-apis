@@ -65,7 +65,7 @@ const handleUpdateSection = async (
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -104,7 +104,7 @@ const handleDeleteSection = async (
         message: 'Section deleted successfully',
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,

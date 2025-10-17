@@ -92,7 +92,7 @@ const handleGetProgress = async (req: NextApiRequest, res: NextApiResponse) => {
         data: progress,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Get Challenge Progress Error:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({

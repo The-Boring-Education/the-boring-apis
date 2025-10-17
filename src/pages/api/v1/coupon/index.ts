@@ -73,7 +73,7 @@ const handleGetAllCoupons = async (res: NextApiResponse) => {
         data: coupons,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching coupons:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
@@ -165,7 +165,7 @@ const handleCreateCoupon = async (
         data: newCoupon,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Error creating coupon:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({

@@ -30,7 +30,7 @@ export const createAuthOptions = (config: AuthConfig = {}): NextAuthOptions => {
         },
 
         callbacks: {
-            async signIn({ user, account, profile }) {
+            async signIn({ user, account, _profile }) {
                 // If custom sign-in logic is provided, use it
                 if (onSignIn) {
                     return await onSignIn(user as any, account)
@@ -69,13 +69,13 @@ export const createAuthOptions = (config: AuthConfig = {}): NextAuthOptions => {
         },
 
         events: {
-            async signIn({ user, account, profile, isNewUser }) {
+            async signIn({ user, account, _profile, _isNewUser }) {
                 console.log(
                     `User signed in: ${user.email} via ${account?.provider}`
                 )
             },
 
-            async signOut({ session, token }) {
+            async signOut({ session, _token }) {
                 console.log(
                     `User signed out: ${session?.user?.email || "unknown"}`
                 )
@@ -109,11 +109,11 @@ export const withAuth = (authOptions: NextAuthOptions) => {
                 }
 
                 // Attach session to request for handler to use
-                ;(req as any).session = session
+                (req as any).session = session
                 ;(req as any).user = session.user
 
                 return handler(req, res)
-            } catch (error) {
+            } catch (_error) {
                 console.error("Auth middleware error:", error)
                 return res.status(500).json({
                     success: false,
@@ -161,11 +161,11 @@ export const withAdminAuth = (
                 }
 
                 // Attach session to request for handler to use
-                ;(req as any).session = session
+                (req as any).session = session
                 ;(req as any).user = session.user
 
                 return handler(req, res)
-            } catch (error) {
+            } catch (_error) {
                 console.error("Admin auth middleware error:", error)
                 return res.status(500).json({
                     success: false,

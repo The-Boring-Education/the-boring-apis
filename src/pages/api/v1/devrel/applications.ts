@@ -46,7 +46,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       );
     }
 
-  } catch (error) {
+  } catch (_error) {
     console.error('Error in DevRel applications API:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
@@ -86,7 +86,7 @@ const handleGetApplications = async (req: NextApiRequest, res: NextApiResponse) 
       })
     );
 
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching applications:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
@@ -148,7 +148,7 @@ const handleUpdateApplication = async (req: NextApiRequest, res: NextApiResponse
       })
     );
 
-  } catch (error) {
+  } catch (_error) {
     console.error('Error updating application:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({

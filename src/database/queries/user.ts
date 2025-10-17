@@ -17,7 +17,7 @@ const getUserByIdFromDB = async (
         if (!user) return { error: "User does not exists" }
 
         return { data: user }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Error while fetching user" }
     }
 }
@@ -31,7 +31,7 @@ const getUserByEmailFromDB = async (
         if (!user) return { error: "User does not exists" }
 
         return { data: user }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed while fetching user" }
     }
 }
@@ -42,7 +42,7 @@ const createUserInDB = async (
     try {
         const user = await User.create(userPayload)
         return { data: user }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed while creating user" }
     }
 }
@@ -62,7 +62,7 @@ const getUserByUserNameFromDB = async (
         }
 
         return { data: true }
-    } catch (error) {
+    } catch (_error) {
         return { error: "An error occurred while checking the userName" }
     }
 }
@@ -99,7 +99,7 @@ const onboardUserToDB = async (
         if (!user) return { error: "User does not exist" }
 
         return { data: user }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -132,7 +132,7 @@ const onboardPrepYatraUserTODB = async (
         if (!user) return { error: "User does not exist" }
 
         return { data: user }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -152,7 +152,7 @@ const updateUserSkillsInDB = async (
         )
         if (!user) return { error: "User does not exist" }
         return { data: user }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to update user skills" }
     }
 }
@@ -163,7 +163,7 @@ const getUserDataByUserNameFromDB = async (
     try {
         const user = await User.findOne({ userName })
         return { data: user }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to fetch user from DB" }
     }
 }

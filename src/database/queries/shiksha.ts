@@ -20,7 +20,7 @@ const addACourseToDB = async (
         const course = new Course(courseDetails)
         await course.save()
         return { data: course }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed while adding course" }
     }
 }
@@ -39,7 +39,7 @@ const updateACourseInDB = async ({
         if (!updatedCourse) return { error: "Course does not exists" }
 
         return { data: updatedCourse }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed while updating course" }
     }
 }
@@ -54,7 +54,7 @@ const deleteACourseFromDBById = async (
             return { error: "Course not found" }
         }
         return { data: "Course deleted" }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed while deleting course" }
     }
 }
@@ -70,7 +70,7 @@ const getAllCourseFromDB = async (): Promise<DatabaseQueryResponseType> => {
         }
 
         return { data: course }
-    } catch (error) {
+    } catch (_error) {
         return { error: `Failed while fetching a course ${error}` }
     }
 }
@@ -98,7 +98,7 @@ const getACourseFromDBById = async (
         }
 
         return { data: course }
-    } catch (error) {
+    } catch (_error) {
         return { error: `Failed while fetching a course ${error}` }
     }
 }
@@ -119,7 +119,7 @@ const addChapterToCourseInDB = async (
         }
 
         return { data: updatedCourse }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to add chapter to course" }
     }
 }
@@ -143,7 +143,7 @@ const updateCourseChapterInDB = async (
         )
 
         return { data: course }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to update chapter to course" }
     }
 }
@@ -159,7 +159,7 @@ const deleteCourseChapterByIdFromDB = async (
             { new: true }
         )
         return { data: course }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to delete chapter from course" }
     }
 }
@@ -189,7 +189,7 @@ const enrollInACourse = async ({
         await updateUserPointsInDB(userId, "ENROLL_COURSE")
 
         return { data: userCourse }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed while enrolling in a course" }
     }
 }
@@ -201,7 +201,7 @@ const getEnrolledCourseFromDB = async ({
     try {
         const enrolledCourse = await UserCourse.findOne({ userId, courseId })
         return { data: enrolledCourse }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed while fetching enrolled course" }
     }
 }
@@ -223,7 +223,7 @@ const getAllEnrolledCoursesFromDB = async (
                 isEnrolled: true
             })) as unknown as BaseShikshaCourseResponseProps
         }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed while fetching enrolled course" }
     }
 }
@@ -239,7 +239,7 @@ const getCourseBySlugFromDB = async (
         }
 
         return { data: course }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -290,7 +290,7 @@ const getCourseBySlugWithUserFromDB = async (
                 chapters: mappedChapters
             }
         }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -338,7 +338,7 @@ const updateUserCourseChapterInDB = async ({
         await userCourse.save()
 
         return { data: userCourse }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to update chapter in user course" }
     }
 }
@@ -384,7 +384,7 @@ const getACourseForUserFromDB = async (userId: string, courseId: string) => {
                 isEnrolled: true
             } as BaseShikshaCourseResponseProps
         }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to fetch courses with chapter status" }
     }
 }
@@ -406,7 +406,7 @@ const updateCertificateToUserShikshaCourseDoc = async (
         }
 
         return { data: userCourse }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to update certificate status in user course" }
     }
 }

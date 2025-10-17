@@ -33,7 +33,7 @@ const sendEmailFromDB = async (
     } else {
       return { error: result.error || 'Failed to send email' };
     }
-  } catch (error) {
+  } catch (_error) {
     return { error: 'Email service error' };
   }
 };

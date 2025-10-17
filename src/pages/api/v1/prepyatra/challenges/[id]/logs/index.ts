@@ -49,7 +49,7 @@ const handleGetLogs = async (req: NextApiRequest, res: NextApiResponse) => {
         data: logs,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Get Challenge Logs Error:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
@@ -121,7 +121,7 @@ const handleCreateLog = async (req: NextApiRequest, res: NextApiResponse) => {
         data: log,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Create Challenge Log Error:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({

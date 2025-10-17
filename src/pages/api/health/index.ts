@@ -53,7 +53,7 @@ async function checkServiceHealth(
                     "User-Agent": "TBE-Health-Check/1.0"
                 }
             } as RequestInit)
-        } catch (healthError) {
+        } catch (_healthError) {
             response = await fetch(fallbackUrl, {
                 method: "GET",
                 timeout,
@@ -79,7 +79,7 @@ async function checkServiceHealth(
                 error: `HTTP ${response.status}: ${response.statusText}`
             }
         }
-    } catch (error) {
+    } catch (_error) {
         const responseTime = Date.now() - startTime
         const errorMessage =
             error instanceof Error ? error.message : "Unknown error"
@@ -142,8 +142,8 @@ export default async function handler(
             overallStatus === "healthy"
                 ? 200
                 : overallStatus === "degraded"
-                  ? 207
-                  : 503
+                ? 207
+                : 503
 
         const response: OverallHealthResponse = {
             status: overallStatus,
@@ -153,7 +153,7 @@ export default async function handler(
         }
 
         res.status(httpStatus).json(response)
-    } catch (error) {
+    } catch (_error) {
         const errorMessage =
             error instanceof Error ? error.message : "Unknown error"
 

@@ -23,7 +23,7 @@ const addFeedbackToDB = async ({
 
         await newFeedback.save()
         return { data: newFeedback }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to create feedback" }
     }
 }
@@ -46,7 +46,7 @@ const updateFeedbackTextInDB = async ({
         existingFeedback.feedback = feedback
         await existingFeedback.save()
         return { data: existingFeedback }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to update feedback text" }
     }
 }

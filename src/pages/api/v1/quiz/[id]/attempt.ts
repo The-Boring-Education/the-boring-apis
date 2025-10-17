@@ -98,7 +98,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         attemptId: savedAttempt._id,
       },
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Quiz attempt API error:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }

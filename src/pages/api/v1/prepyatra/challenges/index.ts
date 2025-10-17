@@ -40,7 +40,7 @@ const handleGetChallenges = async (req: NextApiRequest, res: NextApiResponse) =>
 
     // Handle both ObjectId and string user IDs
     const userId = String(queryUserId);
-    let query: any = {};
+    const query: any = {};
     
     // Check if userId is a valid MongoDB ObjectId (24 hex characters)
     if (/^[0-9a-fA-F]{24}$/.test(userId)) {
@@ -73,7 +73,7 @@ const handleGetChallenges = async (req: NextApiRequest, res: NextApiResponse) =>
         data: challenges,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Get Challenges Error:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
@@ -145,7 +145,7 @@ const handleCreateChallenge = async (req: NextApiRequest, res: NextApiResponse) 
         data: challenge,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Create Challenge Error:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({

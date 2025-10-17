@@ -102,7 +102,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       success: true,
       data: response,
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Error submitting answer:', error);
     res.status(500).json({ error: 'Internal server error' });
   }

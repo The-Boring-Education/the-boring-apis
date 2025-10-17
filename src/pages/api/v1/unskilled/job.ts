@@ -115,7 +115,7 @@ const handleAddJob = async (req: NextApiRequest, res: NextApiResponse) => {
         data: newJob,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'An unexpected error occurred while adding the job',
@@ -156,7 +156,7 @@ const handleGetJobs = async (req: NextApiRequest, res: NextApiResponse) => {
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'An unexpected error occurred while fetching jobs',

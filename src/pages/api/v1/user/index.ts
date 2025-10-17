@@ -121,7 +121,7 @@ const handleGetUser = async (
         error: 'Please provide Email or User id or Username',
       })
     );
-  } catch (error) {
+  } catch (_error) {
     captureAPIError(
       error as Error,
       '/api/v1/user',
@@ -200,7 +200,7 @@ const handleCreateUser = async (req: NextApiRequest, res: NextApiResponse) => {
         })
       );
     }
-  } catch (error) {
+  } catch (_error) {
     captureAuthError(error as Error, 'user_creation', req.body?.email);
 
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(

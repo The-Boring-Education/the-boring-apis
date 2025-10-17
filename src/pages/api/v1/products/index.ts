@@ -120,7 +120,7 @@ const handleGetProducts = async (res: NextApiResponse) => {
         data: productsResponse,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching products:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({

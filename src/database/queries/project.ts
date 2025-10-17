@@ -38,12 +38,12 @@ const addAProjectToDB = async ({
 
         try {
             await project.save()
-        } catch (error) {
+        } catch (_error) {
             return { error }
         }
 
         return { data: project }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -52,7 +52,7 @@ const getProjectsFromDB = async (): Promise<DatabaseQueryResponseType> => {
     try {
         const projects = await Project.find()
         return { data: projects }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -68,7 +68,7 @@ const getProjectBySlugFromDB = async (
         }
 
         return { data: project }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -112,7 +112,7 @@ const getProjectBySlugWithUserFromDB = async (
                 }))
             }
         }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -144,7 +144,7 @@ const getProjectByIDFromDB = async (
         }
 
         return { data: project }
-    } catch (error) {
+    } catch (_error) {
         return { error: `Failed while fetching a project: ${error}` }
     }
 }
@@ -165,7 +165,7 @@ const updateProjectInDB = async ({
         }
 
         return { data: updatedProject }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -181,7 +181,7 @@ const deleteProjectFromDB = async (
             return { error: "Project not found" }
         }
         return { data: deletedProject }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -202,7 +202,7 @@ const addSectionToProjectInDB = async (
         await project.save()
 
         return { data: project }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Section not added" }
     }
 }
@@ -218,7 +218,7 @@ const getSectionsFromProjectInDB = async (
         }
 
         return { data: project.sections }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Section not fetched" }
     }
 }
@@ -252,7 +252,7 @@ const updateSectionInProjectInDB = async ({
         )
 
         return { data: project.sections[updatedSectionIndex] }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Error updating section" }
     }
 }
@@ -281,7 +281,7 @@ const deleteSectionFromProjectInDB = async ({
         await project.save()
 
         return {}
-    } catch (error) {
+    } catch (_error) {
         return { error: "Error deleting section" }
     }
 }
@@ -311,7 +311,7 @@ const addChapterToSectionInDB = async (
         await project.save()
 
         return { data: project }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Chapter not added" }
     }
 }
@@ -336,7 +336,7 @@ const getChaptersFromSectionInDB = async (
         }
 
         return { data: section.chapters }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Error fetching chapters" }
     }
 }
@@ -370,7 +370,7 @@ const getChapterFromSectionInDB = async (
         }
 
         return { data: chapter }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Error fetching chapter" }
     }
 }
@@ -414,7 +414,7 @@ const updateChapterInSectionInDB = async ({
         await project.save()
 
         return { data: project }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Chapter not updated" }
     }
 }
@@ -464,7 +464,7 @@ const deleteChapterFromSectionInDB = async ({
         await project.save()
 
         return { data: "Chapter deleted successfully" }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Error deleting chapter" }
     }
 }
@@ -521,7 +521,7 @@ const updateUserProjectChapterInDB = async ({
         await userProject.save()
 
         return { data: userProject }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to update chapter in user project" }
     }
 }
@@ -555,7 +555,7 @@ const enrollInAProject = async ({
         await updateUserPointsInDB(userId, "ENROLL_PROJECT")
 
         return { data: userProject }
-    } catch (error) {
+    } catch (_error) {
         return { error: `Failed while enrolling in a project ${error}` }
     }
 }
@@ -580,7 +580,7 @@ const getAllEnrolledProjectsFromDB = async (
         return {
             data: projectData
         }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed while fetching enrolled projects" }
     }
 }
@@ -592,7 +592,7 @@ const getEnrolledProjectFromDB = async ({
     try {
         const enrolledProject = await UserProject.findOne({ userId, projectId })
         return { data: enrolledProject }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed while fetching enrolled project" }
     }
 }
@@ -652,7 +652,7 @@ const getAProjectForUserFromDB = async (userId: string, projectId: string) => {
                 isEnrolled: true
             }
         }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to fetch project with task status" }
     }
 }

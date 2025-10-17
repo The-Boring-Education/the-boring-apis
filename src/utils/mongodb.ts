@@ -25,7 +25,7 @@ export const connectToDatabase = async (): Promise<void> => {
         await mongoose.connect(mongoUri)
         isConnected = true
         console.log("Connected to MongoDB")
-    } catch (error) {
+    } catch (_error) {
         console.error("MongoDB connection error:", error)
         throw error
     }
@@ -51,7 +51,7 @@ export const getTotalCountFromModel = async (
     try {
         const count = await model.countDocuments()
         return { data: count }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Error while counting documents" }
     }
 }
@@ -76,7 +76,7 @@ export const getAllDocumentsFromModel = async (
 
         const documents = await query.exec()
         return { data: documents }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Error while fetching documents" }
     }
 }

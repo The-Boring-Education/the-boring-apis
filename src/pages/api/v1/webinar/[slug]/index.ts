@@ -68,7 +68,7 @@ const handleGetWebinarDetails = async (
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -117,7 +117,7 @@ const handleCheckUserRegistration = async (
         data: { isRegistered },
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -168,7 +168,7 @@ const handleUpdateWebinar = async (
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -203,7 +203,7 @@ const handleDeleteWebinar = async (
         message: 'Webinar deleted successfully',
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.NOT_FOUND).json(
       sendAPIResponse({
         status: false,

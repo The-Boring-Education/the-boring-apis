@@ -25,11 +25,11 @@ export const withAuth = (authOptions: NextAuthOptions) => {
                 }
 
                 // Attach session to request for handler to use
-                ;(req as any).session = session
+                (req as any).session = session
                 ;(req as any).user = session.user
 
                 return handler(req, res)
-            } catch (error) {
+            } catch (_error) {
                 console.error("Auth middleware error:", error)
                 return res.status(500).json({
                     success: false,
@@ -77,11 +77,11 @@ export const withAdminAuth = (
                 }
 
                 // Attach session to request for handler to use
-                ;(req as any).session = session
+                (req as any).session = session
                 ;(req as any).user = session.user
 
                 return handler(req, res)
-            } catch (error) {
+            } catch (_error) {
                 console.error("Admin auth middleware error:", error)
                 return res.status(500).json({
                     success: false,

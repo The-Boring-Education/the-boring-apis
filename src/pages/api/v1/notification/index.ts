@@ -70,7 +70,7 @@ const handleAddANotification = async (
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.NOT_FOUND).json(
       sendAPIResponse({
         status: false,
@@ -105,7 +105,7 @@ const handleGetAllNotification = async (
         data: allNotifications,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.NOT_FOUND).json(
       sendAPIResponse({
         status: false,
@@ -142,7 +142,7 @@ const handleUpdateANotification = async (
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.NOT_FOUND).json(
       sendAPIResponse({
         status: false,
@@ -180,7 +180,7 @@ const handleDeleteANotification = async (
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.NOT_FOUND).json(
       sendAPIResponse({
         status: false,

@@ -60,7 +60,7 @@ const createUserInterestInDB = async (
         })
 
         return { data: interest }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to create user interest" }
     }
 }
@@ -115,7 +115,7 @@ const getUserInterestsFromDB = async (filters: {
                 }
             }
         }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to get user interests" }
     }
 }
@@ -139,7 +139,7 @@ const updateUserInterestInDB = async (
         }
 
         return { data: interest }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to update user interest" }
     }
 }

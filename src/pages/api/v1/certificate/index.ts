@@ -103,7 +103,7 @@ const handleAddACertificate = async (
                 message: "Certificate added successfully"
             })
         )
-    } catch (error) {
+    } catch (_error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,
@@ -154,7 +154,7 @@ const handleGetACertificate = async (
                 message: "Certificate not found"
             })
         )
-    } catch (error) {
+    } catch (_error) {
         return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
             sendAPIResponse({
                 status: false,

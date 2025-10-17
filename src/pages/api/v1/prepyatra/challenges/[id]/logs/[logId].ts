@@ -62,7 +62,7 @@ const handleUpdateLog = async (req: NextApiRequest, res: NextApiResponse) => {
         data: updatedLog,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Update Challenge Log Error:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
@@ -104,7 +104,7 @@ const handleDeleteLog = async (req: NextApiRequest, res: NextApiResponse) => {
         message: 'Log deleted successfully',
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Delete Challenge Log Error:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({

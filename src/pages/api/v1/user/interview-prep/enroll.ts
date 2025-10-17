@@ -28,7 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           })
         );
     }
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -96,7 +96,7 @@ const handleSheetEnrollment = async (
           );
         });
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching user/sheet data for email:', error);
     }
 
@@ -107,7 +107,7 @@ const handleSheetEnrollment = async (
         message: 'Successfully enrolled in sheet',
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,

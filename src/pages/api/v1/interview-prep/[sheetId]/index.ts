@@ -51,7 +51,7 @@ const handleGetSheetById = async (
         message: 'Questions retrieved successfully',
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -91,7 +91,7 @@ const handleUpdateSheet = async (
         message: 'Sheet updated successfully',
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,

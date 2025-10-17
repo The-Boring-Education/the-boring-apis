@@ -21,7 +21,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           })
         );
     }
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -72,7 +72,7 @@ const handleSendEmail = async (req: NextApiRequest, res: NextApiResponse) => {
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Email sending error:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({

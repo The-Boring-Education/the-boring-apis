@@ -14,7 +14,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     await connectDB();
     return handleGetLeaderboard(req, res);
-  } catch (error) {
+  } catch (_error) {
     console.error('Leaderboard API error:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
@@ -23,7 +23,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 async function handleGetLeaderboard(req: NextApiRequest, res: NextApiResponse) {
   const { limit = '50', category } = req.query;
   const limitNum = Math.min(100, Math.max(1, parseInt(limit as string) || 50));
-  const categoryFilter = typeof category === 'string' ? category : undefined;
+  const _categoryFilter = typeof category === 'string' ? category : undefined;
 
   const { data: leaderboard, error } = await getLeaderboardFromDB(limitNum);
 

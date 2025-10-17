@@ -68,7 +68,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       success: true,
       data: formattedAnalytics,
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching user analytics:', error);
     res.status(500).json({ error: 'Internal server error' });
   }

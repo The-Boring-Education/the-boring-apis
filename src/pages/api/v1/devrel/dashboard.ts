@@ -55,7 +55,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       );
     }
 
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching dashboard data:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
@@ -187,7 +187,7 @@ const handleAdvocateDashboard = async (req: NextApiRequest, res: NextApiResponse
       })
     );
 
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching advocate dashboard:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
@@ -289,7 +289,7 @@ const handleLeadDashboard = async (req: NextApiRequest, res: NextApiResponse, us
       })
     );
 
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching lead dashboard:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({

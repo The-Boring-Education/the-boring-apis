@@ -12,7 +12,7 @@ const addACertificateToDB = async (
     const certificate = new Certificate(certificatePayload);
     await certificate.save();
     return { data: certificate };
-  } catch (error) {
+    } catch (_error) {
     return { error };
   }
 };
@@ -30,7 +30,7 @@ const checkCertificateExistForAProgram = async (
     } else {
       return { error: 'Certificate does not exist' };
     }
-  } catch (error) {
+    } catch (_error) {
     return { error: 'Failed while checking certificate existence' };
   }
 };
@@ -45,7 +45,7 @@ const getCertificateById = async (certificateId: string) => {
     } else {
       return { error: 'Certificate not found' };
     }
-  } catch (error) {
+    } catch (_error) {
     return { error: 'Failed while fetching certificate' };
   }
 };
@@ -60,7 +60,7 @@ const getUserCertificates = async (userId: string) => {
     } else {
       return { error: 'No certificates found' };
     }
-  } catch (error) {
+    } catch (_error) {
     return { error: 'Failed while fetching certificates' };
   }
 };

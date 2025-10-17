@@ -15,7 +15,7 @@ const addJobToDB = async (
         const newJob = new Job(jobPayload)
         const savedJob = await newJob.save()
         return { data: savedJob }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -47,7 +47,7 @@ const getAllJobsFromDB = async (
                 pageSize: limit
             }
         }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -66,7 +66,7 @@ const getJobByJobIdFromDB = async (
             return { error: "Job not found" }
         }
         return { data: job }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -181,7 +181,7 @@ const fetchJobsAggregationFromDB =
                     companyTypes
                 }
             }
-        } catch (error) {
+        } catch (_error) {
             return { error }
         }
     }
@@ -207,7 +207,7 @@ const saveDailyJobsAggregationToDB =
             await newAggregation.save()
 
             return { data: newAggregation }
-        } catch (error) {
+        } catch (_error) {
             return { error: "Failed to save job aggregation to DB" }
         }
     }
@@ -224,7 +224,7 @@ const getLatestJobAggregationFromDB =
             }
 
             return { data: latestAggregation }
-        } catch (error) {
+        } catch (_error) {
             return { error: "Failed to fetch latest job aggregation data" }
         }
     }
@@ -383,7 +383,7 @@ const getResumeEvaluationResultsFromDB = async ({
         }
 
         return { data: response }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to fetch latest job aggregation data" }
     }
 }

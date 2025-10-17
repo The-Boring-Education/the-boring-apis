@@ -110,7 +110,7 @@ const handleAddBulkPlaylist = async (
       }
 
       addedPlaylists.push(newPlaylist);
-    } catch (error) {
+    } catch (_error) {
       failedPlaylists.push({
         playlistUrl,
         error: `Unexpected error: ${error}`,

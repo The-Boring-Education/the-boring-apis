@@ -52,7 +52,7 @@ const handleGetPlaylistsBySkill = async (
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'An unexpected error occurred while fetching playlists',
@@ -92,7 +92,7 @@ const handleDeletePlaylistBySkill = async (
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'An unexpected error occurred while deleting playlists',

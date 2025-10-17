@@ -78,7 +78,7 @@ const handleAddLog = async (req: NextApiRequest, res: NextApiResponse) => {
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -119,7 +119,7 @@ const handleGetLogs = async (req: NextApiRequest, res: NextApiResponse) => {
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -161,7 +161,7 @@ const handleUpdateLog = async (req: NextApiRequest, res: NextApiResponse) => {
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -241,7 +241,7 @@ const handleAddMentorFeedback = async (
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -283,7 +283,7 @@ const handleDeleteLog = async (req: NextApiRequest, res: NextApiResponse) => {
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,

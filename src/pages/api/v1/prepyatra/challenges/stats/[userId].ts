@@ -67,7 +67,7 @@ const handleGetStats = async (req: NextApiRequest, res: NextApiResponse) => {
         data: stats,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Get Challenge Stats Error:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({

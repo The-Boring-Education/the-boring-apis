@@ -11,7 +11,7 @@ const getTotalCountFromModel = async (
   try {
     const count = await model.countDocuments();
     return { data: count };
-  } catch (error) {
+    } catch (_error) {
     return { error: 'Error while counting documents' };
   }
 };
@@ -42,7 +42,7 @@ const getAllDocumentsFromModel = async (
         totalPages: Math.ceil(total / limit),
       },
     };
-  } catch (error) {
+    } catch (_error) {
     return { error: 'Error while fetching documents' };
   }
 };

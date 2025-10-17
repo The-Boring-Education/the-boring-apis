@@ -90,7 +90,7 @@ const handleGetCoupon = async (
         data: coupon,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching coupon:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
@@ -152,7 +152,7 @@ const handleUpdateCoupon = async (
         data: updatedCoupon,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Error updating coupon:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
@@ -187,7 +187,7 @@ const handleDeleteCoupon = async (
         data: deletedCoupon,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Error deleting coupon:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({

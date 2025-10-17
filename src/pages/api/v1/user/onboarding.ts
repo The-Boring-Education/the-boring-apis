@@ -74,7 +74,7 @@ const getUserByUsername = async (
         message: 'Username is available.',
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -130,7 +130,7 @@ const handleUserOnboarding = async (
         message: 'User onboarded successfully',
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,
@@ -184,7 +184,7 @@ const handlePrepYatraOnboarding = async (
         message: 'User onboarded successfully',
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,

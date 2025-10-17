@@ -52,7 +52,7 @@ const handleAddBulkChapters = async (
         message: 'All Chapters added to course successfully',
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         status: false,

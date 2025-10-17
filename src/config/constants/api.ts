@@ -19,7 +19,7 @@ import type {
     WorkDomainType
 } from "@/interfaces"
 
-const apiStatusCodes = {
+const _apiStatusCodes = {
     OKAY: 200,
     RESOURCE_CREATED: 201,
     SUCCESSFUL_WITHOUT_RESPONSE: 204,

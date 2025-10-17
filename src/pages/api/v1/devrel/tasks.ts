@@ -69,7 +69,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       );
     }
 
-  } catch (error) {
+  } catch (_error) {
     console.error('Error in DevRel tasks API:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
@@ -136,7 +136,7 @@ const handleGetTasks = async (req: NextApiRequest, res: NextApiResponse, user: a
       })
     );
 
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching tasks:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
@@ -188,7 +188,7 @@ const handleCreateTask = async (req: NextApiRequest, res: NextApiResponse, user:
       })
     );
 
-  } catch (error) {
+  } catch (_error) {
     console.error('Error creating task:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
@@ -282,7 +282,7 @@ const handleUpdateTaskProgress = async (req: NextApiRequest, res: NextApiRespons
       })
     );
 
-  } catch (error) {
+  } catch (_error) {
     console.error('Error updating task progress:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({

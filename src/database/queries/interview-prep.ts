@@ -19,7 +19,7 @@ const addAInterviewSheetToDB = async (
         const sheet = new InterviewSheet(sheetPayload)
         await sheet.save()
         return { data: sheet }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -36,7 +36,7 @@ const getAllInterviewSheetsFromDB =
             }
 
             return { data: sheet }
-        } catch (error) {
+        } catch (_error) {
             return { error }
         }
     }
@@ -86,7 +86,7 @@ const getInterviewSheetBySlugFromDB = async (
                 questions: mappedQuestions
             }
         }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -102,7 +102,7 @@ const getInterviewSheetByIDFromDB = async (
         }
 
         return { data: sheet }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -121,7 +121,7 @@ const updateInterviewSheetInDB = async ({
         if (!updatedCourse) return { error: "Sheet does not exists" }
 
         return { data: updatedCourse }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed while updating sheet" }
     }
 }
@@ -151,7 +151,7 @@ const updateInterviewQuestionInDB = async (
         )
 
         return { data: course }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to update chapter to course" }
     }
 }
@@ -169,7 +169,7 @@ const deleteQuestionFromSheetInDB = async (
         )
 
         return { data: course }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to delete question from sheet" }
     }
 }
@@ -190,7 +190,7 @@ const addQuestionToInterviewSheetInDB = async (
         }
 
         return { data: updatedSheet }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to add question to interview sheet" }
     }
 }
@@ -220,7 +220,7 @@ const enrollInASheet = async ({
         await updateUserPointsInDB(userId, "ENROLL_SHEET")
 
         return { data: userSheet }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed while enrolling in a sheet" }
     }
 }
@@ -232,7 +232,7 @@ const getEnrolledSheetFromDB = async ({
     try {
         const enrolledSheet = await UserSheet.findOne({ userId, sheetId })
         return { data: enrolledSheet }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed while fetching enrolled sheet" }
     }
 }
@@ -254,7 +254,7 @@ const getAllEnrolledSheetsFromDB = async (
                 isEnrolled: true
             }))
         }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed while fetching enrolled sheets" }
     }
 }
@@ -277,7 +277,7 @@ const markQuestionCompletedByUser = async (
         }
 
         return { data: updatedSheet }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to mark question as completed" }
     }
 }
@@ -295,7 +295,7 @@ const getAllQuestionsByUser = async (userId: string) => {
         const allQuestions = userSheets.flatMap((sheet) => sheet.questions)
 
         return { data: allQuestions, error: null }
-    } catch (error) {
+    } catch (_error) {
         return {
             data: null,
             error: "Error fetching questions from the database"
@@ -326,7 +326,7 @@ const getASheetFromDBById = async (
         }
 
         return { data: sheet }
-    } catch (error) {
+    } catch (_error) {
         return { error: `Failed while fetching a sheet ${error}` }
     }
 }
@@ -366,7 +366,7 @@ const getASheetForUserFromDB = async (userId: string, sheetId: string) => {
                 isEnrolled: true
             } as BaseInterviewSheetResponseProps
         }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to fetch courses with chapter status" }
     }
 }
@@ -391,7 +391,7 @@ const markQuestionStarredByUser = async (
         }
 
         return { data: updatedSheet }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to mark question as starred" }
     }
 }
@@ -408,7 +408,7 @@ const getStarredQuestionsFromDB = async (userId: string, sheetId: string) => {
             (q) => q.isStarred === true
         )
         return { data: starredQuestions }
-    } catch (error) {
+    } catch (_error) {
         return { error: "Failed to get starred questions" }
     }
 }

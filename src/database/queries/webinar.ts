@@ -14,7 +14,7 @@ const addAWebinarToDB = async (
         const newWebinar = new Webinar(webinarPayload)
         const savedWebinar = await newWebinar.save()
         return { data: savedWebinar }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -32,7 +32,7 @@ const getAllWebinarsFromDB = async () => {
         })
 
         return { data: updatedWebinars }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -70,7 +70,7 @@ const updateWebinarInDB = async (
         const finalUpdatedWebinar = await Webinar.findOne({ slug })
 
         return { data: finalUpdatedWebinar }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -91,7 +91,7 @@ const checkUserRegistrationInWebinarDB = async (
         )
 
         return { data: isRegistered }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -111,7 +111,7 @@ const getWebinarDetailsFromDB = async (slug: string) => {
         return {
             data: webinarDetails
         }
-    } catch (error) {
+    } catch (_error) {
         return {
             error: "Failed to fetch webinar details from the database"
         }
@@ -126,7 +126,7 @@ const getWebinarBySlugFromDB = async (slug: string) => {
         }
 
         return { data: webinar }
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }
@@ -141,7 +141,7 @@ const deleteAWebinarFromDB = async (slug: string) => {
         await webinar.deleteOne()
 
         return {}
-    } catch (error) {
+    } catch (_error) {
         return { error }
     }
 }

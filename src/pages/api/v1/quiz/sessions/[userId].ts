@@ -67,7 +67,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       success: true,
       data: formattedSessions,
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching user sessions:', error);
     res.status(500).json({ error: 'Internal server error' });
   }

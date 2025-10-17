@@ -144,7 +144,7 @@ const generatePaymentOrderId = (): string =>
       if (!status || !data) return false;
   
       return !!data.isEnrolled;
-    } catch (error) {
+    } catch (_error) {
       console.error('Enrollment check failed:', error);
       return false;
     }
@@ -230,7 +230,7 @@ const fetchPlaylistName = async (
                 playlist.thumbnails?.default?.url ||
                 ""
         }
-    } catch (error) {
+    } catch (_error) {
         console.error("Error fetching playlist name:", error)
         return {}
     }
@@ -300,7 +300,7 @@ const fetchPlaylistData = async (
             thumbnail: metadata.thumbnail || "",
             videos: allVideos
         }
-    } catch (error) {
+    } catch (_error) {
         console.error("Error fetching playlist data:", error)
     }
 }

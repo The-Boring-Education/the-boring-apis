@@ -8,7 +8,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     res.setHeader('Content-Type', 'application/xml');
     res.status(200).send(sitemap);
-  } catch (error) {
+  } catch (_error) {
     res.status(500).json({ error: 'Failed to generate sitemap' });
   }
 };

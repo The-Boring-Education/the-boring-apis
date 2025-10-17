@@ -9,7 +9,7 @@ const connectDB = async () => {
   try {
     await mongoose.connect(envConfig.MONGODB_URI);
     console.log('Connected to MongoDB');
-  } catch (error) {
+  } catch (_error) {
     console.error('Error connecting to MongoDB:', error);
   }
 };
@@ -36,7 +36,7 @@ const adminMiddleware = async (
     }
     
     return true;
-  } catch (error) {
+  } catch (_error) {
     res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({
         success: false,

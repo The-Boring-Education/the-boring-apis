@@ -73,7 +73,7 @@ const handleAddAWebinar = async (req: NextApiRequest, res: NextApiResponse) => {
         data,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.NOT_FOUND).json(
       sendAPIResponse({
         status: false,
@@ -108,7 +108,7 @@ const handleGetAllWebinars = async (
         data: allWebinars,
       })
     );
-  } catch (error) {
+  } catch (_error) {
     return res.status(apiStatusCodes.NOT_FOUND).json(
       sendAPIResponse({
         status: false,

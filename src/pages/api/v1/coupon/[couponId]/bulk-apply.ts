@@ -115,7 +115,7 @@ const handleBulkApply = async (
         },
       })
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Error applying coupon to sheets:', error);
     return res.status(apiStatusCodes.INTERNAL_SERVER_ERROR).json(
       sendAPIResponse({

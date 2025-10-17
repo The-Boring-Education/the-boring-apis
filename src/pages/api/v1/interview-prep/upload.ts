@@ -147,7 +147,7 @@ export default async function handler(
                     )
 
                     return questionResponse.data
-                } catch (error) {
+                } catch (_error) {
                     console.error(`Error adding question ${index + 1}:`, error)
                     return null
                 }
@@ -191,7 +191,7 @@ export default async function handler(
                 slug: savedSheet.slug
             }
         })
-    } catch (error) {
+    } catch (_error) {
         console.error("Interview sheet upload error:", error)
 
         // Handle specific axios errors
