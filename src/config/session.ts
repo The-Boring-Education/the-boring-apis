@@ -25,7 +25,9 @@ export const getCookieConfig = () => {
                 : 'next-auth.session-token',
             options: {
                 httpOnly: true,
-                sameSite: 'lax' as const,
+                // Use 'none' for cross-site requests when using different domains
+                // Use 'lax' for same-site or subdomain SSO
+                sameSite: cookieDomain ? 'lax' : 'none' as const,
                 path: '/',
                 secure: isProduction,
                 domain: cookieDomain || undefined

@@ -45,14 +45,16 @@ const nextConfig = {
             {
                 source: "/api/:path*",
                 headers: [
-                    { key: "Access-Control-Allow-Origin", value: "*" },
+                    // Note: For credentials to work, we cannot use wildcard "*"
+                    // We handle origin dynamically in the CORS middleware
+                    { key: "Access-Control-Allow-Credentials", value: "true" },
                     {
                         key: "Access-Control-Allow-Methods",
                         value: "GET,OPTIONS,PATCH,DELETE,POST,PUT"
                     },
                     {
                         key: "Access-Control-Allow-Headers",
-                        value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
+                        value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, Cookie"
                     }
                 ]
             }
